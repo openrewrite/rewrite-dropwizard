@@ -1,6 +1,7 @@
-package org.openrewrite.dropwizard;
+package org.openrewrite.dropwizard.annotation;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.dropwizard.annotation.AddAnnotationIfSuperTypeExistsRecipe;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;

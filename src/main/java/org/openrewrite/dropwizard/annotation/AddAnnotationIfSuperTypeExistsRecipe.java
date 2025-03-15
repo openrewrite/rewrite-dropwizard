@@ -1,4 +1,4 @@
-package org.openrewrite.dropwizard;
+package org.openrewrite.dropwizard.annotation;
 
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
