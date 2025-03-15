@@ -45,8 +45,8 @@ public class AddAnnotationIfAnnotationExistsRecipe extends AddClassAnnotationRec
                 .anyMatch(
                         annotation -> {
                             JavaType.FullyQualified type = TypeUtils.asFullyQualified(annotation.getType());
-                            return type != null
-                                    && targetAnnotationClassNames.equals(type.getFullyQualifiedName());
+                            return type != null &&
+                                    targetAnnotationClassNames.equals(type.getFullyQualifiedName());
                         });
     }
 }
