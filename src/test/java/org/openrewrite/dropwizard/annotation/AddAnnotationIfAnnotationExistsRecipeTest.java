@@ -157,21 +157,21 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
                 "javax.persistence.Entity", "javax.persistence.Table", false)),
           java(
             """
-                  import javax.persistence.Table;
+              import javax.persistence.Table;
+              public class Outer {
+                  @Table
+                  public class Inner {
+                      private String name;
+              }
+              import javax.persistence.Entity;
+              import javax.persistence.Table;
 
-                  public class Outer {
-                      @Table
-                      public class Inner {
-                          private String name;
-                      }
-                  }
-              """,
-            """
-                  import javax.persistence.Entity;
-                  import javax.persistence.Table;
-
-                  public class Outer {
-                      @Entity
+              public class Outer {
+                  @Entity
+                  @Table
+                  public class Inner {
+                      private String name;
+              }
                       @Table
                       public class Inner {
                           private String name;
