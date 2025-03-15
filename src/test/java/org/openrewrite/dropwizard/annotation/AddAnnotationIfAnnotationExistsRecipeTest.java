@@ -118,7 +118,6 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
               public class Customer {
                   private String name;
               }
-                  }
               """));
     }
 
@@ -139,12 +138,12 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
             """
               import javax.persistence.Entity;
               import javax.persistence.Table;
+
               @Entity
               @Table
               public class Customer {
                   private String name;
               }
-                  }
               """));
     }
 
@@ -158,11 +157,15 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
           java(
             """
               import javax.persistence.Table;
+
               public class Outer {
                   @Table
                   public class Inner {
                       private String name;
+                  }
               }
+              """,
+            """
               import javax.persistence.Entity;
               import javax.persistence.Table;
 
@@ -171,12 +174,8 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
                   @Table
                   public class Inner {
                       private String name;
-              }
-                      @Table
-                      public class Inner {
-                          private String name;
-                      }
                   }
+              }
               """));
     }
 }
