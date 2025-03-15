@@ -111,13 +111,13 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
                 "javax.persistence.Entity", "javax.persistence.Table", false)),
           java(
             """
-                  import javax.persistence.Entity;
-                  import javax.persistence.Table;
-
-                  @Entity
-                  @Table
-                  public class Customer {
-                      private String name;
+              import javax.persistence.Entity;
+              import javax.persistence.Table;
+              @Entity
+              @Table
+              public class Customer {
+                  private String name;
+              }
                   }
               """));
     }
