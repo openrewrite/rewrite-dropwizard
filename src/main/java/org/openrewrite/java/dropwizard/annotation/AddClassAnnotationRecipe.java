@@ -54,30 +54,27 @@ public abstract class AddClassAnnotationRecipe extends Recipe {
                 // if annotation parameters are given as well
                 String annotationType = annotationText.split("[(<]")[0].trim();
 
-                JavaType.FullyQualified fqn = TypeUtils.asFullyQualified(JavaType.buildType(annotationType));
-
-                if (fqn == null) {
-                    return cd;
-                }
-
                 if (service(AnnotationService.class)
-                        .matches(getCursor(), new AnnotationMatcher(fqn.getFullyQualifiedName()))) {
+                        .matches(getCursor(), new AnnotationMatcher(annotationType))) {
                     return cd;
                 }
 
                 boolean shouldAdd = shouldAddAnnotation(cd);
+
                 if (!shouldAdd && TRUE.equals(annotateSubclasses)) {
                     shouldAdd = shouldAddAnnotationToAnyParentClass();
                 }
+
                 if (!shouldAdd) {
                     return cd;
                 }
-                maybeAddImport(fqn);
+
+                maybeAddImport(annotationType);
 
                 ClassDeclaration updated =
                         JavaTemplate.builder("@#{}")
                                 .javaParser(fromJavaVersion().classpath(runtimeClasspath()))
-                                .imports(fqn.getFullyQualifiedName())
+                                .imports(annotationType)
                                 .build()
                                 .apply(
                                         updateCursor(cd),
@@ -88,14 +85,19 @@ public abstract class AddClassAnnotationRecipe extends Recipe {
             }
 
             private boolean shouldAddAnnotationToAnyParentClass() {
-                getCursor().dropParentUntil(
-                        x -> {
-                            if (x instanceof J.ClassDeclaration) {
-                                return shouldAddAnnotation((J.ClassDeclaration) x);
-                            }
-                            return false;
-                        });
-                return true;
+                try {
+                    getCursor().dropParentUntil(
+                                    x -> {
+                                        if (x instanceof J.ClassDeclaration) {
+                                            return shouldAddAnnotation((J.ClassDeclaration) x);
+                                        }
+                                        return false;
+                                    });
+
+                    return true;
+                } catch (IllegalStateException e) {
+                    return false;
+                }
             }
         };
     }
