@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openrewrite.dropwizard.annotation;
+package org.openrewrite.java.dropwizard.annotation;
 
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;

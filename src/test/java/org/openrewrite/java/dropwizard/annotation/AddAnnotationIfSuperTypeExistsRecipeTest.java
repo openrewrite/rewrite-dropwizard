@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openrewrite.dropwizard.annotation;
+package org.openrewrite.java.dropwizard.annotation;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
@@ -39,6 +39,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
               .recipe(
                 new AddAnnotationIfSuperTypeExistsRecipe(
                   "javax.persistence.Entity", "java.util.AbstractList", false)),
+          //language=java
           java(
             """
               import java.util.AbstractList;
@@ -72,7 +73,9 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
                       return 0;
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -82,6 +85,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
             spec.recipe(
               new AddAnnotationIfSuperTypeExistsRecipe(
                 "javax.persistence.Entity", "java.io.Serializable", false)),
+          //language=java
           java(
             """
               import java.io.Serializable;
@@ -99,7 +103,9 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
               public class Customer implements Serializable {
                   private String name;
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -109,6 +115,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
             spec.recipe(
               new AddAnnotationIfSuperTypeExistsRecipe(
                 "javax.persistence.Entity", "java.io.Serializable", false)),
+          //language=java
           java(
             """
               import java.io.Serializable;
@@ -128,7 +135,9 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
               public class Customer implements Cloneable, Serializable {
                   private String name;
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -138,12 +147,15 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
             spec.recipe(
               new AddAnnotationIfSuperTypeExistsRecipe(
                 "javax.persistence.Entity", "java.io.Serializable", false)),
+          //language=java
           java(
             """
               public class Customer implements Cloneable {
                   private String name;
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -153,6 +165,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
             spec.recipe(
               new AddAnnotationIfSuperTypeExistsRecipe(
                 "javax.persistence.Entity", "java.io.Serializable", false)),
+          //language=java
           java(
             """
               import java.io.Serializable;
@@ -162,7 +175,9 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
               public class Customer implements Serializable {
                   private String name;
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -172,6 +187,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
             spec.recipe(
               new AddAnnotationIfSuperTypeExistsRecipe(
                 "javax.persistence.Entity", "java.io.Serializable", false)),
+          //language=java
           java(
             """
               import java.io.Serializable;
@@ -193,7 +209,9 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
                       private String name;
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -203,6 +221,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
             spec.recipe(
               new AddAnnotationIfSuperTypeExistsRecipe(
                 "javax.persistence.Entity", "java.io.Serializable", true)),
+          //language=java
           java(
             """
               import java.io.Serializable;
@@ -225,7 +244,9 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
                       private String name;
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -235,6 +256,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
             spec.recipe(
               new AddAnnotationIfSuperTypeExistsRecipe(
                 "javax.persistence.Entity", "java.lang.Cloneable", false)),
+          //language=java
           java(
             """
               public class Customer implements Cloneable {
@@ -248,7 +270,9 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
               public class Customer implements Cloneable {
                   private String name;
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -258,6 +282,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
             spec.recipe(
               new AddAnnotationIfSuperTypeExistsRecipe(
                 "javax.persistence.Entity", "java.util.List", false)),
+          //language=java
           java(
             """
               import java.util.List;
@@ -273,6 +298,8 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
               @Entity
               public class StringList implements List<String> {
               }
-              """));
+              """
+          )
+        );
     }
 }

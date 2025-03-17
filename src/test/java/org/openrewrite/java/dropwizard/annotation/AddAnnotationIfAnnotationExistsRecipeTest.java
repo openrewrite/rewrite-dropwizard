@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openrewrite.dropwizard.annotation;
+package org.openrewrite.java.dropwizard.annotation;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
@@ -38,6 +38,7 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
             spec.recipe(
               new AddAnnotationIfAnnotationExistsRecipe(
                 "javax.persistence.Entity", "javax.persistence.Table", false)),
+          //language=java
           java(
             """
                   import javax.persistence.Table;
@@ -56,7 +57,9 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
                   public class Customer {
                       private String name;
                   }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -68,6 +71,7 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
                 "javax.persistence.Entity(name = \"customer\")",
                 "javax.persistence.Table",
                 false)),
+          //language=java
           java(
             """
               import javax.persistence.Table;
@@ -86,7 +90,9 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
               public class Customer {
                   private String name;
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -96,12 +102,15 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
             spec.recipe(
               new AddAnnotationIfAnnotationExistsRecipe(
                 "javax.persistence.Entity", "javax.persistence.Table", false)),
+          //language=java
           java(
             """
               public class Customer {
                   private String name;
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -111,6 +120,7 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
             spec.recipe(
               new AddAnnotationIfAnnotationExistsRecipe(
                 "javax.persistence.Entity", "javax.persistence.Table", false)),
+          //language=java
           java(
             """
               import javax.persistence.Entity;
@@ -120,7 +130,9 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
               public class Customer {
                   private String name;
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -130,6 +142,7 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
             spec.recipe(
               new AddAnnotationIfAnnotationExistsRecipe(
                 "javax.persistence.Entity", "javax.persistence.Table", false)),
+          //language=java
           java(
             """
               @javax.persistence.Table
@@ -146,7 +159,9 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
               public class Customer {
                   private String name;
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -156,6 +171,7 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
             spec.recipe(
               new AddAnnotationIfAnnotationExistsRecipe(
                 "javax.persistence.Entity", "javax.persistence.Table", false)),
+          //language=java
           java(
             """
               import javax.persistence.Table;
@@ -178,6 +194,8 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
                       private String name;
                   }
               }
-              """));
+              """
+          )
+        );
     }
 }
