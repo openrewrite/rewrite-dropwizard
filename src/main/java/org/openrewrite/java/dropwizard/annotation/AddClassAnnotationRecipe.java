@@ -24,8 +24,6 @@ import org.openrewrite.java.service.AnnotationService;
 import org.openrewrite.java.service.ImportService;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.J.ClassDeclaration;
-import org.openrewrite.java.tree.JavaType;
-import org.openrewrite.java.tree.TypeUtils;
 
 import static java.lang.Boolean.TRUE;
 import static java.util.Comparator.comparing;
