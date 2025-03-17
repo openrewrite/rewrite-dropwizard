@@ -41,22 +41,22 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
           //language=java
           java(
             """
-                  import javax.persistence.Table;
+              import javax.persistence.Table;
 
-                  @Table
-                  public class Customer {
-                      private String name;
-                  }
+              @Table
+              public class Customer {
+                  private String name;
+              }
               """,
             """
-                  import javax.persistence.Entity;
-                  import javax.persistence.Table;
+              import javax.persistence.Entity;
+              import javax.persistence.Table;
 
-                  @Entity
-                  @Table
-                  public class Customer {
-                      private String name;
-                  }
+              @Entity
+              @Table
+              public class Customer {
+                  private String name;
+              }
               """
           )
         );
