@@ -17,11 +17,12 @@ package org.openrewrite.java.dropwizard.annotation;
 
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
+import org.openrewrite.java.AnnotationMatcher;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.JavaTemplate;
+import org.openrewrite.java.service.AnnotationService;
 import org.openrewrite.java.service.ImportService;
 import org.openrewrite.java.tree.J;
-import org.openrewrite.java.tree.J.Annotation;
 import org.openrewrite.java.tree.J.ClassDeclaration;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
@@ -59,37 +60,29 @@ public abstract class AddClassAnnotationRecipe extends Recipe {
                     return cd;
                 }
 
-                for (Annotation annotation : cd.getLeadingAnnotations()) {
-                    if (annotation.getSimpleName().equals(fqn.getClassName())) {
-                        return cd;
-                    }
+                if (service(AnnotationService.class)
+                        .matches(getCursor(), new AnnotationMatcher(fqn.getFullyQualifiedName()))) {
+                    return cd;
                 }
 
                 boolean shouldAdd = shouldAddAnnotation(cd);
-
                 if (!shouldAdd && TRUE.equals(annotateSubclasses)) {
                     shouldAdd = shouldAddAnnotationToAnyParentClass();
                 }
-
                 if (!shouldAdd) {
                     return cd;
                 }
                 maybeAddImport(fqn);
 
-                JavaTemplate template =
-                        JavaTemplate.builder("@#{}\n")
-                                .contextSensitive()
+                ClassDeclaration updated =
+                        JavaTemplate.builder("@#{}")
                                 .javaParser(fromJavaVersion().classpath(runtimeClasspath()))
                                 .imports(fqn.getFullyQualifiedName())
-                                .build();
-
-                ClassDeclaration updated =
-                        template.apply(
-                                updateCursor(cd),
-                                cd.getCoordinates()
-                                        .addAnnotation(comparing(J.Annotation::getSimpleName)),
-                                annotationText);
-
+                                .build()
+                                .apply(
+                                        updateCursor(cd),
+                                        cd.getCoordinates().addAnnotation(comparing(J.Annotation::getSimpleName)),
+                                        annotationText);
                 doAfterVisit(service(ImportService.class).shortenFullyQualifiedTypeReferencesIn(updated));
                 return maybeAutoFormat(cd, updated, ctx);
             }
@@ -102,9 +95,7 @@ public abstract class AddClassAnnotationRecipe extends Recipe {
                             }
                             return false;
                         });
-
                 return true;
-
             }
         };
     }
