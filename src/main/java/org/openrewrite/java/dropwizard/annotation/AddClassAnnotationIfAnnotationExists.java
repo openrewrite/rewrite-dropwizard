@@ -19,11 +19,11 @@ import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 
-public class AddAnnotationIfAnnotationExistsRecipe extends AddClassAnnotationRecipe {
+public class AddClassAnnotationIfAnnotationExists extends AddClassAnnotation {
 
     private final String targetAnnotationClassNames;
 
-    public AddAnnotationIfAnnotationExistsRecipe(
+    public AddClassAnnotationIfAnnotationExists(
             String annotationToAdd, String targetAnnotationClassNames, Boolean annotateInnerClasses) {
         super(annotationToAdd, annotateInnerClasses);
         this.targetAnnotationClassNames = (targetAnnotationClassNames);

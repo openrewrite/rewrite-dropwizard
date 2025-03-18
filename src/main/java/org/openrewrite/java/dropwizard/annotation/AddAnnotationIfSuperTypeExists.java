@@ -21,11 +21,11 @@ import org.openrewrite.java.tree.TypeUtils;
 
 import java.util.Objects;
 
-public class AddAnnotationIfSuperTypeExistsRecipe extends AddClassAnnotationRecipe {
+public class AddAnnotationIfSuperTypeExists extends AddClassAnnotation {
 
     private final String targetSupertypeNames;
 
-    public AddAnnotationIfSuperTypeExistsRecipe(
+    public AddAnnotationIfSuperTypeExists(
             String annotationToAdd, String targetSupertypeNames, boolean annotateInnerClasses) {
         super(annotationToAdd, annotateInnerClasses);
         this.targetSupertypeNames = targetSupertypeNames;

@@ -30,11 +30,11 @@ import static java.util.Comparator.comparing;
 import static org.openrewrite.java.JavaParser.fromJavaVersion;
 import static org.openrewrite.java.JavaParser.runtimeClasspath;
 
-public abstract class AddClassAnnotationRecipe extends Recipe {
+public abstract class AddClassAnnotation extends Recipe {
     private final String annotationText;
     private final Boolean annotateSubclasses;
 
-    public AddClassAnnotationRecipe(String annotationText, Boolean annotateSubclasses) {
+    public AddClassAnnotation(String annotationText, Boolean annotateSubclasses) {
         this.annotationText = annotationText;
         this.annotateSubclasses = annotateSubclasses;
     }

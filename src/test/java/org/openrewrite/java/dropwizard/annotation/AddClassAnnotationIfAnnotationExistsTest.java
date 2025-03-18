@@ -23,7 +23,7 @@ import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.java.Assertions.java;
 
-class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
+class AddClassAnnotationIfAnnotationExistsTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -36,7 +36,7 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfAnnotationExistsRecipe(
+              new AddClassAnnotationIfAnnotationExists(
                 "javax.persistence.Entity", "javax.persistence.Table", false)),
           //language=java
           java(
@@ -67,7 +67,7 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfAnnotationExistsRecipe(
+              new AddClassAnnotationIfAnnotationExists(
                 "javax.persistence.Entity(name = \"customer\")",
                 "javax.persistence.Table",
                 false)),
@@ -100,7 +100,7 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfAnnotationExistsRecipe(
+              new AddClassAnnotationIfAnnotationExists(
                 "javax.persistence.Entity", "javax.persistence.Table", false)),
           //language=java
           java(
@@ -118,7 +118,7 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfAnnotationExistsRecipe(
+              new AddClassAnnotationIfAnnotationExists(
                 "javax.persistence.Entity", "javax.persistence.Table", false)),
           //language=java
           java(
@@ -140,7 +140,7 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfAnnotationExistsRecipe(
+              new AddClassAnnotationIfAnnotationExists(
                 "javax.persistence.Entity", "javax.persistence.Table", false)),
           //language=java
           java(
@@ -169,7 +169,7 @@ class AddAnnotationIfAnnotationExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfAnnotationExistsRecipe(
+              new AddClassAnnotationIfAnnotationExists(
                 "javax.persistence.Entity", "javax.persistence.Table", false)),
           //language=java
           java(
