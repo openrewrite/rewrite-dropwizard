@@ -23,46 +23,46 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PermitAllToPreAuthorizeTransformer extends AnnotationTransformer {
-  @Override
-  protected String getSourceAnnotation() {
-    return "javax.annotation.security.PermitAll";
-  }
+    @Override
+    protected String getSourceAnnotation() {
+        return "javax.annotation.security.PermitAll";
+    }
 
-  @Override
-  protected String getTargetAnnotation() {
-    return "org.springframework.security.access.prepost.PreAuthorize";
-  }
+    @Override
+    protected String getTargetAnnotation() {
+        return "org.springframework.security.access.prepost.PreAuthorize";
+    }
 
-  @Override
-  protected Map<String, String> getAttributeMappings() {
-    // If in future you have an attribute on PermitAll that you want to map, you can add it here.
-    // For now, since PermitAll has none, just map the "default" value attribute to "value".
-    Map<String, String> map = new HashMap<>();
-    map.put("value", "value");
-    return map;
-  }
+    @Override
+    protected Map<String, String> getAttributeMappings() {
+        // If in future you have an attribute on PermitAll that you want to map, you can add it here.
+        // For now, since PermitAll has none, just map the "default" value attribute to "value".
+        Map<String, String> map = new HashMap<>();
+        map.put("value", "value");
+        return map;
+    }
 
-  @Override
-  protected Map<String, SerializableFunction<Object, Object>> getValueTransformers() {
-    return Collections.emptyMap();
-  }
+    @Override
+    protected Map<String, SerializableFunction<Object, Object>> getValueTransformers() {
+        return Collections.emptyMap();
+    }
 
-  @Override
-  protected Map<String, Object> getFallbackAttributes() {
-    // Since PermitAll has no attributes, we provide the default attribute for PreAuthorize here:
-    // We want @PreAuthorize("permitAll"), so value = "permitAll".
-    Map<String, Object> fallback = new HashMap<>();
-    fallback.put("value", "permitAll()");
-    return fallback;
-  }
+    @Override
+    protected Map<String, Object> getFallbackAttributes() {
+        // Since PermitAll has no attributes, we provide the default attribute for PreAuthorize here:
+        // We want @PreAuthorize("permitAll"), so value = "permitAll".
+        Map<String, Object> fallback = new HashMap<>();
+        fallback.put("value", "permitAll()");
+        return fallback;
+    }
 
-  @Override
-  public String getDisplayName() {
-    return "Replace @PermitAll with @PreAuthorize(\"permitAll()\")";
-  }
+    @Override
+    public String getDisplayName() {
+        return "Replace @PermitAll with @PreAuthorize(\"permitAll()\")";
+    }
 
-  @Override
-  public String getDescription() {
-    return "Replaces @PermitAll annotation with Spring Security's @PreAuthorize(\"permitAll()\"), converting role expressions appropriately.";
-  }
+    @Override
+    public String getDescription() {
+        return "Replaces @PermitAll annotation with Spring Security's @PreAuthorize(\"permitAll()\"), converting role expressions appropriately.";
+    }
 }
