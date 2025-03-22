@@ -23,7 +23,7 @@ import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.java.Assertions.java;
 
-class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
+class AddClassAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -37,7 +37,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
           spec ->
             spec
               .recipe(
-                new AddAnnotationIfSuperTypeExists(
+                new AddClassAnnotationIfSuperTypeExists(
                   "javax.persistence.Entity", "java.util.AbstractList", false)),
           //language=java
           java(
@@ -83,7 +83,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfSuperTypeExists(
+              new AddClassAnnotationIfSuperTypeExists(
                 "javax.persistence.Entity", "java.io.Serializable", false)),
           //language=java
           java(
@@ -113,7 +113,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfSuperTypeExists(
+              new AddClassAnnotationIfSuperTypeExists(
                 "javax.persistence.Entity", "java.io.Serializable", false)),
           //language=java
           java(
@@ -145,7 +145,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfSuperTypeExists(
+              new AddClassAnnotationIfSuperTypeExists(
                 "javax.persistence.Entity", "java.io.Serializable", false)),
           //language=java
           java(
@@ -163,7 +163,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfSuperTypeExists(
+              new AddClassAnnotationIfSuperTypeExists(
                 "javax.persistence.Entity", "java.io.Serializable", false)),
           //language=java
           java(
@@ -185,7 +185,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfSuperTypeExists(
+              new AddClassAnnotationIfSuperTypeExists(
                 "javax.persistence.Entity", "java.io.Serializable", false)),
           //language=java
           java(
@@ -219,7 +219,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfSuperTypeExists(
+              new AddClassAnnotationIfSuperTypeExists(
                 "javax.persistence.Entity", "java.io.Serializable", true)),
           //language=java
           java(
@@ -254,7 +254,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfSuperTypeExists(
+              new AddClassAnnotationIfSuperTypeExists(
                 "javax.persistence.Entity", "java.lang.Cloneable", false)),
           //language=java
           java(
@@ -280,7 +280,7 @@ class AddAnnotationIfSuperTypeExistsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new AddAnnotationIfSuperTypeExists(
+              new AddClassAnnotationIfSuperTypeExists(
                 "javax.persistence.Entity", "java.util.List", false)),
           //language=java
           java(

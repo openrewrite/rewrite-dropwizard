@@ -89,7 +89,7 @@ recipeList:
       annotateInnerClasses: true
   - org.openrewrite.general.annotation.AddAnnotationIfAnnotationExistsRecipe:
       annotationToAdd: "org.springframework.stereotype.Component"
-      targetAnnotationClassNames: "javax.ws.rs.ext.Provider"
+      targetAnnotationClassName: "javax.ws.rs.ext.Provider"
 ---
 # Resource Migration
 type: specs.openrewrite.org/v1beta/recipe
@@ -114,7 +114,7 @@ recipeList:
       onlyIfAbsent: true
   - org.openrewrite.general.annotation.AddAnnotationIfAnnotationExistsRecipe:
       annotationToAdd: "org.springframework.stereotype.Component"
-      targetAnnotationClassNames: "javax.ws.rs.Path"
+      targetAnnotationClassName: "javax.ws.rs.Path"
 ---
 # Hibernate Migration
 type: specs.openrewrite.org/v1beta/recipe

@@ -29,13 +29,19 @@ import org.openrewrite.java.tree.TypeUtils;
 @EqualsAndHashCode(callSuper = false)
 public class AddClassAnnotationIfAnnotationExists extends Recipe {
 
-    @Option
-    String targetAnnotationClassNames;
-
-    @Option
+    @Option(displayName = "Annotation to add",
+            description = "The annotation that should be added.",
+            example = "org.springframework.stereotype.Component")
     String annotationToAdd;
 
-    @Option(required = false)
+    @Option(displayName = "Target annotation class name",
+            description = "The annotation that should looked for.",
+            example = "javax.ws.rs.Path")
+    String targetAnnotationClassName;
+
+    @Option(displayName = "Annotate inner classes",
+            description = "Boolean whether to annotate inner classes of the matched annotation",
+            required = false)
     Boolean annotateInnerClasses;
 
     @Override
@@ -51,7 +57,7 @@ public class AddClassAnnotationIfAnnotationExists extends Recipe {
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new AddClassAnnotationIfAnnotationExistsVisitor(targetAnnotationClassNames,
+        return new AddClassAnnotationIfAnnotationExistsVisitor(targetAnnotationClassName,
                 annotationToAdd, annotateInnerClasses);
     }
 

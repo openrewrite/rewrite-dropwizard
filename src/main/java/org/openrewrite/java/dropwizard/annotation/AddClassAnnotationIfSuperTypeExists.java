@@ -29,15 +29,21 @@ import java.util.Objects;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
-public class AddAnnotationIfSuperTypeExists extends Recipe {
+public class AddClassAnnotationIfSuperTypeExists extends Recipe {
 
-    @Option
-    String targetAnnotationClassNames;
-
-    @Option
+    @Option(displayName = "Annotation to add",
+            description = "The annotation that should be added.",
+            example = "org.springframework.stereotype.Component")
     String annotationToAdd;
 
-    @Option(required = false)
+    @Option(displayName = "Target supertype name",
+            description = "The supertype that should looked for.",
+            example = "javax.ws.rs.Path")
+    String targetSupertypeName;
+
+    @Option(displayName = "Annotate inner classes",
+            description = "Boolean whether to annotate inner classes of the matched annotation",
+            required = false)
     Boolean annotateInnerClasses;
 
     @Override
@@ -52,7 +58,7 @@ public class AddAnnotationIfSuperTypeExists extends Recipe {
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new AddClassAnnotationIfSuperTypeExistsVisitor(targetAnnotationClassNames,
+        return new AddClassAnnotationIfSuperTypeExistsVisitor(targetSupertypeName,
                 annotationToAdd, annotateInnerClasses);
     }
 
