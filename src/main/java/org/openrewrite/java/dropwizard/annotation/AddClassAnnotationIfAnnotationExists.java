@@ -15,19 +15,28 @@
  */
 package org.openrewrite.java.dropwizard.annotation;
 
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+import org.openrewrite.ExecutionContext;
+import org.openrewrite.Option;
+import org.openrewrite.Recipe;
+import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 
-public class AddClassAnnotationIfAnnotationExists extends AddClassAnnotation {
+@Value
+@EqualsAndHashCode(callSuper = false)
+public class AddClassAnnotationIfAnnotationExists extends Recipe {
 
-    private final String targetAnnotationClassNames;
+    @Option
+    String targetAnnotationClassNames;
 
-    public AddClassAnnotationIfAnnotationExists(
-            String annotationToAdd, String targetAnnotationClassNames, Boolean annotateInnerClasses) {
-        super(annotationToAdd, annotateInnerClasses);
-        this.targetAnnotationClassNames = (targetAnnotationClassNames);
-    }
+    @Option
+    String annotationToAdd;
+
+    @Option(required = false)
+    Boolean annotateInnerClasses;
 
     @Override
     public String getDisplayName() {
@@ -39,14 +48,32 @@ public class AddClassAnnotationIfAnnotationExists extends AddClassAnnotation {
         return "Adds annotation if class has any of the specified target annotations.";
     }
 
+
     @Override
-    protected boolean shouldAddAnnotation(J.ClassDeclaration cd) {
-        return cd.getLeadingAnnotations().stream()
-                .anyMatch(
-                        annotation -> {
-                            JavaType.FullyQualified type = TypeUtils.asFullyQualified(annotation.getType());
-                            return type != null &&
-                                    targetAnnotationClassNames.equals(type.getFullyQualifiedName());
-                        });
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return new AddClassAnnotationIfAnnotationExistsVisitor(targetAnnotationClassNames,
+                annotationToAdd, annotateInnerClasses);
+    }
+
+    private static class AddClassAnnotationIfAnnotationExistsVisitor extends AddClassAnnotationVisitor {
+
+        private final String targetAnnotationClassNames;
+
+        public AddClassAnnotationIfAnnotationExistsVisitor(String targetAnnotationClassNames,
+                                                           String annotationText, boolean annotateSubclasses) {
+            super(annotationText, annotateSubclasses);
+            this.targetAnnotationClassNames = targetAnnotationClassNames;
+        }
+
+        @Override
+        protected boolean shouldAddAnnotation(J.ClassDeclaration cd) {
+            return cd.getLeadingAnnotations().stream()
+                    .anyMatch(
+                            annotation -> {
+                                JavaType.FullyQualified type = TypeUtils.asFullyQualified(annotation.getType());
+                                return type != null &&
+                                        targetAnnotationClassNames.equals(type.getFullyQualifiedName());
+                            });
+        }
     }
 }

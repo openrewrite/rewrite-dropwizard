@@ -15,21 +15,30 @@
  */
 package org.openrewrite.java.dropwizard.annotation;
 
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+import org.openrewrite.ExecutionContext;
+import org.openrewrite.Option;
+import org.openrewrite.Recipe;
+import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 
 import java.util.Objects;
 
-public class AddAnnotationIfSuperTypeExists extends AddClassAnnotation {
+@Value
+@EqualsAndHashCode(callSuper = false)
+public class AddAnnotationIfSuperTypeExists extends Recipe {
 
-    private final String targetSupertypeNames;
+    @Option
+    String targetAnnotationClassNames;
 
-    public AddAnnotationIfSuperTypeExists(
-            String annotationToAdd, String targetSupertypeNames, boolean annotateInnerClasses) {
-        super(annotationToAdd, annotateInnerClasses);
-        this.targetSupertypeNames = targetSupertypeNames;
-    }
+    @Option
+    String annotationToAdd;
+
+    @Option(required = false)
+    Boolean annotateInnerClasses;
 
     @Override
     public String getDisplayName() {
@@ -42,21 +51,38 @@ public class AddAnnotationIfSuperTypeExists extends AddClassAnnotation {
     }
 
     @Override
-    protected boolean shouldAddAnnotation(J.ClassDeclaration cd) {
-        if (cd.getExtends() != null) {
-            JavaType.FullyQualified extendsType = TypeUtils.asFullyQualified(cd.getExtends().getType());
-            if (extendsType != null && targetSupertypeNames.equals(extendsType.getFullyQualifiedName())) {
-                return true;
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return new AddClassAnnotationIfSuperTypeExistsVisitor(targetAnnotationClassNames,
+                annotationToAdd, annotateInnerClasses);
+    }
+
+    private static class AddClassAnnotationIfSuperTypeExistsVisitor extends AddClassAnnotationVisitor {
+
+        private final String targetSupertypeName;
+
+        public AddClassAnnotationIfSuperTypeExistsVisitor(String targetSupertypeName,
+                                                          String annotationText, boolean annotateSubclasses) {
+            super(annotationText, annotateSubclasses);
+            this.targetSupertypeName = targetSupertypeName;
+        }
+
+        @Override
+        protected boolean shouldAddAnnotation(J.ClassDeclaration cd) {
+            if (cd.getExtends() != null) {
+                JavaType.FullyQualified extendsType = TypeUtils.asFullyQualified(cd.getExtends().getType());
+                if (extendsType != null && targetSupertypeName.equals(extendsType.getFullyQualifiedName())) {
+                    return true;
+                }
             }
-        }
 
-        if (cd.getImplements() != null) {
-            return cd.getImplements().stream()
-                    .map(impl -> TypeUtils.asFullyQualified(impl.getType()))
-                    .filter(Objects::nonNull)
-                    .anyMatch(type -> targetSupertypeNames.equals(type.getFullyQualifiedName()));
-        }
+            if (cd.getImplements() != null) {
+                return cd.getImplements().stream()
+                        .map(impl -> TypeUtils.asFullyQualified(impl.getType()))
+                        .filter(Objects::nonNull)
+                        .anyMatch(type -> targetSupertypeName.equals(type.getFullyQualifiedName()));
+            }
 
-        return false;
+            return false;
+        }
     }
 }
