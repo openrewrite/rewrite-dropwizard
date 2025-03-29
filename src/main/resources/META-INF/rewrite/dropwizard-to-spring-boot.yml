@@ -15,8 +15,8 @@
 #
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.dropwizard.CompositeDropwizardToSpringBoot
-displayName: Migration Recipe with Variables
-description: Main recipe that defines variables for child recipes
+displayName: Migrate Dropwizard to Spring Boot
+description: Apply various changes to migrate Dropwizard applications to Spring Boot.
 recipeList:
   - org.openrewrite.java.dropwizard.CoreSetup
   - org.openrewrite.java.dropwizard.MigrateConfigurationClass
@@ -36,8 +36,9 @@ recipeList:
   - org.openrewrite.maven.AddDependency:
       groupId: org.projectlombok
       artifactId: lombok
-      version: "1.18.30"
+      version: "1.18.x"
       onlyIfAbsent: true
+      onlyIfUsing: "lombok.*"
   - org.openrewrite.maven.AddManagedDependency:
       groupId: org.springframework.boot
       artifactId: spring-boot-dependencies
