@@ -1,0 +1,171 @@
+#
+# Copyright 2025 the original author or authors.
+# <p>
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# <p>
+# https://www.apache.org/licenses/LICENSE-2.0
+# <p>
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.MigrateDropwizardToSpringBoot
+displayName: Migrate Dropwizard to Spring Boot
+description: Apply various changes to migrate Dropwizard applications to Spring Boot.
+recipeList:
+  - org.openrewrite.java.dropwizard.CoreSetup
+  - org.openrewrite.java.dropwizard.MigrateConfigurationClass
+  - org.openrewrite.java.dropwizard.MigrateHealthChecksAndMetrics
+  - org.openrewrite.java.dropwizard.MigrateSecurity
+  - org.openrewrite.java.dropwizard.MigrateHibernate
+  - org.openrewrite.java.dropwizard.MigrateResourcesToSpringJersey
+  - org.openrewrite.java.dropwizard.MigrateTests
+  - org.openrewrite.java.dropwizard.CodeCleanup
+---
+# Core Application Setup
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.CoreSetup
+displayName: Create Spring Boot Application Entry Point
+description: Creates the main Spring Boot application class.
+recipeList:
+  - org.openrewrite.maven.AddDependency:
+      groupId: org.projectlombok
+      artifactId: lombok
+      version: "1.18.x"
+      onlyIfAbsent: true
+      onlyIfUsing: "lombok.*"
+  - org.openrewrite.maven.AddManagedDependency:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-dependencies
+      version: "2.7.18"
+      scope: import
+      type: pom
+      addToRootPom: true
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
+      annotationToAdd: "org.springframework.boot.SpringBootApplication"
+      targetSupertypeName: "io.dropwizard.Application"
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.MigrateHealthChecksAndMetrics
+displayName: Add Spring Boot Actuator
+description: Configures Spring Boot Actuator with basic health endpoints.
+recipeList:
+  - org.openrewrite.maven.AddDependency:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-actuator
+      version: "2.7.18"
+      onlyIfAbsent: true
+
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.ModifyDropwizardHealthChecksToSpringVariants
+displayName: Convert Health Check Implementations
+description: Transforms Dropwizard HealthCheck classes to Spring Boot HealthIndicator.
+recipeList:
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
+      annotationToAdd: "org.springframework.stereotype.Component"
+      targetSupertypeName: "org.springframework.boot.actuate.health.HealthIndicator"
+---
+# Configuration Migration
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.MigrateConfigurationClass
+displayName: Migrate Configuration Class
+description: Converts Dropwizard Configuration to Spring Boot format.
+recipeList:
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
+      annotationToAdd: "org.springframework.context.annotation.Configuration"
+      targetSupertypeName: "io.dropwizard.Configuration"
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
+      annotationToAdd: "org.springframework.boot.context.properties.ConfigurationProperties"
+      targetSupertypeName: "io.dropwizard.Configuration"
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
+      annotationToAdd: "lombok.Data"
+      targetSupertypeName: "io.dropwizard.Configuration"
+      annotateInnerClasses: true
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfAnnotationExists:
+      annotationToAdd: "org.springframework.stereotype.Component"
+      targetAnnotationClassName: "javax.ws.rs.ext.Provider"
+---
+# Resource Migration
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.MigrateResourcesToSpringJersey
+displayName: Migrate Resource Classes
+description: Converts Dropwizard Resources to Spring Boot format.
+recipeList:
+  - org.openrewrite.maven.AddDependency:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter
+      version: "2.7.18"
+      onlyIfAbsent: true
+  - org.openrewrite.maven.AddDependency:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-web
+      version: "2.7.18"
+      onlyIfAbsent: true
+  - org.openrewrite.maven.AddDependency:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-jersey
+      version: "2.7.18"
+      onlyIfAbsent: true
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfAnnotationExists:
+      annotationToAdd: "org.springframework.stereotype.Component"
+      targetAnnotationClassName: "javax.ws.rs.Path"
+---
+# Hibernate Migration
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.MigrateHibernate
+displayName: Migrate Hibernate
+description: Converts Dropwizard Resources to Spring Boot format.
+recipeList:
+  - org.openrewrite.maven.AddDependency:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-data-jpa
+      version: "2.7.18"
+      onlyIfAbsent: true
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
+      annotationToAdd: "org.springframework.stereotype.Repository"
+      targetSupertypeName: "io.dropwizard.hibernate.AbstractDAO"
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
+      annotationToAdd: "org.springframework.transaction.annotation.Transactional"
+      targetSupertypeName: "io.dropwizard.hibernate.AbstractDAO"
+---
+# Test migration
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.MigrateTests
+displayName: Migrate Health Checks to Spring Boot
+description: Converts Dropwizard tests to Spring Boot format.
+recipeList:
+  - org.openrewrite.maven.AddDependency:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-test
+      version: "2.7.18"
+      onlyIfAbsent: true
+      scope: test
+---
+# Security migration
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.MigrateSecurity
+displayName: Migrate Health Checks to Spring Boot
+description: Converts Dropwizard health checks to Spring Boot format.
+recipeList:
+  - org.openrewrite.maven.AddDependency:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-security
+      version: "2.7.18"
+      onlyIfAbsent: true
+---
+# Cleanup
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.CodeCleanup
+displayName: Clean up various issues with the code.
+description: Clean up the code.
+recipeList:
+  - org.openrewrite.java.ShortenFullyQualifiedTypeReferences
+  # TODO - org.openrewrite.java.dropwizard.method.AddMissingAbstractMethods
+  - org.openrewrite.java.RemoveUnusedImports
