@@ -49,8 +49,7 @@ public abstract class AddClassAnnotationVisitor extends JavaIsoVisitor<Execution
         // if annotation parameters are given as well
         String annotationType = annotationText.split("[(<]")[0].trim();
 
-        if (service(AnnotationService.class)
-                .matches(getCursor(), new AnnotationMatcher(annotationType))) {
+        if (service(AnnotationService.class).matches(getCursor(), new AnnotationMatcher(annotationType))) {
             return cd;
         }
 
@@ -66,15 +65,14 @@ public abstract class AddClassAnnotationVisitor extends JavaIsoVisitor<Execution
 
         maybeAddImport(annotationType);
 
-        ClassDeclaration updated =
-                JavaTemplate.builder("@#{}")
-                        .javaParser(fromJavaVersion().classpath(runtimeClasspath()))
-                        .imports(annotationType)
-                        .build()
-                        .apply(
-                                updateCursor(cd),
-                                cd.getCoordinates().addAnnotation(comparing(J.Annotation::getSimpleName)),
-                                annotationText);
+        ClassDeclaration updated = JavaTemplate.builder("@#{}")
+                .javaParser(fromJavaVersion().classpath(runtimeClasspath()))
+                .imports(annotationType)
+                .build()
+                .apply(
+                        updateCursor(cd),
+                        cd.getCoordinates().addAnnotation(comparing(J.Annotation::getSimpleName)),
+                        annotationText);
         doAfterVisit(service(ImportService.class).shortenFullyQualifiedTypeReferencesIn(updated));
         return maybeAutoFormat(cd, updated, ctx);
     }

@@ -58,37 +58,24 @@ public class AddClassAnnotationIfSuperTypeExists extends Recipe {
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new AddClassAnnotationIfSuperTypeExistsVisitor(targetSupertypeName,
-                annotationToAdd, annotateInnerClasses);
-    }
-
-    private static class AddClassAnnotationIfSuperTypeExistsVisitor extends AddClassAnnotationVisitor {
-
-        private final String targetSupertypeName;
-
-        public AddClassAnnotationIfSuperTypeExistsVisitor(String targetSupertypeName,
-                                                          String annotationText, boolean annotateSubclasses) {
-            super(annotationText, annotateSubclasses);
-            this.targetSupertypeName = targetSupertypeName;
-        }
-
-        @Override
-        protected boolean shouldAddAnnotation(J.ClassDeclaration cd) {
-            if (cd.getExtends() != null) {
-                JavaType.FullyQualified extendsType = TypeUtils.asFullyQualified(cd.getExtends().getType());
-                if (extendsType != null && targetSupertypeName.equals(extendsType.getFullyQualifiedName())) {
-                    return true;
+        return new AddClassAnnotationVisitor(annotationToAdd, annotateInnerClasses) {
+            @Override
+            protected boolean shouldAddAnnotation(J.ClassDeclaration cd) {
+                if (cd.getExtends() != null) {
+                    JavaType.FullyQualified extendsType = TypeUtils.asFullyQualified(cd.getExtends().getType());
+                    if (extendsType != null && targetSupertypeName.equals(extendsType.getFullyQualifiedName())) {
+                        return true;
+                    }
                 }
+                if (cd.getImplements() != null) {
+                    return cd.getImplements().stream()
+                            .map(impl -> TypeUtils.asFullyQualified(impl.getType()))
+                            .filter(Objects::nonNull)
+                            .anyMatch(type -> targetSupertypeName.equals(type.getFullyQualifiedName()));
+                }
+                return false;
             }
-
-            if (cd.getImplements() != null) {
-                return cd.getImplements().stream()
-                        .map(impl -> TypeUtils.asFullyQualified(impl.getType()))
-                        .filter(Objects::nonNull)
-                        .anyMatch(type -> targetSupertypeName.equals(type.getFullyQualifiedName()));
-            }
-
-            return false;
-        }
+        };
     }
+
 }
