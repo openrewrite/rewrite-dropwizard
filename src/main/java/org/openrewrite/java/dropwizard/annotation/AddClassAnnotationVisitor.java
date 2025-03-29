@@ -15,6 +15,7 @@
  */
 package org.openrewrite.java.dropwizard.annotation;
 
+import org.openrewrite.Cursor;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.java.AnnotationMatcher;
 import org.openrewrite.java.JavaIsoVisitor;
@@ -79,18 +80,16 @@ public abstract class AddClassAnnotationVisitor extends JavaIsoVisitor<Execution
     }
 
     private boolean shouldAddAnnotationToAnyParentClass() {
-        try {
-            getCursor().dropParentUntil(
-                    x -> {
-                        if (x instanceof J.ClassDeclaration) {
-                            return shouldAddAnnotation((J.ClassDeclaration) x);
-                        }
-                        return false;
-                    });
-
-            return true;
-        } catch (IllegalStateException e) {
-            return false;
+        Cursor cursor = getCursor();
+        while (true) {
+            cursor = cursor.getParent();
+            if (cursor == null) {
+                return false;
+            }
+            if (cursor.getValue() instanceof ClassDeclaration &&
+                    shouldAddAnnotation(cursor.getValue())) {
+                return true;
+            }
         }
     }
 }
