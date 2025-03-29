@@ -24,6 +24,8 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
 
     testImplementation("org.openrewrite:rewrite-test")
+
+    testRuntimeOnly("javax.persistence:javax.persistence-api:2.2")
 }
 
 recipeDependencies {
