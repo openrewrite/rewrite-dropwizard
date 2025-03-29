@@ -22,24 +22,25 @@ import org.openrewrite.ExecutionContext;
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
-import org.openrewrite.java.service.AnnotationService;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 
+import java.util.Objects;
+
 @Value
 @EqualsAndHashCode(callSuper = false)
-public class AddClassAnnotationIfAnnotationExists extends Recipe {
+public class AddClassAnnotationIfSuperTypeExists extends Recipe {
 
     @Option(displayName = "Annotation to add",
             description = "The annotation that should be added.",
             example = "org.springframework.stereotype.Component")
     String annotationToAdd;
 
-    @Option(displayName = "Target annotation class name",
-            description = "The annotation that should looked for.",
+    @Option(displayName = "Target supertype name",
+            description = "The supertype that should looked for.",
             example = "javax.ws.rs.Path")
-    String targetAnnotationClassName;
+    String targetSupertypeName;
 
     @Option(displayName = "Annotate inner classes",
             description = "Boolean whether to annotate inner classes of the matched annotation",
@@ -49,12 +50,12 @@ public class AddClassAnnotationIfAnnotationExists extends Recipe {
 
     @Override
     public String getDisplayName() {
-        return "Add annotation if target annotations exist";
+        return "Add annotation if target supertypes exist";
     }
 
     @Override
     public String getDescription() {
-        return "Adds annotation if class has any of the specified target annotations.";
+        return "Adds annotation if class extends or implements any of the specified target types.";
     }
 
     @Override
@@ -62,14 +63,21 @@ public class AddClassAnnotationIfAnnotationExists extends Recipe {
         return new AddClassAnnotationVisitor(annotationToAdd, annotateInnerClasses) {
             @Override
             protected boolean shouldAddAnnotation(J.ClassDeclaration cd) {
-                return service(AnnotationService.class)
-                        .getAllAnnotations(getCursor())
-                        .stream()
-                        .anyMatch(annotation -> {
-                            JavaType.FullyQualified type = TypeUtils.asFullyQualified(annotation.getType());
-                            return type != null && targetAnnotationClassName.equals(type.getFullyQualifiedName());
-                        });
+                if (cd.getExtends() != null) {
+                    JavaType.FullyQualified extendsType = TypeUtils.asFullyQualified(cd.getExtends().getType());
+                    if (extendsType != null && targetSupertypeName.equals(extendsType.getFullyQualifiedName())) {
+                        return true;
+                    }
+                }
+                if (cd.getImplements() != null) {
+                    return cd.getImplements().stream()
+                            .map(impl -> TypeUtils.asFullyQualified(impl.getType()))
+                            .filter(Objects::nonNull)
+                            .anyMatch(type -> targetSupertypeName.equals(type.getFullyQualifiedName()));
+                }
+                return false;
             }
         };
     }
+
 }
