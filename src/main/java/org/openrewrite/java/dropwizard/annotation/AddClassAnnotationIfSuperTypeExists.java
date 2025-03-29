@@ -17,6 +17,7 @@ package org.openrewrite.java.dropwizard.annotation;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Option;
 import org.openrewrite.Recipe;
@@ -44,6 +45,7 @@ public class AddClassAnnotationIfSuperTypeExists extends Recipe {
     @Option(displayName = "Annotate inner classes",
             description = "Boolean whether to annotate inner classes of the matched annotation",
             required = false)
+    @Nullable
     Boolean annotateInnerClasses;
 
     @Override

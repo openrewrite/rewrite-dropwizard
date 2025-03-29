@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 type: specs.openrewrite.org/v1beta/recipe
-name: org.openrewrite.java.dropwizard.CompositeDropwizardToSpringBoot
+name: org.openrewrite.java.dropwizard.MigrateDropwizardToSpringBoot
 displayName: Migrate Dropwizard to Spring Boot
 description: Apply various changes to migrate Dropwizard applications to Spring Boot.
 recipeList:
@@ -46,9 +46,9 @@ recipeList:
       scope: import
       type: pom
       addToRootPom: true
-  - org.openrewrite.general.annotation.AddAnnotationIfSuperTypeExistsRecipe:
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "org.springframework.boot.SpringBootApplication"
-      targetSupertypeNames: "io.dropwizard.Application"
+      targetSupertypeName: "io.dropwizard.Application"
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
@@ -68,9 +68,9 @@ name: org.openrewrite.java.dropwizard.ModifyDropwizardHealthChecksToSpringVarian
 displayName: Convert Health Check Implementations
 description: Transforms Dropwizard HealthCheck classes to Spring Boot HealthIndicator.
 recipeList:
-  - org.openrewrite.general.annotation.AddAnnotationIfSuperTypeExistsRecipe:
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "org.springframework.stereotype.Component"
-      targetSupertypeNames: "org.springframework.boot.actuate.health.HealthIndicator"
+      targetSupertypeName: "org.springframework.boot.actuate.health.HealthIndicator"
 ---
 # Configuration Migration
 type: specs.openrewrite.org/v1beta/recipe
@@ -78,17 +78,17 @@ name: org.openrewrite.java.dropwizard.MigrateConfigurationClass
 displayName: Migrate Configuration Class
 description: Converts Dropwizard Configuration to Spring Boot format.
 recipeList:
-  - org.openrewrite.general.annotation.AddAnnotationIfSuperTypeExistsRecipe:
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "org.springframework.context.annotation.Configuration"
-      targetSupertypeNames: "io.dropwizard.Configuration"
-  - org.openrewrite.general.annotation.AddAnnotationIfSuperTypeExistsRecipe:
+      targetSupertypeName: "io.dropwizard.Configuration"
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "org.springframework.boot.context.properties.ConfigurationProperties"
-      targetSupertypeNames: "io.dropwizard.Configuration"
-  - org.openrewrite.general.annotation.AddAnnotationIfSuperTypeExistsRecipe:
+      targetSupertypeName: "io.dropwizard.Configuration"
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "lombok.Data"
-      targetSupertypeNames: "io.dropwizard.Configuration"
+      targetSupertypeName: "io.dropwizard.Configuration"
       annotateInnerClasses: true
-  - org.openrewrite.general.annotation.AddAnnotationIfAnnotationExistsRecipe:
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfAnnotationExists:
       annotationToAdd: "org.springframework.stereotype.Component"
       targetAnnotationClassName: "javax.ws.rs.ext.Provider"
 ---
@@ -113,7 +113,7 @@ recipeList:
       artifactId: spring-boot-starter-jersey
       version: "2.7.18"
       onlyIfAbsent: true
-  - org.openrewrite.general.annotation.AddAnnotationIfAnnotationExistsRecipe:
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfAnnotationExists:
       annotationToAdd: "org.springframework.stereotype.Component"
       targetAnnotationClassName: "javax.ws.rs.Path"
 ---
@@ -128,12 +128,12 @@ recipeList:
       artifactId: spring-boot-starter-data-jpa
       version: "2.7.18"
       onlyIfAbsent: true
-  - org.openrewrite.general.annotation.AddAnnotationIfSuperTypeExistsRecipe:
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "org.springframework.stereotype.Repository"
-      targetSupertypeNames: "io.dropwizard.hibernate.AbstractDAO"
-  - org.openrewrite.general.annotation.AddAnnotationIfSuperTypeExistsRecipe:
+      targetSupertypeName: "io.dropwizard.hibernate.AbstractDAO"
+  - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "org.springframework.transaction.annotation.Transactional"
-      targetSupertypeNames: "io.dropwizard.hibernate.AbstractDAO"
+      targetSupertypeName: "io.dropwizard.hibernate.AbstractDAO"
 ---
 # Test migration
 type: specs.openrewrite.org/v1beta/recipe
@@ -167,5 +167,5 @@ displayName: Clean up various issues with the code.
 description: Clean up the code.
 recipeList:
   - org.openrewrite.java.ShortenFullyQualifiedTypeReferences
-  - org.openrewrite.general.method.AddMissingAbstractMethods
+  # TODO - org.openrewrite.java.dropwizard.method.AddMissingAbstractMethods
   - org.openrewrite.java.RemoveUnusedImports
