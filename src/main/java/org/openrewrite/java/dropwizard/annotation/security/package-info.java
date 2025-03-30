@@ -13,15 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@NullMarked
+@NonNullFields
 package org.openrewrite.java.dropwizard.annotation.security;
 
-import org.openrewrite.config.CompositeRecipe;
-
-import java.util.Arrays;
-
-public class SecurityAnnotationTransformer extends CompositeRecipe {
-
-  public SecurityAnnotationTransformer() {
-    super(Arrays.asList(new RolesToPreAuthorize(), new PermitAllToPreAuthorizeTransformer()));
-  }
-}
+import org.jspecify.annotations.NullMarked;
+import org.openrewrite.internal.lang.NonNullFields;

@@ -27,6 +27,8 @@ recipeList:
   - org.openrewrite.java.dropwizard.MigrateTests
   - org.openrewrite.java.dropwizard.CodeCleanup
   - org.openrewrite.java.dropwizard.annotation.micrometer.CodahaleTimedToMicrometerTimed
+  - org.openrewrite.java.dropwizard.annotation.security.PermitAllToPreAuthorizeTransformer
+  - org.openrewrite.java.dropwizard.annotation.security.RolesToPreAuthorize
 ---
 # Core Application Setup
 type: specs.openrewrite.org/v1beta/recipe

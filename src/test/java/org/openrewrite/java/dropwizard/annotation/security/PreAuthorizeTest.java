@@ -23,11 +23,11 @@ import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.java.Assertions.java;
 
-class SecurityAnnotationTransformerTest implements RewriteTest {
+class PreAuthorizeTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(new SecurityAnnotationTransformer())
+        spec.recipes(new PermitAllToPreAuthorizeTransformer(), new RolesToPreAuthorize())
           .parser(JavaParser.fromJavaVersion().classpath(JavaParser.runtimeClasspath()));
     }
 
