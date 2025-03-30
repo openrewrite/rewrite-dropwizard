@@ -27,7 +27,7 @@ class CodahaleTimedToMicrometerTimedTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(new CodahaleTimedToMicrometerTimed())
+        spec.recipeFromResources("org.openrewrite.java.dropwizard.annotation.micrometer.CodahaleTimedToMicrometerTimed")
           .parser(
             JavaParser.fromJavaVersion()
               .logCompilationWarningsAndErrors(true)
@@ -119,7 +119,7 @@ class CodahaleTimedToMicrometerTimedTest implements RewriteTest {
               import io.micrometer.core.annotation.Timed;
 
               class TestClass {
-                  @Timed(absolute = true, description = "Method execution time", value = "customMetricName")
+                  @Timed(value = "customMetricName", absolute = true, description = "Method execution time")
                   public void timedMethod() {
                   }
               }
@@ -157,7 +157,8 @@ class CodahaleTimedToMicrometerTimedTest implements RewriteTest {
               import java.util.concurrent.TimeUnit;
 
               class TestClass {
-                  @Timed(value = "customMetricName")
+                  @Timed(
+                      value = "customMetricName")
                   public void timedMethod() {
                   }
               }
