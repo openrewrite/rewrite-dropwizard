@@ -25,59 +25,63 @@ import static org.openrewrite.java.Assertions.java;
 
 class CodahaleTimedToMicrometerTimedTest implements RewriteTest {
 
-  @Override
-  public void defaults(RecipeSpec spec) {
-    spec.recipe(new CodahaleTimedToMicrometerTimed())
-        .parser(
+    @Override
+    public void defaults(RecipeSpec spec) {
+        spec.recipe(new CodahaleTimedToMicrometerTimed())
+          .parser(
             JavaParser.fromJavaVersion()
-                .logCompilationWarningsAndErrors(true)
-                .classpath("metrics-annotation", "micrometer-core"));
-  }
+              .logCompilationWarningsAndErrors(true)
+              .classpath("metrics-annotation", "micrometer-core"));
+    }
 
-  @DocumentExample
-  @Test
-  void transformsSimpleTimed() {
-    rewriteRun(
-        java(
+    @DocumentExample
+    @Test
+    void transformsSimpleTimed() {
+        rewriteRun(
+          //language=java
+          java(
             """
-            package com.example;
+              package com.example;
 
-            import com.codahale.metrics.annotation.Timed;
+              import com.codahale.metrics.annotation.Timed;
 
-            class TestClass {
-                @Timed
-                public void timedMethod() {
-                }
-            }
-            """,
+              class TestClass {
+                  @Timed
+                  public void timedMethod() {
+                  }
+              }
+              """,
             """
-            package com.example;
+              package com.example;
 
-            import io.micrometer.core.annotation.Timed;
+              import io.micrometer.core.annotation.Timed;
 
-            class TestClass {
-                @Timed
-                public void timedMethod() {
-                }
-            }
-            """));
-  }
+              class TestClass {
+                  @Timed
+                  public void timedMethod() {
+                  }
+              }
+              """
+          )
+        );
+    }
 
-  @Test
-  void transformsTimedWithName() {
-    rewriteRun(
-        java(
+    @Test
+    void transformsTimedWithName() {
+        rewriteRun(
+          //language=java
+          java(
             """
-            package com.example;
+              package com.example;
 
-            import com.codahale.metrics.annotation.Timed;
+              import com.codahale.metrics.annotation.Timed;
 
-            class TestClass {
-                @Timed(name = "customMetricName")
-                public void timedMethod() {
-                }
-            }
-            """,
+              class TestClass {
+                  @Timed(name = "customMetricName")
+                  public void timedMethod() {
+                  }
+              }
+              """,
             """
               package com.example;
 
@@ -88,24 +92,27 @@ class CodahaleTimedToMicrometerTimedTest implements RewriteTest {
                   public void timedMethod() {
                   }
               }
-              """));
-  }
+              """
+          )
+        );
+    }
 
-  @Test
-  void transformsTimedWithMultipleAttributes() {
-    rewriteRun(
-        java(
+    @Test
+    void transformsTimedWithMultipleAttributes() {
+        rewriteRun(
+          //language=java
+          java(
             """
-            package com.example;
+              package com.example;
 
-            import com.codahale.metrics.annotation.Timed;
+              import com.codahale.metrics.annotation.Timed;
 
-            class TestClass {
-                @Timed(name = "customMetricName", absolute = true, description = "Method execution time")
-                public void timedMethod() {
-                }
-            }
-            """,
+              class TestClass {
+                  @Timed(name = "customMetricName", absolute = true, description = "Method execution time")
+                  public void timedMethod() {
+                  }
+              }
+              """,
             """
               package com.example;
 
@@ -116,41 +123,46 @@ class CodahaleTimedToMicrometerTimedTest implements RewriteTest {
                   public void timedMethod() {
                   }
               }
-              """));
-  }
+              """
+          )
+        );
+    }
 
-  @Test
-  void ignoresUnmappedAttributes() {
-    rewriteRun(
-        java(
+    @Test
+    void ignoresUnmappedAttributes() {
+        rewriteRun(
+          //language=java
+          java(
             """
-            package com.example;
+              package com.example;
 
-            import com.codahale.metrics.annotation.Timed;
-            import java.util.concurrent.TimeUnit;
+              import com.codahale.metrics.annotation.Timed;
+              import java.util.concurrent.TimeUnit;
 
-            class TestClass {
-                @Timed(
-                    name = "customMetricName",
-                    rateUnit = TimeUnit.SECONDS,
-                    durationUnit = TimeUnit.MILLISECONDS
-                )
-                public void timedMethod() {
-                }
-            }
-            """,
+              class TestClass {
+                  @Timed(
+                      name = "customMetricName",
+                      rateUnit = TimeUnit.SECONDS,
+                      durationUnit = TimeUnit.MILLISECONDS
+                  )
+                  public void timedMethod() {
+                  }
+              }
+              """,
             """
-            package com.example;
+              package com.example;
 
-            import io.micrometer.core.annotation.Timed;
+              import io.micrometer.core.annotation.Timed;
 
-            import java.util.concurrent.TimeUnit;
+              import java.util.concurrent.TimeUnit;
 
-            class TestClass {
-                @Timed(value = "customMetricName")
-                public void timedMethod() {
-                }
-            }
-            """));
-  }
+              class TestClass {
+                  @Timed(value = "customMetricName")
+                  public void timedMethod() {
+                  }
+              }
+              """
+          )
+        );
+    }
 }

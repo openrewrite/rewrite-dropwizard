@@ -16,7 +16,6 @@
 package org.openrewrite.java.dropwizard.annotation.security;
 
 import org.junit.jupiter.api.Test;
-import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -25,104 +24,113 @@ import static org.openrewrite.java.Assertions.java;
 
 class SecurityAnnotationTransformerTest implements RewriteTest {
 
-  @Override
-  public void defaults(RecipeSpec spec) {
-    spec.recipe(new SecurityAnnotationTransformer())
-        .parser(JavaParser.fromJavaVersion().classpath(JavaParser.runtimeClasspath()));
-  }
+    @Override
+    public void defaults(RecipeSpec spec) {
+        spec.recipe(new SecurityAnnotationTransformer())
+          .parser(JavaParser.fromJavaVersion().classpath(JavaParser.runtimeClasspath()));
+    }
 
-  @Test
-  void transformsRolesAllowed() {
-    rewriteRun(
-        java(
+    @Test
+    void transformsRolesAllowed() {
+        rewriteRun(
+          //language=java
+          java(
             """
-            package com.example;
+              package com.example;
 
-            import javax.annotation.security.RolesAllowed;
+              import javax.annotation.security.RolesAllowed;
 
-            class TestClass {
-                @RolesAllowed({"ADMIN", "USER"})
-                public void multiRoleMethod() {
-                }
-            }
-            """,
+              class TestClass {
+                  @RolesAllowed({"ADMIN", "USER"})
+                  public void multiRoleMethod() {
+                  }
+              }
+              """,
             """
-            package com.example;
+              package com.example;
 
-            import org.springframework.security.access.prepost.PreAuthorize;
+              import org.springframework.security.access.prepost.PreAuthorize;
 
-            class TestClass {
-                @PreAuthorize(value = "hasAnyRole('ADMIN, USER')")
-                public void multiRoleMethod() {
-                }
-            }
-              """));
-  }
+              class TestClass {
+                  @PreAuthorize(value = "hasAnyRole('ADMIN, USER')")
+                  public void multiRoleMethod() {
+                  }
+              }
+              """
+          )
+        );
+    }
 
-  @Test
-  void transformsPermitAll() {
-    rewriteRun(
-        java(
+    @Test
+    void transformsPermitAll() {
+        rewriteRun(
+          //language=java
+          java(
             """
-            package com.example;
+              package com.example;
 
-            import javax.annotation.security.PermitAll;
+              import javax.annotation.security.PermitAll;
 
-            class TestClass {
-                @PermitAll
-                public void publicMethod() {
-                }
-            }
-            """,
+              class TestClass {
+                  @PermitAll
+                  public void publicMethod() {
+                  }
+              }
+              """,
             """
-            package com.example;
+              package com.example;
 
-            import org.springframework.security.access.prepost.PreAuthorize;
+              import org.springframework.security.access.prepost.PreAuthorize;
 
-            class TestClass {
-                @PreAuthorize(value = "permitAll()")
-                public void publicMethod() {
-                }
-            }
-            """));
-  }
+              class TestClass {
+                  @PreAuthorize(value = "permitAll()")
+                  public void publicMethod() {
+                  }
+              }
+              """
+          )
+        );
+    }
 
-  @Test
-  void transformsBothAnnotationTypes() {
-    rewriteRun(
-        java(
+    @Test
+    void transformsBothAnnotationTypes() {
+        rewriteRun(
+          //language=java
+          java(
             """
-            package com.example;
+              package com.example;
 
-            import javax.annotation.security.PermitAll;
-            import javax.annotation.security.RolesAllowed;
+              import javax.annotation.security.PermitAll;
+              import javax.annotation.security.RolesAllowed;
 
-            class TestClass {
-                @PermitAll
-                public void publicMethod() {
-                }
+              class TestClass {
+                  @PermitAll
+                  public void publicMethod() {
+                  }
 
-                @RolesAllowed("ADMIN")
-                public void adminMethod() {
-                }
-            }
-            """,
+                  @RolesAllowed("ADMIN")
+                  public void adminMethod() {
+                  }
+              }
+              """,
             """
-            package com.example;
+              package com.example;
 
-            import org.springframework.security.access.prepost.PreAuthorize;
+              import org.springframework.security.access.prepost.PreAuthorize;
 
-            class TestClass {
-                @PreAuthorize(value = "permitAll()")
-                public void publicMethod() {
-                }
+              class TestClass {
+                  @PreAuthorize(value = "permitAll()")
+                  public void publicMethod() {
+                  }
 
-                @PreAuthorize(value = "hasAnyRole('ADMIN')")
-                public void adminMethod() {
-                }
-            }
-            """));
-  }
+                  @PreAuthorize(value = "hasAnyRole('ADMIN')")
+                  public void adminMethod() {
+                  }
+              }
+              """
+          )
+        );
+    }
 
 
 }

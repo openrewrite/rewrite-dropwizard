@@ -25,22 +25,21 @@ import static org.openrewrite.java.Assertions.java;
 
 class AddMethodAnnotationIfAnnotationExistsTest implements RewriteTest {
 
-  @Override
-  public void defaults(RecipeSpec spec) {
-    spec.recipe(
+    @Override
+    public void defaults(RecipeSpec spec) {
+        spec.recipe(
             new AddMethodAnnotationIfAnnotationExists(
-                "org.lombok.SneakyThrows", "org.junit.jupiter.api.Test"))
-        .parser(JavaParser.fromJavaVersion().classpath("lombok", ""));
-  }
+              "org.lombok.SneakyThrows", "org.junit.jupiter.api.Test"))
+          .parser(JavaParser.fromJavaVersion().classpath("lombok", ""));
+    }
 
-  @DocumentExample
-  @Test
-  void addsAnnotationWhenTargetExists() {
-    rewriteRun(
-        java(
+    @DocumentExample
+    @Test
+    void addsAnnotationWhenTargetExists() {
+        rewriteRun(
           //language=java
-
-          """
+          java(
+            """
               import org.junit.jupiter.api.Test;
 
               class TestClass {
@@ -48,8 +47,7 @@ class AddMethodAnnotationIfAnnotationExistsTest implements RewriteTest {
                   void testMethod() {}
               }
               """,
-          //language=java
-          """
+            """
               import org.junit.jupiter.api.Test;
 
               class TestClass {
@@ -58,8 +56,10 @@ class AddMethodAnnotationIfAnnotationExistsTest implements RewriteTest {
                   void testMethod() {
                   }
               }
-              """));
-  }
+              """
+          )
+        );
+    }
 
     @Test
     void doesNotAddWhenNoTargetExists() {
