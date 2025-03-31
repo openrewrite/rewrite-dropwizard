@@ -29,7 +29,6 @@ dependencies {
     testRuntimeOnly("org.springframework.boot:spring-boot-starter-actuator:2.5.+")
     testRuntimeOnly("javax.persistence:javax.persistence-api:2.2")
     testRuntimeOnly("org.projectlombok:lombok:1.18.+")
-    testRuntimeOnly("org.springframework.boot:spring-boot-starter-security:2.5.+")
 }
 
 recipeDependencies {
