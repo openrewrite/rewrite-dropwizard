@@ -17,27 +17,30 @@ package org.openrewrite.java.dropwizard.method;
 
 import org.openrewrite.java.tree.JavaType;
 
-import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
+public class RemoveSuperTypeByPackage extends RemoveSuperType {
+    private final String packageToMatch;
 
-public class RemoveSuperTypeRecipe extends RemoveSuperType {
-    private final String typeToRemove;
-
-    public RemoveSuperTypeRecipe(String typeToRemove) {
-        this.typeToRemove = typeToRemove;
+    public RemoveSuperTypeByPackage(String packageToMatch) {
+        this.packageToMatch = packageToMatch;
     }
 
     @Override
     public String getDisplayName() {
-        return "Remove supertype by fully qualified name matches";
+        return "Remove supertypes by package";
     }
 
     @Override
     public String getDescription() {
-        return "Removes a specified type from class extends or implements clauses.";
+        return "Removes all supertypes from a specified package in class extends or implements clauses.";
     }
 
     @Override
     protected boolean shouldRemoveType(JavaType type) {
-        return isOfClassType(type, typeToRemove);
+        if (type instanceof JavaType.FullyQualified) {
+            JavaType.FullyQualified fqType = (JavaType.FullyQualified) type;
+            String typePackage = fqType.getPackageName();
+            return typePackage != null && typePackage.startsWith(packageToMatch);
+        }
+        return false;
     }
 }

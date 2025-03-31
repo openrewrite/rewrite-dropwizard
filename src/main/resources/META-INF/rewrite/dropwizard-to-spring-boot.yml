@@ -168,7 +168,7 @@ displayName: Clean up various issues with the code.
 description: Clean up the code.
 recipeList:
   - org.openrewrite.java.ShortenFullyQualifiedTypeReferences
-  # TODO - org.openrewrite.java.dropwizard.method.AddMissingAbstractMethods
+  - org.openrewrite.java.dropwizard.method.AddMissingAbstractMethods
   - org.openrewrite.java.RemoveUnusedImports
 ---
 type: specs.openrewrite.org/v1beta/recipe

@@ -15,18 +15,17 @@
  */
 package org.openrewrite.java.dropwizard.method;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.java.Assertions.java;
 
-class RemoveSuperTypeRecipeTest implements RewriteTest {
+class RemoveSuperTypeByPackageRecipeTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(new RemoveSuperTypeRecipe("com.example.BaseClass"));
+        spec.recipe(new RemoveSuperTypeByPackage("com.example"));
     }
 
     @Test
@@ -64,7 +63,6 @@ class RemoveSuperTypeRecipeTest implements RewriteTest {
     @Test
     void removesInterface() {
         rewriteRun(
-          spec -> spec.recipe(new RemoveSuperTypeRecipe("com.example.MyInterface")),
           java(
             """
               package com.example;
@@ -97,12 +95,11 @@ class RemoveSuperTypeRecipeTest implements RewriteTest {
     @Test
     void removesOneOfMultipleInterfaces() {
         rewriteRun(
-          spec -> spec.recipes(new RemoveSuperTypeRecipe("com.example.InterfaceToRemove")),
           java(
             """
-              package com.example;
+              package com.other.example;
 
-              interface InterfaceToKeep {
+              public interface InterfaceToKeep {
                   void keepMethod();
               }
               """),
@@ -118,6 +115,8 @@ class RemoveSuperTypeRecipeTest implements RewriteTest {
             """
               package com.example;
 
+              import com.other.example.InterfaceToKeep;
+
               class TestClass implements InterfaceToKeep, InterfaceToRemove {
                   @Override
                   public void keepMethod() {}
@@ -128,13 +127,15 @@ class RemoveSuperTypeRecipeTest implements RewriteTest {
             """
               package com.example;
 
+              import com.other.example.InterfaceToKeep;
+
               class TestClass implements InterfaceToKeep {
                   @Override
                   public void keepMethod() {}
                   @Override
                   public void removeMethod() {}
               }
-              """));
+                """));
     }
 
     @Test
@@ -174,9 +175,9 @@ class RemoveSuperTypeRecipeTest implements RewriteTest {
         rewriteRun(
           java(
             """
-              package com.example;
+              package com.other.example;
 
-              class DifferentBase {
+              public class DifferentBase {
                   protected void differentMethod() {}
               }
               """),
@@ -184,44 +185,11 @@ class RemoveSuperTypeRecipeTest implements RewriteTest {
             """
               package com.example;
 
+              import com.other.example.DifferentBase;
+
               class UnrelatedClass extends DifferentBase {
                   void someMethod() {
                       differentMethod();
-                  }
-              }
-              """));
-    }
-
-    @Test
-    @Disabled
-    void handlesImportRemoval() {
-        rewriteRun(
-          java(
-            """
-              package com.example.base;
-
-              public class BaseClass {
-                  protected void importedMethod() {}
-              }
-              """),
-          java(
-            """
-              package com.example.child;
-
-              import com.example.base.BaseClass;
-
-              class ChildClass extends BaseClass {
-                  void someMethod() {
-                      importedMethod();
-                  }
-              }
-              """,
-            """
-              package com.example.child;
-
-              class ChildClass {
-                  void someMethod() {
-                      importedMethod();
                   }
               }
               """));
