@@ -57,7 +57,6 @@ public class AddClassAnnotationIfAnnotationExists extends Recipe {
         return "Adds annotation if class has any of the specified target annotations.";
     }
 
-
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return new AddClassAnnotationVisitor(annotationToAdd, annotateInnerClasses) {
