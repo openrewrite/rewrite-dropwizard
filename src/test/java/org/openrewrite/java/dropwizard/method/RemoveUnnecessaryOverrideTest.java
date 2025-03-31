@@ -266,7 +266,7 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipes(
-                new RemoveSuperTypeRecipe("ee.test.BaseClass"),
+                new RemoveSuperTypeByType("ee.test.BaseClass"),
                 new RemoveUnnecessaryOverride(false))
               .parser(JavaParser.fromJavaVersion().logCompilationWarningsAndErrors(false)),
           java(

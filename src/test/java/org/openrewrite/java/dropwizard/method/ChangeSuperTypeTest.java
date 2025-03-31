@@ -24,12 +24,12 @@ import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.java.Assertions.java;
 
-class ChangeSuperclassRecipeTest implements RewriteTest {
+class ChangeSuperTypeTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
         spec.recipe(
-            new ChangeSuperclassRecipe(
+            new ChangeSuperType(
               "org.example.OldParent", "org.example.NewParent", false, false, false, true))
           .parser(
             JavaParser.fromJavaVersion()
@@ -102,7 +102,7 @@ class ChangeSuperclassRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipes(
-              new ChangeSuperclassRecipe(
+              new ChangeSuperType(
                 "java.util.Vector", "java.util.ArrayList", false, false, false, false)),
           java(
             """
@@ -132,7 +132,7 @@ class ChangeSuperclassRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipes(
-              new ChangeSuperclassRecipe(
+              new ChangeSuperType(
                 "org.example.OldParent", "org.example.NewParent", true, false, false, false)),
           java(
             """
@@ -278,7 +278,7 @@ class ChangeSuperclassRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipe(
-              new ChangeSuperclassRecipe(
+              new ChangeSuperType(
                 "com.codahale.metrics.health.HealthCheck",
                 "org.springframework.boot.actuate.health.HealthIndicator",
                 false,

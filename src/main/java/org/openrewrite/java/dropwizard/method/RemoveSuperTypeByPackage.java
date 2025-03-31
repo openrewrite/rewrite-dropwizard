@@ -15,14 +15,21 @@
  */
 package org.openrewrite.java.dropwizard.method;
 
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+import org.openrewrite.ExecutionContext;
+import org.openrewrite.Option;
+import org.openrewrite.Recipe;
+import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.tree.JavaType;
 
-public class RemoveSuperTypeByPackage extends RemoveSuperType {
-    private final String packageToMatch;
+@Value
+@EqualsAndHashCode(callSuper = false)
+public class RemoveSuperTypeByPackage extends Recipe {
 
-    public RemoveSuperTypeByPackage(String packageToMatch) {
-        this.packageToMatch = packageToMatch;
-    }
+    @Option(displayName = "Package to match",
+            description = "Supertypes that match this package are to be removed")
+    String packageToMatch;
 
     @Override
     public String getDisplayName() {
@@ -35,12 +42,26 @@ public class RemoveSuperTypeByPackage extends RemoveSuperType {
     }
 
     @Override
-    protected boolean shouldRemoveType(JavaType type) {
-        if (type instanceof JavaType.FullyQualified) {
-            JavaType.FullyQualified fqType = (JavaType.FullyQualified) type;
-            String typePackage = fqType.getPackageName();
-            return typePackage != null && typePackage.startsWith(packageToMatch);
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return new RemoveSuperTypeByPackageVisitor(packageToMatch);
+    }
+
+    private static class RemoveSuperTypeByPackageVisitor extends RemoveSuperTypeVisitor {
+
+        private final String packageToMatch;
+
+        private RemoveSuperTypeByPackageVisitor(String packageToMatch) {
+            this.packageToMatch = packageToMatch;
         }
-        return false;
+
+        @Override
+        protected boolean shouldRemoveType(JavaType type) {
+            if (type instanceof JavaType.FullyQualified) {
+                JavaType.FullyQualified fqType = (JavaType.FullyQualified) type;
+                String typePackage = fqType.getPackageName();
+                return typePackage != null && typePackage.startsWith(packageToMatch);
+            }
+            return false;
+        }
     }
 }

@@ -16,7 +16,10 @@
 package org.openrewrite.java.dropwizard.method;
 
 
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.Option;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.JavaIsoVisitor;
@@ -32,35 +35,39 @@ import static java.lang.Boolean.TRUE;
 import static org.openrewrite.java.tree.TypeUtils.asFullyQualified;
 import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
 
-public class ChangeSuperclassRecipe extends Recipe {
-    private final String targetClass;
-    private final String newSuperclass;
+@Value
+@EqualsAndHashCode(callSuper = false)
+public class ChangeSuperType extends Recipe {
 
-    private final Boolean keepTypeParameters;
+    @Option(displayName = "Target class",
+            description = "The fully qualified name of the class whose superclass should be changed.",
+            example = "com.myorg.MyClass")
+    String targetClass;
 
-    private final Boolean convertToInterface;
+    @Option(displayName = "New superclass",
+            description = "The fully qualified name of the new superclass to extend or interface to implement.",
+            example = "com.myorg.NewSuperclass")
+    String newSuperclass;
 
-    private final Boolean addAbstractMethods;
+    @Option(displayName = "Keep type parameters",
+            description = "Whether to keep existing type parameters on the target class declaration. Defaults to true.",
+            required = false)
+    Boolean keepTypeParameters;
 
-    private final Boolean removeUnnecessaryOverrides;
+    @Option(displayName = "Convert to interface",
+            description = "If the new supertype is an interface, setting this to true converts 'extends' to 'implements'. Defaults to true.",
+            required = false)
+    Boolean convertToInterface;
 
-    public ChangeSuperclassRecipe(
-            String targetClass,
-            String newSuperclass,
-            Boolean keepTypeParameters,
-            Boolean convertToInterface,
-            Boolean addAbstractMethods,
-            Boolean removeUnnecessaryOverrides) {
-        this.targetClass = targetClass;
-        this.newSuperclass = newSuperclass;
+    @Option(displayName = "Add abstract method stubs",
+            description = "If the new superclass is abstract or an interface, add stubs for newly required abstract methods. Defaults to true.",
+            required = false)
+    Boolean addAbstractMethods;
 
-        // Default to enabled.
-        this.keepTypeParameters = keepTypeParameters == null || keepTypeParameters;
-        this.convertToInterface = convertToInterface == null || convertToInterface;
-        this.addAbstractMethods = addAbstractMethods == null || addAbstractMethods;
-        this.removeUnnecessaryOverrides =
-                removeUnnecessaryOverrides == null || removeUnnecessaryOverrides;
-    }
+    @Option(displayName = "Remove unnecessary overrides",
+            description = "Remove methods that override methods from the *old* superclass but are no longer necessary with the new superclass. Defaults to true.",
+            required = false)
+    Boolean removeUnnecessaryOverrides;
 
     @Override
     public String getDisplayName() {

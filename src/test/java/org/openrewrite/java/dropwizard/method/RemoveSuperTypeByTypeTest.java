@@ -22,11 +22,11 @@ import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.java.Assertions.java;
 
-class RemoveSuperTypeRecipeTest implements RewriteTest {
+class RemoveSuperTypeByTypeTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(new RemoveSuperTypeRecipe("com.example.BaseClass"));
+        spec.recipe(new RemoveSuperTypeByType("com.example.BaseClass"));
     }
 
     @Test
@@ -64,7 +64,7 @@ class RemoveSuperTypeRecipeTest implements RewriteTest {
     @Test
     void removesInterface() {
         rewriteRun(
-          spec -> spec.recipe(new RemoveSuperTypeRecipe("com.example.MyInterface")),
+          spec -> spec.recipe(new RemoveSuperTypeByType("com.example.MyInterface")),
           java(
             """
               package com.example;
@@ -97,7 +97,7 @@ class RemoveSuperTypeRecipeTest implements RewriteTest {
     @Test
     void removesOneOfMultipleInterfaces() {
         rewriteRun(
-          spec -> spec.recipes(new RemoveSuperTypeRecipe("com.example.InterfaceToRemove")),
+          spec -> spec.recipes(new RemoveSuperTypeByType("com.example.InterfaceToRemove")),
           java(
             """
               package com.example;

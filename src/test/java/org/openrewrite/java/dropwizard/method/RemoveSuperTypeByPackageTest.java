@@ -21,7 +21,7 @@ import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.java.Assertions.java;
 
-class RemoveSuperTypeByPackageRecipeTest implements RewriteTest {
+class RemoveSuperTypeByPackageTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {

@@ -134,7 +134,7 @@ class RemoveSuperCallsRecipeTest implements RewriteTest {
         rewriteRun(
           spec ->
             spec.recipes(
-              new ChangeSuperclassRecipe("old.Super", "new.Super", false, false, false, false),
+              new ChangeSuperType("old.Super", "new.Super", false, false, false, false),
               new RemoveUnnecessarySuperCalls()),
           java(
             """

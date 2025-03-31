@@ -27,15 +27,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
-public abstract class RemoveSupertypeVisitor extends JavaIsoVisitor<ExecutionContext> {
-
-    private final String annotationText;
-    private final boolean annotateSubclasses;
-
-    public RemoveSupertypeVisitor(String annotationText, boolean annotateSubclasses) {
-        this.annotationText = annotationText;
-        this.annotateSubclasses = annotateSubclasses;
-    }
+public abstract class RemoveSuperTypeVisitor extends JavaIsoVisitor<ExecutionContext> {
 
     protected abstract boolean shouldRemoveType(JavaType type);
 

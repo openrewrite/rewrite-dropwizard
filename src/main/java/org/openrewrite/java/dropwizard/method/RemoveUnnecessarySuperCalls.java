@@ -25,7 +25,6 @@ import org.openrewrite.java.tree.TypeUtils;
 
 public class RemoveUnnecessarySuperCalls extends Recipe {
 
-    public static final String SUPER = "super";
 
     @Override
     public String getDisplayName() {
@@ -43,6 +42,7 @@ public class RemoveUnnecessarySuperCalls extends Recipe {
     }
 
     public static class RemoveUnnecessarySuperCallsVisitor extends JavaIsoVisitor<ExecutionContext> {
+        private static final String SUPER = "super";
 
         @Override
         public J.@Nullable MethodInvocation visitMethodInvocation(
@@ -87,6 +87,7 @@ public class RemoveUnnecessarySuperCalls extends Recipe {
             if (classDecl.getExtends() == null) {
                 return false;
             }
+            
             // If we can't resolve types, we might choose to be safe and not remove
             if (classDecl.getType() == null) {
                 return true;

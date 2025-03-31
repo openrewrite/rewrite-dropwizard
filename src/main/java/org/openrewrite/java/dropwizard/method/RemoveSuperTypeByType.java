@@ -15,16 +15,23 @@
  */
 package org.openrewrite.java.dropwizard.method;
 
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+import org.openrewrite.ExecutionContext;
+import org.openrewrite.Option;
+import org.openrewrite.Recipe;
+import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.tree.JavaType;
 
 import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
 
-public class RemoveSuperTypeRecipe extends RemoveSuperType {
-    private final String typeToRemove;
+@Value
+@EqualsAndHashCode(callSuper = false)
+public class RemoveSuperTypeByType extends Recipe {
 
-    public RemoveSuperTypeRecipe(String typeToRemove) {
-        this.typeToRemove = typeToRemove;
-    }
+    @Option(displayName = "Fully qualified name of the superclass to remove",
+            description = "Supertypes that match this name are to be removed")
+    String typeToRemove;
 
     @Override
     public String getDisplayName() {
@@ -37,7 +44,21 @@ public class RemoveSuperTypeRecipe extends RemoveSuperType {
     }
 
     @Override
-    protected boolean shouldRemoveType(JavaType type) {
-        return isOfClassType(type, typeToRemove);
+    public TreeVisitor<?, ExecutionContext> getVisitor() {
+        return new RemoveSuperTypeByTypeVisitor(typeToRemove);
+    }
+
+    private static class RemoveSuperTypeByTypeVisitor extends RemoveSuperTypeVisitor {
+
+        private final String typeToRemove;
+
+        private RemoveSuperTypeByTypeVisitor(String typeToRemove) {
+            this.typeToRemove = typeToRemove;
+        }
+
+        @Override
+        protected boolean shouldRemoveType(JavaType type) {
+            return isOfClassType(type, typeToRemove);
+        }
     }
 }
