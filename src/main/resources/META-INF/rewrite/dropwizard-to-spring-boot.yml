@@ -26,7 +26,6 @@ recipeList:
   - org.openrewrite.java.dropwizard.MigrateResourcesToSpringJersey
   - org.openrewrite.java.dropwizard.MigrateTests
   - org.openrewrite.java.dropwizard.CodeCleanup
-  - org.openrewrite.java.dropwizard.annotation.micrometer.CodahaleTimedToMicrometerTimed
 ---
 # Core Application Setup
 type: specs.openrewrite.org/v1beta/recipe
@@ -50,6 +49,8 @@ recipeList:
   - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "org.springframework.boot.SpringBootApplication"
       targetSupertypeName: "io.dropwizard.Application"
+  - org.openrewrite.java.dropwizard.method.RemoveSuperTypeByType:
+      typeToRemove: io.dropwizard.Application
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
@@ -62,6 +63,7 @@ recipeList:
       artifactId: spring-boot-starter-actuator
       version: "2.7.18"
       onlyIfAbsent: true
+  - org.openrewrite.java.dropwizard.annotation.micrometer.CodahaleTimedToMicrometerTimed
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
@@ -72,6 +74,13 @@ recipeList:
   - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "org.springframework.stereotype.Component"
       targetSupertypeName: "org.springframework.boot.actuate.health.HealthIndicator"
+  - org.openrewrite.java.dropwizard.method.ChangeSuperType:
+      targetClass: com.codahale.metrics.health.HealthCheck
+      newSuperclass: org.springframework.boot.actuate.health.HealthIndicator
+      convertToInterface: true
+      keepTypeParameters: false
+      addAbstractMethods: true
+      removeUnnecessaryOverrides: true
 ---
 # Configuration Migration
 type: specs.openrewrite.org/v1beta/recipe
@@ -92,6 +101,8 @@ recipeList:
   - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfAnnotationExists:
       annotationToAdd: "org.springframework.stereotype.Component"
       targetAnnotationClassName: "javax.ws.rs.ext.Provider"
+  - org.openrewrite.java.dropwizard.method.RemoveSuperTypeByType:
+      typeToRemove: "io.dropwizard.Configuration"
 ---
 # Resource Migration
 type: specs.openrewrite.org/v1beta/recipe
@@ -135,6 +146,13 @@ recipeList:
   - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "org.springframework.transaction.annotation.Transactional"
       targetSupertypeName: "io.dropwizard.hibernate.AbstractDAO"
+  - org.openrewrite.java.dropwizard.method.ChangeSuperType:
+      targetClass: "io.dropwizard.hibernate.AbstractDAO"
+      newSuperclass: "ee.taltech.example.AbstractJpaDAO" # Custom class; from helper library
+      convertToInterface: false
+      keepTypeParameters: true
+      addAbstractMethods: false
+      removeUnnecessaryOverrides: true
 ---
 # Test migration
 type: specs.openrewrite.org/v1beta/recipe
@@ -161,6 +179,22 @@ recipeList:
       version: "2.7.18"
       onlyIfAbsent: true
 ---
+# Tasks, Commands
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.MigrateTasksAndCommands
+displayName: Clean up various issues with the code.
+description: Clean up the code.
+recipeList:
+  - org.openrewrite.java.dropwizard.method.ChangeSuperclass:
+      targetClass: io.dropwizard.cli.ConfiguredCommand
+      newSuperclass: org.springframework.boot.CommandLineRunner
+      convertToInterface: true
+      keepTypeParameters: false
+      addAbstractMethods: true
+      removeUnnecessaryOverrides: true
+  - org.openrewrite.java.dropwizard.method.RemoveSuperTypeByType:
+      typeToRemove: io.dropwizard.servlets.tasks.PostBodyTask
+---
 # Cleanup
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.dropwizard.CodeCleanup
@@ -170,6 +204,12 @@ recipeList:
   - org.openrewrite.java.ShortenFullyQualifiedTypeReferences
   - org.openrewrite.java.dropwizard.method.AddMissingAbstractMethods
   - org.openrewrite.java.RemoveUnusedImports
+  - org.openrewrite.java.dropwizard.method.RemoveUnnecessaryOverride:
+      ignoreAnonymousClassMethods: false
+  - org.openrewrite.java.dropwizard.method.RemoveSuperTypeByPackage:
+      packageToMatch: "io.dropwizard" # General clean-up - if we have forgotten something
+  - org.openrewrite.maven.OrderPomElements
+  - org.openrewrite.maven.RemoveRedundantDependencyVersions
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.dropwizard.annotation.micrometer.CodahaleTimedToMicrometerTimed
