@@ -30,7 +30,8 @@ import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
 public class RemoveSuperTypeByType extends Recipe {
 
     @Option(displayName = "Fully qualified name of the superclass to remove",
-            description = "Supertypes that match this name are to be removed")
+            description = "Supertypes that match this name are to be removed",
+            example = "io.dropwizard.Configuration")
     String typeToRemove;
 
     @Override

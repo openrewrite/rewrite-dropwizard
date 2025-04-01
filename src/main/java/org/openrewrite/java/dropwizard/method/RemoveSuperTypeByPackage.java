@@ -28,7 +28,8 @@ import org.openrewrite.java.tree.JavaType;
 public class RemoveSuperTypeByPackage extends Recipe {
 
     @Option(displayName = "Package to match",
-            description = "Supertypes that match this package are to be removed")
+            description = "Supertypes that match this package are to be removed",
+            example = "io.dropwizard")
     String packageToMatch;
 
     @Override

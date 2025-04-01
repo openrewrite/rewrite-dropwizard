@@ -25,7 +25,6 @@ import org.openrewrite.java.tree.TypeUtils;
 
 public class RemoveUnnecessarySuperCalls extends Recipe {
 
-
     @Override
     public String getDisplayName() {
         return "Remove `super` calls when the class does not extend another class";
@@ -87,7 +86,7 @@ public class RemoveUnnecessarySuperCalls extends Recipe {
             if (classDecl.getExtends() == null) {
                 return false;
             }
-            
+
             // If we can't resolve types, we might choose to be safe and not remove
             if (classDecl.getType() == null) {
                 return true;

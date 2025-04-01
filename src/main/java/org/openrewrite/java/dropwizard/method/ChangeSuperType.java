@@ -50,22 +50,22 @@ public class ChangeSuperType extends Recipe {
     String newSuperclass;
 
     @Option(displayName = "Keep type parameters",
-            description = "Whether to keep existing type parameters on the target class declaration. Defaults to true.",
+            description = "Whether to keep existing type parameters on the target class declaration.",
             required = false)
     Boolean keepTypeParameters;
 
     @Option(displayName = "Convert to interface",
-            description = "If the new supertype is an interface, setting this to true converts 'extends' to 'implements'. Defaults to true.",
+            description = "If the new supertype is an interface, setting this to true converts 'extends' to 'implements'.",
             required = false)
     Boolean convertToInterface;
 
     @Option(displayName = "Add abstract method stubs",
-            description = "If the new superclass is abstract or an interface, add stubs for newly required abstract methods. Defaults to true.",
+            description = "If the new superclass is abstract or an interface, add stubs for newly required abstract methods.",
             required = false)
     Boolean addAbstractMethods;
 
     @Option(displayName = "Remove unnecessary overrides",
-            description = "Remove methods that override methods from the *old* superclass but are no longer necessary with the new superclass. Defaults to true.",
+            description = "Remove method Override annotations that override methods from the *old* superclass but are no longer necessary with the new superclass.",
             required = false)
     Boolean removeUnnecessaryOverrides;
 
