@@ -301,8 +301,8 @@ public class AddMissingAbstractMethods extends Recipe {
                     } else {
                         // If no mapping exists, check bounds
                         List<JavaType> bounds = genericParam.getBounds();
-                        if (!bounds.isEmpty()
-                                && !bounds.stream().allMatch(bound -> isAssignableTo(existingParam, bound))) {
+                        if (!bounds.isEmpty() &&
+                                !bounds.stream().allMatch(bound -> isAssignableTo(existingParam, bound))) {
                             return false;
                         }
                     }
@@ -315,8 +315,8 @@ public class AddMissingAbstractMethods extends Recipe {
             JavaType existingReturn = existing.getReturnType();
             JavaType candidateReturn = candidate.getReturnType();
 
-            if (existingReturn instanceof JavaType.Parameterized
-                    && candidateReturn instanceof JavaType.Parameterized) {
+            if (existingReturn instanceof JavaType.Parameterized &&
+                    candidateReturn instanceof JavaType.Parameterized) {
                 JavaType.Parameterized existingParamReturn = (JavaType.Parameterized) existingReturn;
                 JavaType.Parameterized candidateParamReturn = (JavaType.Parameterized) candidateReturn;
 
@@ -349,7 +349,9 @@ public class AddMissingAbstractMethods extends Recipe {
                         return false;
                     }
                 }
-            } else return isAssignableTo(existingReturn, candidateReturn);
+            } else {
+                return isAssignableTo(existingReturn, candidateReturn);
+            }
 
             return true;
         }

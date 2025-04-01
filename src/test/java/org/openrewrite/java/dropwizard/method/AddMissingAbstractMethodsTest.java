@@ -241,14 +241,14 @@ class AddMissingAbstractMethodsTest implements RewriteTest {
               }
               """,
             """
-                import org.springframework.boot.CommandLineRunner;
+              import org.springframework.boot.CommandLineRunner;
 
-                public class RenderCommand implements CommandLineRunner {
-                    @Override
-                    public void run(java.lang.String[] args) throws java.lang.Exception {
-                        throw new UnsupportedOperationException();
-                    }
-                }
+              public class RenderCommand implements CommandLineRunner {
+                  @Override
+                  public void run(java.lang.String[] args) throws java.lang.Exception {
+                      throw new UnsupportedOperationException();
+                  }
+              }
               """));
     }
 }
