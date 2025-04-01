@@ -30,10 +30,7 @@ class RemoveSuperCallsRecipeTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         spec.recipes(new RemoveUnnecessarySuperCalls())
           .typeValidationOptions(TypeValidation.builder().methodInvocations(false).build())
-          .parser(
-            JavaParser.fromJavaVersion()
-              .classpath(JavaParser.runtimeClasspath())
-              .logCompilationWarningsAndErrors(false));
+          .parser(JavaParser.fromJavaVersion().logCompilationWarningsAndErrors(false));
     }
 
     @DocumentExample

@@ -231,7 +231,7 @@ class AddMissingAbstractMethodsTest implements RewriteTest {
             spec.recipes(new AddMissingAbstractMethods())
               .parser(
                 JavaParser.fromJavaVersion()
-                  .classpath(JavaParser.runtimeClasspath())
+                  .classpath("")
                   .logCompilationWarningsAndErrors(false)),
           java(
             """
