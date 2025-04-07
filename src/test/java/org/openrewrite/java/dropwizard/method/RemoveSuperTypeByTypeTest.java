@@ -34,16 +34,12 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
         rewriteRun(
           java(
             """
-              package com.example;
-
               class BaseClass {
                   protected void baseMethod() {}
               }
               """),
           java(
             """
-              package com.example;
-
               class ChildClass extends BaseClass {
                   void someMethod() {
                       baseMethod();
@@ -51,8 +47,6 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
               }
               """,
             """
-              package com.example;
-
               class ChildClass {
                   void someMethod() {
                       baseMethod();
@@ -67,16 +61,12 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
           spec -> spec.recipe(new RemoveSuperTypeByType("com.example.MyInterface")),
           java(
             """
-              package com.example;
-
               interface MyInterface {
                   void interfaceMethod();
               }
               """),
           java(
             """
-              package com.example;
-
               class TestClass implements MyInterface {
                   @Override
                   public void interfaceMethod() {}
@@ -84,8 +74,6 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
               }
               """,
             """
-              package com.example;
-
               class TestClass {
                   @Override
                   public void interfaceMethod() {}
@@ -100,24 +88,18 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
           spec -> spec.recipes(new RemoveSuperTypeByType("com.example.InterfaceToRemove")),
           java(
             """
-              package com.example;
-
               interface InterfaceToKeep {
                   void keepMethod();
               }
               """),
           java(
             """
-              package com.example;
-
               interface InterfaceToRemove {
                   void removeMethod();
               }
               """),
           java(
             """
-              package com.example;
-
               class TestClass implements InterfaceToKeep, InterfaceToRemove {
                   @Override
                   public void keepMethod() {}
@@ -126,8 +108,6 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
               }
               """,
             """
-              package com.example;
-
               class TestClass implements InterfaceToKeep {
                   @Override
                   public void keepMethod() {}
@@ -142,16 +122,12 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
         rewriteRun(
           java(
             """
-              package com.example;
-
               class BaseClass<T> {
                   protected T getValue() { return null; }
               }
               """),
           java(
             """
-              package com.example;
-
               class ChildClass extends BaseClass<String> {
                   void someMethod() {
                       String value = getValue();
@@ -159,8 +135,6 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
               }
               """,
             """
-              package com.example;
-
               class ChildClass {
                   void someMethod() {
                       String value = getValue();
@@ -174,16 +148,12 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
         rewriteRun(
           java(
             """
-              package com.example;
-
               class DifferentBase {
                   protected void differentMethod() {}
               }
               """),
           java(
             """
-              package com.example;
-
               class UnrelatedClass extends DifferentBase {
                   void someMethod() {
                       differentMethod();
