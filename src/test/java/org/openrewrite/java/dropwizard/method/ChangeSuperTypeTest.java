@@ -71,7 +71,9 @@ class ChangeSuperTypeTest implements RewriteTest {
                       this.oldField = "test";
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -90,7 +92,9 @@ class ChangeSuperTypeTest implements RewriteTest {
 
               public class Child extends DifferentParent {
               }
-              """));
+              """
+          )
+        );
     }
 
     @DocumentExample
@@ -121,7 +125,9 @@ class ChangeSuperTypeTest implements RewriteTest {
                       this.add("test");
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -165,7 +171,9 @@ class ChangeSuperTypeTest implements RewriteTest {
                       this.value = value;
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -224,7 +232,9 @@ class ChangeSuperTypeTest implements RewriteTest {
                       System.out.println("child");
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -267,7 +277,9 @@ class ChangeSuperTypeTest implements RewriteTest {
                       System.out.println("child constructor");
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -304,6 +316,8 @@ class ChangeSuperTypeTest implements RewriteTest {
                       return Result.healthy();
                   }
               }
-              """));
+              """
+          )
+        );
     }
 }

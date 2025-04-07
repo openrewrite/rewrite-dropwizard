@@ -52,7 +52,9 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
                       baseMethod();
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -79,7 +81,9 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
                   public void interfaceMethod() {}
                   void someMethod() {}
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -114,7 +118,9 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
                   @Override
                   public void removeMethod() {}
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -140,7 +146,9 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
                       String value = getValue();
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -159,7 +167,9 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
                       differentMethod();
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -194,6 +204,8 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
                       importedMethod();
                   }
               }
-              """));
+              """
+          )
+        );
     }
 }
