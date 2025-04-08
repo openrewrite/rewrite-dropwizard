@@ -152,10 +152,10 @@ public class MethodStubCreator {
     }
 
     private static String getParameterName(List<String> parameterNames, int index) {
-        if (parameterNames != null
-                && index < parameterNames.size()
-                && parameterNames.get(index) != null
-                && !parameterNames.get(index).trim().isEmpty()) {
+        if (parameterNames != null &&
+                index < parameterNames.size() &&
+                parameterNames.get(index) != null &&
+                !parameterNames.get(index).trim().isEmpty()) {
             return parameterNames.get(index).trim();
         }
         // fallback name

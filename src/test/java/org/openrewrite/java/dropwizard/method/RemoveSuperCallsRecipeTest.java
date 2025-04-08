@@ -52,7 +52,9 @@ class RemoveSuperCallsRecipeTest implements RewriteTest {
                       System.out.println("hello");
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -81,7 +83,9 @@ class RemoveSuperCallsRecipeTest implements RewriteTest {
                       System.out.println("hello");
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -102,7 +106,9 @@ class RemoveSuperCallsRecipeTest implements RewriteTest {
                       System.out.println("initializing");
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -123,7 +129,9 @@ class RemoveSuperCallsRecipeTest implements RewriteTest {
                       System.out.println("child init");
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -148,6 +156,8 @@ class RemoveSuperCallsRecipeTest implements RewriteTest {
                       System.out.println("Hello " + name);
                   }
               }
-              """));
+              """
+          )
+        );
     }
 }

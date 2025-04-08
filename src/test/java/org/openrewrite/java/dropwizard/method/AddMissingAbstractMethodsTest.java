@@ -27,11 +27,7 @@ class AddMissingAbstractMethodsTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipe(new AddMissingAbstractMethods())
-          .parser(
-            JavaParser.fromJavaVersion()
-              .classpath(JavaParser.runtimeClasspath())
-              .logCompilationWarningsAndErrors(false));
+        spec.recipe(new AddMissingAbstractMethods());
     }
 
     @Test
@@ -55,7 +51,9 @@ class AddMissingAbstractMethodsTest implements RewriteTest {
                       throw new UnsupportedOperationException();
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -79,7 +77,9 @@ class AddMissingAbstractMethodsTest implements RewriteTest {
                       throw new UnsupportedOperationException();
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -114,7 +114,9 @@ class AddMissingAbstractMethodsTest implements RewriteTest {
                       throw new UnsupportedOperationException();
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -134,7 +136,9 @@ class AddMissingAbstractMethodsTest implements RewriteTest {
                       System.out.println("Processing");
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -161,7 +165,9 @@ class AddMissingAbstractMethodsTest implements RewriteTest {
                       throw new UnsupportedOperationException();
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -182,7 +188,9 @@ class AddMissingAbstractMethodsTest implements RewriteTest {
                       return name;
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -220,7 +228,9 @@ class AddMissingAbstractMethodsTest implements RewriteTest {
                       return roles;
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @DocumentExample
@@ -241,14 +251,16 @@ class AddMissingAbstractMethodsTest implements RewriteTest {
               }
               """,
             """
-                import org.springframework.boot.CommandLineRunner;
+              import org.springframework.boot.CommandLineRunner;
 
-                public class RenderCommand implements CommandLineRunner {
-                    @Override
-                    public void run(java.lang.String[] args) throws java.lang.Exception {
-                        throw new UnsupportedOperationException();
-                    }
-                }
-              """));
+              public class RenderCommand implements CommandLineRunner {
+                  @Override
+                  public void run(java.lang.String[] args) throws java.lang.Exception {
+                      throw new UnsupportedOperationException();
+                  }
+              }
+              """
+          )
+        );
     }
 }

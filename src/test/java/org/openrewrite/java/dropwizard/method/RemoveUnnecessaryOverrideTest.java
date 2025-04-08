@@ -16,6 +16,7 @@
 package org.openrewrite.java.dropwizard.method;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -51,9 +52,12 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
                   void nonExistentMethod() {
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
+    @DocumentExample
     @Test
     void configuresRenderCommandArguments() {
         rewriteRun(
@@ -91,7 +95,9 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
                       subparser.addArgument("names").nargs("*");
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -109,7 +115,9 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
                   @Override
                   void baseMethod() {}
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -135,7 +143,9 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
                   void wrongMethod() {
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -162,18 +172,20 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
               }
               """,
             """
-                  class TestClass implements MyInterface {
-                      @Override
-                      public void correctMethod() {}
+              class TestClass implements MyInterface {
+                  @Override
+                  public void correctMethod() {}
 
 
-                      public void wrongMethod() {
-                      }
-
-                      @Override
-                      public void anotherMethod() {}
+                  public void wrongMethod() {
                   }
-              """));
+
+                  @Override
+                  public void anotherMethod() {}
+              }
+              """
+          )
+        );
     }
 
     @Test
@@ -196,7 +208,9 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
                       };
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -230,7 +244,9 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
                   public void nonExistentMethod() {
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -253,7 +269,9 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
 
                   }
               }
-              """));
+              """
+          )
+        );
     }
 
     @Test
@@ -289,6 +307,8 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
                   void baseMethod() {
                   }
               }
-              """));
+              """
+          )
+        );
     }
 }

@@ -41,9 +41,9 @@ public abstract class RemoveSuperTypeVisitor extends JavaIsoVisitor<ExecutionCon
         boolean modified = false;
 
         // Handle extends clause
-        if (nonNull(cd.getExtends())
-                && nonNull(cd.getExtends().getType())
-                && shouldRemoveType(cd.getExtends().getType())) {
+        if (nonNull(cd.getExtends()) &&
+                nonNull(cd.getExtends().getType()) &&
+                shouldRemoveType(cd.getExtends().getType())) {
             modified = true;
             cd = cd.withExtends(null);
         }

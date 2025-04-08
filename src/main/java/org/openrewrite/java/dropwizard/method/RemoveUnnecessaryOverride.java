@@ -17,6 +17,7 @@ package org.openrewrite.java.dropwizard.method;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.*;
 import org.openrewrite.java.AnnotationMatcher;
 import org.openrewrite.java.JavaIsoVisitor;
@@ -24,7 +25,6 @@ import org.openrewrite.java.service.AnnotationService;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.TypeUtils;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +46,8 @@ public class RemoveUnnecessaryOverride extends Recipe {
 
     @Override
     public String getDescription() {
-        return "Removes `@Override` annotations from methods that don't actually override or implement any method. "
-                + "This helps maintain clean code by removing incorrect annotations that could be misleading.";
+        return "Removes `@Override` annotations from methods that don't actually override or implement any method. " +
+                "This helps maintain clean code by removing incorrect annotations that could be misleading.";
     }
 
     @Override
@@ -78,11 +78,11 @@ public class RemoveUnnecessaryOverride extends Recipe {
                 J.MethodDeclaration method, ExecutionContext ctx) {
             J.MethodDeclaration m = super.visitMethodDeclaration(method, ctx);
 
-            if (!m.isConstructor()
-                    && service(AnnotationService.class).matches(getCursor(), OVERRIDE_ANNOTATION)
-                    && !TypeUtils.isOverride(m.getMethodType())
-                    && !(Boolean.TRUE.equals(ignoreAnonymousClassMethods)
-                    && getCursorToParentScope(getCursor()).getValue() instanceof J.NewClass)) {
+            if (!m.isConstructor() &&
+                    service(AnnotationService.class).matches(getCursor(), OVERRIDE_ANNOTATION) &&
+                    !TypeUtils.isOverride(m.getMethodType()) &&
+                    !(Boolean.TRUE.equals(ignoreAnonymousClassMethods) &&
+                    getCursorToParentScope(getCursor()).getValue() instanceof J.NewClass)) {
 
                 // Find and remove the @Override annotation
                 List<J.Annotation> annotations = new ArrayList<>(m.getLeadingAnnotations());
