@@ -17,10 +17,8 @@ package org.openrewrite.java.dropwizard.method;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.openrewrite.ExecutionContext;
-import org.openrewrite.Option;
-import org.openrewrite.Recipe;
-import org.openrewrite.TreeVisitor;
+import org.openrewrite.*;
+import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.JavaType;
 
 import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
@@ -46,20 +44,14 @@ public class RemoveSuperTypeByType extends Recipe {
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new RemoveSuperTypeByTypeVisitor(typeToRemove);
-    }
-
-    private static class RemoveSuperTypeByTypeVisitor extends RemoveSuperTypeVisitor {
-
-        private final String typeToRemove;
-
-        private RemoveSuperTypeByTypeVisitor(String typeToRemove) {
-            this.typeToRemove = typeToRemove;
-        }
-
-        @Override
-        protected boolean shouldRemoveType(JavaType type) {
-            return isOfClassType(type, typeToRemove);
-        }
+        return Preconditions.check(
+                new UsesType<>(typeToRemove, false),
+                new RemoveSuperTypeVisitor() {
+                    @Override
+                    protected boolean shouldRemoveType(JavaType type) {
+                        return isOfClassType(type, typeToRemove);
+                    }
+                }
+        );
     }
 }

@@ -17,10 +17,8 @@ package org.openrewrite.java.dropwizard.method;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.openrewrite.ExecutionContext;
-import org.openrewrite.Option;
-import org.openrewrite.Recipe;
-import org.openrewrite.TreeVisitor;
+import org.openrewrite.*;
+import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.JavaType;
 
 @Value
@@ -44,25 +42,19 @@ public class RemoveSuperTypeByPackage extends Recipe {
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new RemoveSuperTypeByPackageVisitor(packageToMatch);
-    }
-
-    private static class RemoveSuperTypeByPackageVisitor extends RemoveSuperTypeVisitor {
-
-        private final String packageToMatch;
-
-        private RemoveSuperTypeByPackageVisitor(String packageToMatch) {
-            this.packageToMatch = packageToMatch;
-        }
-
-        @Override
-        protected boolean shouldRemoveType(JavaType type) {
-            if (type instanceof JavaType.FullyQualified) {
-                JavaType.FullyQualified fqType = (JavaType.FullyQualified) type;
-                String typePackage = fqType.getPackageName();
-                return typePackage != null && typePackage.startsWith(packageToMatch);
-            }
-            return false;
-        }
+        return Preconditions.check(
+                new UsesType<>(packageToMatch + ".*", false),
+                new RemoveSuperTypeVisitor() {
+                    @Override
+                    protected boolean shouldRemoveType(JavaType type) {
+                        if (type instanceof JavaType.FullyQualified) {
+                            JavaType.FullyQualified fqType = (JavaType.FullyQualified) type;
+                            String typePackage = fqType.getPackageName();
+                            return typePackage != null && typePackage.startsWith(packageToMatch);
+                        }
+                        return false;
+                    }
+                }
+        );
     }
 }
