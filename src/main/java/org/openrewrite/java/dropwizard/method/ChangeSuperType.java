@@ -59,11 +59,6 @@ public class ChangeSuperType extends Recipe {
             required = false)
     Boolean convertToInterface;
 
-    @Option(displayName = "Add abstract method stubs",
-            description = "If the new superclass is abstract or an interface, add stubs for newly required abstract methods.",
-            required = false)
-    Boolean addAbstractMethods;
-
     @Option(displayName = "Remove unnecessary overrides",
             description = "Remove method Override annotations that override methods from the *old* superclass but are no longer necessary with the new superclass.",
             required = false)
@@ -130,10 +125,6 @@ public class ChangeSuperType extends Recipe {
 
                 if (TRUE.equals(removeUnnecessaryOverrides)) {
                     doAfterVisit(new RemoveUnnecessaryOverride.RemoveUnnecessaryOverrideVisitor());
-                }
-
-                if (TRUE.equals(addAbstractMethods)) {
-                    doAfterVisit(new AddMissingAbstractMethods.AddMissingMethodsVisitor());
                 }
 
                 doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
