@@ -79,7 +79,6 @@ recipeList:
       newSuperclass: org.springframework.boot.actuate.health.HealthIndicator
       convertToInterface: true
       keepTypeParameters: false
-      addAbstractMethods: true
       removeUnnecessaryOverrides: true
 ---
 # Configuration Migration
@@ -151,7 +150,6 @@ recipeList:
       newSuperclass: "ee.taltech.example.AbstractJpaDAO" # Custom class; from helper library
       convertToInterface: false
       keepTypeParameters: true
-      addAbstractMethods: false
       removeUnnecessaryOverrides: true
 ---
 # Test migration
@@ -190,7 +188,6 @@ recipeList:
       newSuperclass: org.springframework.boot.CommandLineRunner
       convertToInterface: true
       keepTypeParameters: false
-      addAbstractMethods: true
       removeUnnecessaryOverrides: true
   - org.openrewrite.java.dropwizard.method.RemoveSuperTypeByType:
       typeToRemove: io.dropwizard.servlets.tasks.PostBodyTask
@@ -202,7 +199,6 @@ displayName: Clean up various issues with the code.
 description: Clean up the code.
 recipeList:
   - org.openrewrite.java.ShortenFullyQualifiedTypeReferences
-  - org.openrewrite.java.dropwizard.method.AddMissingAbstractMethods
   - org.openrewrite.java.RemoveUnusedImports
   - org.openrewrite.java.dropwizard.method.RemoveUnnecessaryOverride:
       ignoreAnonymousClassMethods: false

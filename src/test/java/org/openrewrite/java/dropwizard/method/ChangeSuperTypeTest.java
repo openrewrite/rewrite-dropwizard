@@ -30,7 +30,7 @@ class ChangeSuperTypeTest implements RewriteTest {
     public void defaults(RecipeSpec spec) {
         spec.recipe(
             new ChangeSuperType(
-              "org.example.OldParent", "org.example.NewParent", false, false, false, true))
+              "org.example.OldParent", "org.example.NewParent", false, false, true))
           .parser(JavaParser.fromJavaVersion().classpath("metrics-healthchecks", "spring-boot-actuator"));
     }
 
@@ -104,7 +104,7 @@ class ChangeSuperTypeTest implements RewriteTest {
           spec ->
             spec.recipes(
               new ChangeSuperType(
-                "java.util.Vector", "java.util.ArrayList", false, false, false, false)),
+                "java.util.Vector", "java.util.ArrayList", false, false, false)),
           java(
             """
               package org.example;
@@ -136,7 +136,7 @@ class ChangeSuperTypeTest implements RewriteTest {
           spec ->
             spec.recipes(
               new ChangeSuperType(
-                "org.example.OldParent", "org.example.NewParent", true, false, false, false)),
+                "org.example.OldParent", "org.example.NewParent", true, false, false)),
           java(
             """
               package org.example;
@@ -292,7 +292,6 @@ class ChangeSuperTypeTest implements RewriteTest {
                 "org.springframework.boot.actuate.health.HealthIndicator",
                 false,
                 true,
-                false,
                 true)),
           java(
             """
