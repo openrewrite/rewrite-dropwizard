@@ -38,7 +38,8 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
               class BaseClass {
                   void baseMethod() {}
               }
-              """),
+              """
+          ),
           java(
             """
               class TestClass extends BaseClass {
@@ -108,7 +109,8 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
               class BaseClass {
                   void baseMethod() {}
               }
-              """),
+              """
+          ),
           java(
             """
               class TestClass extends BaseClass {
@@ -128,7 +130,8 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
               class BaseClass {
                   void someMethod() {}
               }
-              """),
+              """
+          ),
           java(
             """
               class TestClass extends BaseClass {
@@ -157,7 +160,8 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
                   void correctMethod();
                   void anotherMethod();
               }
-              """),
+              """
+          ),
           java(
             """
               class TestClass implements MyInterface {
@@ -197,7 +201,8 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
               class BaseClass {
                   void baseMethod() {}
               }
-              """),
+              """
+          ),
           java(
             """
               class TestClass {
@@ -224,7 +229,8 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
 
               interface SubInterface extends SuperInterface {
               }
-              """),
+              """
+          ),
           java(
             """
               class TestClass implements SubInterface {
@@ -289,7 +295,8 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
               class BaseClass {
                   void baseMethod() {}
               }
-              """),
+              """
+          ),
           java(
             """
               package ee.test;

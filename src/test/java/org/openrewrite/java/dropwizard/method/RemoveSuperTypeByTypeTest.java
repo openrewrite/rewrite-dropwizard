@@ -39,7 +39,8 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
               class BaseClass {
                   protected void baseMethod() {}
               }
-              """),
+              """
+          ),
           java(
             """
               package com.example;
@@ -74,7 +75,8 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
               interface MyInterface {
                   void interfaceMethod();
               }
-              """),
+              """
+          ),
           java(
             """
               package com.example;
@@ -109,7 +111,8 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
               interface InterfaceToKeep {
                   void keepMethod();
               }
-              """),
+              """
+          ),
           java(
             """
               package com.example;
@@ -117,7 +120,8 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
               interface InterfaceToRemove {
                   void removeMethod();
               }
-              """),
+              """
+          ),
           java(
             """
               package com.example;
@@ -153,7 +157,8 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
               class BaseClass<T> {
                   protected T getValue() { return null; }
               }
-              """),
+              """
+          ),
           java(
             """
               package com.example;
@@ -187,7 +192,8 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
               class DifferentBase {
                   protected void differentMethod() {}
               }
-              """),
+              """
+          ),
           java(
             """
               package com.example;
@@ -213,7 +219,8 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
               public class BaseClass {
                   protected void importedMethod() {}
               }
-              """),
+              """
+          ),
           java(
             """
               package com.example.child;

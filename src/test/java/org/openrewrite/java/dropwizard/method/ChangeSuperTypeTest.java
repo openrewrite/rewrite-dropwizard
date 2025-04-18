@@ -44,7 +44,8 @@ class ChangeSuperTypeTest implements RewriteTest {
               public class OldParent {
                   protected String oldField;
               }
-              """),
+              """
+          ),
           java(
             """
               package org.example;
@@ -52,7 +53,8 @@ class ChangeSuperTypeTest implements RewriteTest {
               public class NewParent {
                   protected String oldField;
               }
-              """),
+              """
+          ),
           java(
             """
               package org.example;
@@ -85,7 +87,8 @@ class ChangeSuperTypeTest implements RewriteTest {
 
               public class DifferentParent {
               }
-              """),
+              """
+          ),
           java(
             """
               package org.example;
@@ -144,7 +147,8 @@ class ChangeSuperTypeTest implements RewriteTest {
               public class OldParent<T> {
                   protected T value;
               }
-              """),
+              """
+          ),
           java(
             """
               package org.example;
@@ -152,7 +156,8 @@ class ChangeSuperTypeTest implements RewriteTest {
               public class NewParent<T> {
                   protected T value;
               }
-              """),
+              """
+          ),
           java(
             """
               package org.example;
@@ -191,7 +196,8 @@ class ChangeSuperTypeTest implements RewriteTest {
                   protected void doSomething() {}
                   protected void doSomethingElse() {}
               }
-              """),
+              """
+          ),
           java(
             """
               package org.example;
@@ -200,7 +206,8 @@ class ChangeSuperTypeTest implements RewriteTest {
                   protected void doSomething() {}
                   protected void doSomethingElse() {}
               }
-              """),
+              """
+          ),
           java(
             """
               package org.example;
@@ -249,7 +256,8 @@ class ChangeSuperTypeTest implements RewriteTest {
               public class OldParent {
                   public OldParent(String value) {}
               }
-              """),
+              """
+          ),
           java(
             """
               package org.example;
@@ -257,7 +265,8 @@ class ChangeSuperTypeTest implements RewriteTest {
               public class NewParent {
                   public NewParent(String value) {}
               }
-              """),
+              """
+          ),
           java(
             """
               package org.example;

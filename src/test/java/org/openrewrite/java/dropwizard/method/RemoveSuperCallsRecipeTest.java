@@ -65,7 +65,8 @@ class RemoveSuperCallsRecipeTest implements RewriteTest {
               class Parent {
                   void method() {}
               }
-              """),
+              """
+          ),
           java(
             """
               class Child extends Parent {
