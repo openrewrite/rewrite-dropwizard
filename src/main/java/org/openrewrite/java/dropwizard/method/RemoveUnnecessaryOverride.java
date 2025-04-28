@@ -21,18 +21,18 @@ import org.jspecify.annotations.Nullable;
 import org.openrewrite.*;
 import org.openrewrite.java.AnnotationMatcher;
 import org.openrewrite.java.JavaIsoVisitor;
+import org.openrewrite.java.RemoveAnnotationVisitor;
+import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.service.AnnotationService;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.TypeUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class RemoveUnnecessaryOverride extends Recipe {
 
     private static final AnnotationMatcher OVERRIDE_ANNOTATION = new AnnotationMatcher("@java.lang.Override");
+    private static final RemoveAnnotationVisitor removeAnnotationVisitor = new RemoveAnnotationVisitor(OVERRIDE_ANNOTATION);
 
     @Option(
             displayName = "Ignore methods in anonymous classes",
@@ -54,30 +54,25 @@ public class RemoveUnnecessaryOverride extends Recipe {
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
-        return new JavaIsoVisitor<ExecutionContext>() {
-            private Cursor getCursorToParentScope(Cursor cursor) {
-                return cursor.dropParentUntil(is -> is instanceof J.NewClass || is instanceof J.ClassDeclaration);
-            }
+        return Preconditions.check(
+                new UsesType<>("java.lang.Override", false),
+                new JavaIsoVisitor<ExecutionContext>() {
+                    private Cursor getCursorToParentScope(Cursor cursor) {
+                        return cursor.dropParentUntil(is -> is instanceof J.NewClass || is instanceof J.ClassDeclaration);
+                    }
 
-            @Override
-            public J.MethodDeclaration visitMethodDeclaration(J.MethodDeclaration method, ExecutionContext ctx) {
-                J.MethodDeclaration m = super.visitMethodDeclaration(method, ctx);
-
-                if (!m.isConstructor() &&
-                        service(AnnotationService.class).matches(getCursor(), OVERRIDE_ANNOTATION) &&
-                        !TypeUtils.isOverride(m.getMethodType()) &&
-                        !(Boolean.TRUE.equals(ignoreAnonymousClassMethods) &&
-                                getCursorToParentScope(getCursor()).getValue() instanceof J.NewClass)) {
-
-                    // Find and remove the @Override annotation
-                    List<J.Annotation> annotations = new ArrayList<>(m.getLeadingAnnotations());
-                    annotations.removeIf(OVERRIDE_ANNOTATION::matches);
-
-                    return maybeAutoFormat(method, m.withLeadingAnnotations(annotations), ctx);
-                }
-
-                return m;
-            }
-        };
+                    @Override
+                    public J.MethodDeclaration visitMethodDeclaration(J.MethodDeclaration method, ExecutionContext ctx) {
+                        J.MethodDeclaration m = super.visitMethodDeclaration(method, ctx);
+                        if (!m.isConstructor() &&
+                                service(AnnotationService.class).matches(getCursor(), OVERRIDE_ANNOTATION) &&
+                                !TypeUtils.isOverride(m.getMethodType()) &&
+                                !(Boolean.TRUE.equals(ignoreAnonymousClassMethods) &&
+                                        getCursorToParentScope(getCursor()).getValue() instanceof J.NewClass)) {
+                            return removeAnnotationVisitor.visitMethodDeclaration(m, ctx);
+                        }
+                        return m;
+                    }
+                });
     }
 }

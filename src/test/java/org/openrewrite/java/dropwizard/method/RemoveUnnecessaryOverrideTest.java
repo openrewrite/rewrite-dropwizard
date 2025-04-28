@@ -59,12 +59,11 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
               import org.springframework.boot.CommandLineRunner;
 
               public class RenderCommand implements CommandLineRunner {
-
                   public void configure(Subparser subparser) {
                       subparser.addArgument("-i", "--include-default")
-                              .action(Arguments.storeTrue())
-                              .dest("include-default")
-                              .help("Also render the template with the default name");
+                               .action(Arguments.storeTrue())
+                               .dest("include-default")
+                               .help("Also render the template with the default name");
                       subparser.addArgument("names").nargs("*");
                   }
               }
@@ -92,9 +91,7 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
               """,
             """
               class TestClass extends BaseClass {
-
-                  void nonExistentMethod() {
-                  }
+                  void nonExistentMethod() {}
               }
               """
           )
@@ -143,8 +140,7 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
             """
               class TestClass extends BaseClass {
                   @Deprecated
-                  void wrongMethod() {
-                  }
+                  void wrongMethod() {}
               }
               """
           )
@@ -180,9 +176,7 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
                   @Override
                   public void correctMethod() {}
 
-
-                  public void wrongMethod() {
-                  }
+                  public void wrongMethod() {}
 
                   @Override
                   public void anotherMethod() {}
@@ -246,9 +240,7 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
                   @Override
                   public void superMethod() {}
 
-
-                  public void nonExistentMethod() {
-                  }
+                  public void nonExistentMethod() {}
               }
               """
           )
@@ -270,7 +262,6 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
               """,
             """
               class TestClass {
-
                   public void execute() {
 
                   }
@@ -310,9 +301,7 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
               package ee.test;
 
               class TestClass {
-
-                  void baseMethod() {
-                  }
+                  void baseMethod() {}
               }
               """
           )
