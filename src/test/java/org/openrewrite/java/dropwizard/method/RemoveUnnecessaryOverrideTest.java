@@ -30,34 +30,6 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
         spec.recipes(new RemoveUnnecessaryOverride(false));
     }
 
-    @Test
-    void removesUnnecessaryOverride() {
-        rewriteRun(
-          java(
-            """
-              class BaseClass {
-                  void baseMethod() {}
-              }
-              """
-          ),
-          java(
-            """
-              class TestClass extends BaseClass {
-                  @Override
-                  void nonExistentMethod() {}
-              }
-              """,
-            """
-              class TestClass extends BaseClass {
-
-                  void nonExistentMethod() {
-                  }
-              }
-              """
-          )
-        );
-    }
-
     @DocumentExample
     @Test
     void configuresRenderCommandArguments() {
@@ -94,6 +66,34 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
                               .dest("include-default")
                               .help("Also render the template with the default name");
                       subparser.addArgument("names").nargs("*");
+                  }
+              }
+              """
+          )
+        );
+    }
+
+    @Test
+    void removesUnnecessaryOverride() {
+        rewriteRun(
+          java(
+            """
+              class BaseClass {
+                  void baseMethod() {}
+              }
+              """
+          ),
+          java(
+            """
+              class TestClass extends BaseClass {
+                  @Override
+                  void nonExistentMethod() {}
+              }
+              """,
+            """
+              class TestClass extends BaseClass {
+
+                  void nonExistentMethod() {
                   }
               }
               """

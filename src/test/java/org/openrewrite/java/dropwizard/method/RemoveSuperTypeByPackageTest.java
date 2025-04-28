@@ -16,6 +16,7 @@
 package org.openrewrite.java.dropwizard.method;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
@@ -28,6 +29,7 @@ class RemoveSuperTypeByPackageTest implements RewriteTest {
         spec.recipe(new RemoveSuperTypeByPackage("com.example"));
     }
 
+    @DocumentExample
     @Test
     void removesExtends() {
         rewriteRun(

@@ -34,6 +34,39 @@ class ChangeSuperTypeTest implements RewriteTest {
           .parser(JavaParser.fromJavaVersion().classpath("metrics-healthchecks", "spring-boot-actuator"));
     }
 
+    @DocumentExample
+    @Test
+    void handlesImportsCorrectly() {
+        rewriteRun(
+          spec ->
+            spec.recipes(
+              new ChangeSuperType(
+                "java.util.Vector", "java.util.ArrayList", false, false, false)),
+          java(
+            """
+              package org.example;
+
+              public class Child extends java.util.Vector<String> {
+                  public void someMethod() {
+                      this.add("test");
+                  }
+              }
+              """,
+            """
+              package org.example;
+
+              import java.util.ArrayList;
+
+              public class Child extends ArrayList {
+                  public void someMethod() {
+                      this.add("test");
+                  }
+              }
+              """
+          )
+        );
+    }
+
     @Test
     void changesSuperclass() {
         rewriteRun(
@@ -94,39 +127,6 @@ class ChangeSuperTypeTest implements RewriteTest {
               package org.example;
 
               public class Child extends DifferentParent {
-              }
-              """
-          )
-        );
-    }
-
-    @DocumentExample
-    @Test
-    void handlesImportsCorrectly() {
-        rewriteRun(
-          spec ->
-            spec.recipes(
-              new ChangeSuperType(
-                "java.util.Vector", "java.util.ArrayList", false, false, false)),
-          java(
-            """
-              package org.example;
-
-              public class Child extends java.util.Vector<String> {
-                  public void someMethod() {
-                      this.add("test");
-                  }
-              }
-              """,
-            """
-              package org.example;
-
-              import java.util.ArrayList;
-
-              public class Child extends ArrayList {
-                  public void someMethod() {
-                      this.add("test");
-                  }
               }
               """
           )
