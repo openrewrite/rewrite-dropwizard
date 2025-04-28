@@ -234,7 +234,6 @@ class ChangeSuperTypeTest implements RewriteTest {
                   public Child() {
                   }
 
-
                   protected void doSomething() {
                       System.out.println("child");
                   }
@@ -318,7 +317,6 @@ class ChangeSuperTypeTest implements RewriteTest {
               import org.springframework.boot.actuate.health.HealthIndicator;
 
               public class TemplateHealthCheck implements HealthIndicator {
-
 
                   protected Result check() throws Exception {
                       return Result.healthy();

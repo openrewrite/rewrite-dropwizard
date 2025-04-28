@@ -25,7 +25,7 @@ import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.java.JavaTemplate;
-import org.openrewrite.java.service.ImportService;
+import org.openrewrite.java.ShortenFullyQualifiedTypeReferences;
 import org.openrewrite.java.tree.Expression;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
@@ -91,26 +91,22 @@ public class ChangeSuperType extends Recipe {
                 maybeAddImport(newSuperclass);
                 maybeRemoveImport(targetClass);
 
-                JavaTemplate extendsTemplate =
-                        JavaTemplate.builder("#{}" + typeParams)
-                                .javaParser(JavaParser.fromJavaVersion().classpath(JavaParser.runtimeClasspath()))
-                                .imports(newSuperclass)
-                                .contextSensitive()
-                                .build();
+                JavaTemplate extendsTemplate = JavaTemplate.builder(newSuperclass + typeParams)
+                        // TODO runtimeClasspath() might be different in other recipe run environments
+                        .javaParser(JavaParser.fromJavaVersion().classpath(JavaParser.runtimeClasspath()))
+                        .imports(newSuperclass)
+                        .contextSensitive()
+                        .build();
 
                 JavaType.FullyQualified newSuperType;
 
                 if (TRUE.equals(convertToInterface)) {
-                    cd =
-                            extendsTemplate.apply(
-                                    updateCursor(cd), cd.getCoordinates().addImplementsClause(), newSuperclass);
+                    cd = extendsTemplate.apply(updateCursor(cd), cd.getCoordinates().addImplementsClause());
                     cd = cd.withExtends(null);
                     TypeTree lastInterface = cd.getImplements().get(cd.getImplements().size() - 1);
                     newSuperType = asFullyQualified(lastInterface.getType());
                 } else {
-                    cd =
-                            extendsTemplate.apply(
-                                    updateCursor(cd), cd.getCoordinates().replaceExtendsClause(), newSuperclass);
+                    cd = extendsTemplate.apply(updateCursor(cd), cd.getCoordinates().replaceExtendsClause());
                     newSuperType = asFullyQualified(cd.getExtends().getType());
                 }
 
@@ -120,7 +116,7 @@ public class ChangeSuperType extends Recipe {
                 }
 
                 cd = cd.withType(((JavaType.Class) cd.getType()).withSupertype(newSuperType));
-
+                doAfterVisit(ShortenFullyQualifiedTypeReferences.modifyOnly(cd));
                 doAfterVisit(new UpdateMethodTypesVisitor(cd.getType()));
 
                 if (TRUE.equals(removeUnnecessaryOverrides)) {
@@ -128,8 +124,6 @@ public class ChangeSuperType extends Recipe {
                 }
 
                 doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
-                doAfterVisit(service(ImportService.class).shortenFullyQualifiedTypeReferencesIn(cd));
-
                 return cd;
             }
 
