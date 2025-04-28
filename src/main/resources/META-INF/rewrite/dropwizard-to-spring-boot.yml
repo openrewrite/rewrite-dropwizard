@@ -145,12 +145,12 @@ recipeList:
   - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "org.springframework.transaction.annotation.Transactional"
       targetSupertypeName: "io.dropwizard.hibernate.AbstractDAO"
-  - org.openrewrite.java.dropwizard.method.ChangeSuperType:
-      targetClass: "io.dropwizard.hibernate.AbstractDAO"
-      newSuperclass: "ee.taltech.example.AbstractJpaDAO" # Custom class; from helper library
-      convertToInterface: false
-      keepTypeParameters: true
-      removeUnnecessaryOverrides: true
+#  - org.openrewrite.java.dropwizard.method.ChangeSuperType:
+#      targetClass: "io.dropwizard.hibernate.AbstractDAO"
+#      newSuperclass: "ee.taltech.example.AbstractJpaDAO" # Custom class; from helper library
+#      convertToInterface: false
+#      keepTypeParameters: true
+#      removeUnnecessaryOverrides: true
 ---
 # Test migration
 type: specs.openrewrite.org/v1beta/recipe
