@@ -17,9 +17,7 @@ package org.openrewrite.java.dropwizard.method;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.jspecify.annotations.Nullable;
 import org.openrewrite.*;
-import org.openrewrite.internal.ListUtils;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
@@ -55,13 +53,8 @@ public class RemoveSuperTypeByType extends Recipe {
                     public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
                         J.ClassDeclaration cd = super.visitClassDeclaration(classDecl, ctx);
 
-                        if (cd.getExtends() != null && shouldRemoveType(cd.getExtends().getType())) {
+                        if (cd.getExtends() != null && isOfClassType(cd.getExtends().getType(), typeToRemove)) {
                             cd = cd.withExtends(null);
-                        }
-                        if (cd.getImplements() != null) {
-                            cd = cd.withImplements(ListUtils.filter(cd.getImplements(), impl -> !shouldRemoveType(impl.getType())));
-                        }
-                        if (cd != classDecl) {
                             JavaType.ShallowClass type = (JavaType.ShallowClass) JavaType.buildType("java.lang.Object");
                             doAfterVisit(new UpdateMethodTypesVisitor(type));
                             doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
@@ -70,9 +63,6 @@ public class RemoveSuperTypeByType extends Recipe {
                         return cd;
                     }
 
-                    private boolean shouldRemoveType(@Nullable JavaType type) {
-                        return isOfClassType(type, typeToRemove);
-                    }
                 }
         );
     }
