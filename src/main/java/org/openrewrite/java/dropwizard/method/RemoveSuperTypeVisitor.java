@@ -15,61 +15,35 @@
  */
 package org.openrewrite.java.dropwizard.method;
 
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.internal.ListUtils;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
-import org.openrewrite.java.tree.TypeTree;
-import org.openrewrite.java.tree.TypeUtils;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.nonNull;
 
 public abstract class RemoveSuperTypeVisitor extends JavaIsoVisitor<ExecutionContext> {
 
-    protected abstract boolean shouldRemoveType(JavaType type);
+    protected abstract boolean shouldRemoveType(@Nullable JavaType type);
 
     @Override
-    public J.ClassDeclaration visitClassDeclaration(
-            J.ClassDeclaration classDecl, ExecutionContext ctx) {
+    public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
         J.ClassDeclaration cd = super.visitClassDeclaration(classDecl, ctx);
 
-        JavaType.FullyQualified fqn =
-                TypeUtils.asFullyQualified(JavaType.buildType("java.lang.Object"));
-        boolean modified = false;
-
-        // Handle extends clause
-        if (nonNull(cd.getExtends()) &&
-                nonNull(cd.getExtends().getType()) &&
-                shouldRemoveType(cd.getExtends().getType())) {
-            modified = true;
+        if (cd.getExtends() != null && shouldRemoveType(cd.getExtends().getType())) {
             cd = cd.withExtends(null);
         }
+        if (cd.getImplements() != null) {
+            cd = cd.withImplements(ListUtils.filter(cd.getImplements(), impl -> !shouldRemoveType(impl.getType())));
 
-        // Handle implements clause
-        if (nonNull(cd.getImplements())) {
-            List<TypeTree> filteredImplements =
-                    cd.getImplements().stream()
-                            .filter(impl -> !shouldRemoveType(impl.getType()))
-                            .collect(Collectors.toList());
-
-            if (filteredImplements.size() < cd.getImplements().size()) {
-                modified = true;
-                cd = cd.withImplements(filteredImplements);
-            }
         }
-
-        if (modified) {
-            runCleanup(fqn);
+        if (cd != classDecl) {
+            JavaType.ShallowClass type = (JavaType.ShallowClass) JavaType.buildType("java.lang.Object");
+            doAfterVisit(new UpdateMethodTypesVisitor(type));
+            doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
         }
 
         return cd;
     }
 
-    private void runCleanup(JavaType.FullyQualified fqn) {
-        doAfterVisit(new UpdateMethodTypesVisitor(fqn));
-        doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
-    }
 }

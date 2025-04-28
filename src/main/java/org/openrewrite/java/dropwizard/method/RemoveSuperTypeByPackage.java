@@ -17,6 +17,7 @@ package org.openrewrite.java.dropwizard.method;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.*;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.JavaType;
@@ -46,13 +47,9 @@ public class RemoveSuperTypeByPackage extends Recipe {
                 new UsesType<>(packageToMatch + ".*", false),
                 new RemoveSuperTypeVisitor() {
                     @Override
-                    protected boolean shouldRemoveType(JavaType type) {
-                        if (type instanceof JavaType.FullyQualified) {
-                            JavaType.FullyQualified fqType = (JavaType.FullyQualified) type;
-                            String typePackage = fqType.getPackageName();
-                            return typePackage != null && typePackage.startsWith(packageToMatch);
-                        }
-                        return false;
+                    protected boolean shouldRemoveType(@Nullable JavaType type) {
+                        return type instanceof JavaType.FullyQualified &&
+                                ((JavaType.FullyQualified) type).getPackageName().startsWith(packageToMatch);
                     }
                 }
         );
