@@ -124,7 +124,7 @@ public class ChangeSuperType extends Recipe {
                 doAfterVisit(new UpdateMethodTypesVisitor(cd.getType()));
 
                 if (TRUE.equals(removeUnnecessaryOverrides)) {
-                    doAfterVisit(new RemoveUnnecessaryOverride.RemoveUnnecessaryOverrideVisitor());
+                    doAfterVisit(new RemoveUnnecessaryOverride(false).getVisitor());
                 }
 
                 doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
