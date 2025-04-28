@@ -107,3 +107,124 @@ examples:
           }
       }
     language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.java.dropwizard.method.ChangeSuperType
+examples:
+- description: ''
+  parameters:
+  - java.util.Vector
+  - java.util.ArrayList
+  - 'false'
+  - 'false'
+  - 'false'
+  sources:
+  - before: |
+      package org.example;
+
+      public class Child extends java.util.Vector<String> {
+          public void someMethod() {
+              this.add("test");
+          }
+      }
+    after: |
+      package org.example;
+
+      import java.util.ArrayList;
+
+      public class Child extends ArrayList {
+          public void someMethod() {
+              this.add("test");
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.java.dropwizard.method.RemoveSuperTypeByType
+examples:
+- description: ''
+  parameters:
+  - com.example.BaseClass
+  sources:
+  - before: |
+      package com.example;
+
+      class BaseClass {
+          protected void baseMethod() {}
+      }
+    language: java
+  - before: |
+      package com.example;
+
+      class ChildClass extends BaseClass {
+          void someMethod() {
+              baseMethod();
+          }
+      }
+    after: |
+      package com.example;
+
+      class ChildClass {
+          void someMethod() {
+              baseMethod();
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.java.dropwizard.method.RemoveUnnecessaryOverride
+examples:
+- description: ''
+  parameters:
+  - 'false'
+  sources:
+  - before: |
+      import net.sourceforge.argparse4j.impl.Arguments;
+      import net.sourceforge.argparse4j.inf.Subparser;
+      import org.springframework.boot.CommandLineRunner;
+
+      public class RenderCommand implements CommandLineRunner {
+          @Override
+          public void configure(Subparser subparser) {
+              subparser.addArgument("-i", "--include-default")
+                       .action(Arguments.storeTrue())
+                       .dest("include-default")
+                       .help("Also render the template with the default name");
+              subparser.addArgument("names").nargs("*");
+          }
+      }
+    after: |
+      import net.sourceforge.argparse4j.impl.Arguments;
+      import net.sourceforge.argparse4j.inf.Subparser;
+      import org.springframework.boot.CommandLineRunner;
+
+      public class RenderCommand implements CommandLineRunner {
+          public void configure(Subparser subparser) {
+              subparser.addArgument("-i", "--include-default")
+                       .action(Arguments.storeTrue())
+                       .dest("include-default")
+                       .help("Also render the template with the default name");
+              subparser.addArgument("names").nargs("*");
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.java.dropwizard.method.RemoveUnnecessarySuperCalls
+examples:
+- description: ''
+  sources:
+  - before: |
+      class A {
+          public String toString() {
+              super.toString();
+              return "hello";
+          }
+      }
+    after: |
+      class A {
+          public String toString() {
+              return "hello";
+          }
+      }
+    language: java
