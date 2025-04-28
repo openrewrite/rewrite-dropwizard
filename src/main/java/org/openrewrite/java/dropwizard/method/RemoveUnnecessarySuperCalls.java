@@ -41,25 +41,17 @@ public class RemoveUnnecessarySuperCalls extends Recipe {
     }
 
     public static class RemoveUnnecessarySuperCallsVisitor extends JavaIsoVisitor<ExecutionContext> {
-        private static final String SUPER = "super";
-
         @Override
-        public J.@Nullable MethodInvocation visitMethodInvocation(
-                J.MethodInvocation method, ExecutionContext ctx) {
+        public J.@Nullable MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext ctx) {
             J.MethodInvocation mi = super.visitMethodInvocation(method, ctx);
 
             if (isSuperCall(mi)) {
                 J.ClassDeclaration classDecl = getCursor().firstEnclosing(J.ClassDeclaration.class);
                 if (classDecl != null) {
-                    boolean hasRealParent = hasRealSuperclass(classDecl);
-
-                    if (!hasRealParent) {
+                    if (!hasRealSuperclass(classDecl)) {
                         return null;
                     }
-
-                    boolean isOverride =
-                            mi.getMethodType() != null && TypeUtils.isOverride(mi.getMethodType());
-                    if (!isOverride) {
+                    if (!TypeUtils.isOverride(mi.getMethodType())) {
                         return null;
                     }
                 }
@@ -73,10 +65,10 @@ public class RemoveUnnecessarySuperCalls extends Recipe {
         private boolean isSuperCall(J.MethodInvocation mi) {
             // e.g. super.method()
             if (mi.getSelect() instanceof J.Identifier) {
-                return SUPER.equals(((J.Identifier) mi.getSelect()).getSimpleName());
+                return "super".equals(((J.Identifier) mi.getSelect()).getSimpleName());
             }
             // e.g. constructor call "super(...)"
-            return mi.getSelect() == null && SUPER.equals(mi.getSimpleName());
+            return mi.getSelect() == null && "super".equals(mi.getSimpleName());
         }
 
         /**
@@ -88,11 +80,6 @@ public class RemoveUnnecessarySuperCalls extends Recipe {
             }
 
             // If we can't resolve types, we might choose to be safe and not remove
-            if (classDecl.getType() == null) {
-                return true;
-            }
-
-            // Retrieve supertype
             JavaType.FullyQualified fqClassType = TypeUtils.asFullyQualified(classDecl.getType());
             if (fqClassType == null) {
                 return true;

@@ -17,20 +17,16 @@ package org.openrewrite.java.dropwizard.method;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
-import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
-import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
 
-class RemoveSuperCallsRecipeTest implements RewriteTest {
+class RemoveUnnecessarySuperCallsTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipes(new RemoveUnnecessarySuperCalls())
-          .typeValidationOptions(TypeValidation.builder().methodInvocations(false).build())
-          .parser(JavaParser.fromJavaVersion().logCompilationWarningsAndErrors(false));
+        spec.recipes(new RemoveUnnecessarySuperCalls());
     }
 
     @DocumentExample
@@ -40,16 +36,16 @@ class RemoveSuperCallsRecipeTest implements RewriteTest {
           java(
             """
               class A {
-                  void method() {
-                      super.method();
-                      System.out.println("hello");
+                  public String toString() {
+                      super.toString();
+                      return "hello";
                   }
               }
               """,
             """
               class A {
-                  void method() {
-                      System.out.println("hello");
+                  public String toString() {
+                      return "hello";
                   }
               }
               """
