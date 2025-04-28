@@ -202,8 +202,6 @@ recipeList:
   - org.openrewrite.java.RemoveUnusedImports
   - org.openrewrite.java.dropwizard.method.RemoveUnnecessaryOverride:
       ignoreAnonymousClassMethods: false
-  - org.openrewrite.java.dropwizard.method.RemoveSuperTypeByPackage:
-      packageToMatch: "io.dropwizard" # General clean-up - if we have forgotten something
   - org.openrewrite.maven.OrderPomElements
   - org.openrewrite.maven.RemoveRedundantDependencyVersions
 ---

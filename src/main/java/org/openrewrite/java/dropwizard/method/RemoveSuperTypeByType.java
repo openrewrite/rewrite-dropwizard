@@ -19,7 +19,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.jspecify.annotations.Nullable;
 import org.openrewrite.*;
+import org.openrewrite.internal.ListUtils;
+import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.search.UsesType;
+import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 
 import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
@@ -47,9 +50,27 @@ public class RemoveSuperTypeByType extends Recipe {
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
                 new UsesType<>(typeToRemove, false),
-                new RemoveSuperTypeVisitor() {
+                new JavaIsoVisitor<ExecutionContext>() {
                     @Override
-                    protected boolean shouldRemoveType(@Nullable JavaType type) {
+                    public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
+                        J.ClassDeclaration cd = super.visitClassDeclaration(classDecl, ctx);
+
+                        if (cd.getExtends() != null && shouldRemoveType(cd.getExtends().getType())) {
+                            cd = cd.withExtends(null);
+                        }
+                        if (cd.getImplements() != null) {
+                            cd = cd.withImplements(ListUtils.filter(cd.getImplements(), impl -> !shouldRemoveType(impl.getType())));
+                        }
+                        if (cd != classDecl) {
+                            JavaType.ShallowClass type = (JavaType.ShallowClass) JavaType.buildType("java.lang.Object");
+                            doAfterVisit(new UpdateMethodTypesVisitor(type));
+                            doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
+                        }
+
+                        return cd;
+                    }
+
+                    private boolean shouldRemoveType(@Nullable JavaType type) {
                         return isOfClassType(type, typeToRemove);
                     }
                 }
