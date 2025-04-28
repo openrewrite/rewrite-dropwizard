@@ -1,4 +1,5 @@
-<p align="center">
+                                                                                                    <p align="center">
+
   <a href="https://docs.openrewrite.org">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://github.com/openrewrite/rewrite/raw/main/doc/logo-oss-dark.svg">
@@ -23,10 +24,13 @@
 
 ### What is this?
 
-This project implements a [Rewrite module](https://github.com/openrewrite/rewrite) that applies best practices and migrations for those projects using the [Dropwizard framework](https://dropwizard.io/).
+This project implements a [Rewrite module](https://github.com/openrewrite/rewrite) that applies best practices and
+migrations for those projects using the [Dropwizard framework](https://dropwizard.io/).
 
 Browse [a selection of recipes available through this module in the recipe catalog](https://docs.openrewrite.org/recipes/java/dropwizard).
 
 ## Contributing
 
-We appreciate all types of contributions. See the [contributing guide](https://github.com/openrewrite/.github/blob/main/CONTRIBUTING.md) for detailed instructions on how to get started.
+We appreciate all types of contributions. See
+the [contributing guide](https://github.com/openrewrite/.github/blob/main/CONTRIBUTING.md) for detailed instructions on
+how to get started.
