@@ -17,6 +17,9 @@ dependencies {
     implementation("org.openrewrite:rewrite-properties")
     implementation("org.openrewrite:rewrite-yaml")
 
+    implementation("org.openrewrite.recipe:rewrite-static-analysis:${rewriteVersion}")
+    implementation("org.openrewrite.recipe:rewrite-testing-frameworks:${rewriteVersion}")
+
     runtimeOnly("org.openrewrite:rewrite-java-17")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:latest.release")
@@ -31,7 +34,5 @@ dependencies {
     testRuntimeOnly("javax.persistence:javax.persistence-api:2.2")
     testRuntimeOnly("org.projectlombok:lombok:1.18.+")
     testRuntimeOnly("net.sourceforge.argparse4j:argparse4j:0.9.0")
-}
-
-recipeDependencies {
+    testRuntimeOnly("io.dropwizard:dropwizard-testing:1.3.29")
 }
