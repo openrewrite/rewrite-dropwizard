@@ -31,6 +31,10 @@ dependencies {
     testRuntimeOnly("javax.persistence:javax.persistence-api:2.2")
     testRuntimeOnly("org.projectlombok:lombok:1.18.+")
     testRuntimeOnly("net.sourceforge.argparse4j:argparse4j:0.9.0")
+    testRuntimeOnly("io.dropwizard:dropwizard-testing:1.3.29")
+
+    implementation("org.openrewrite.recipe:rewrite-testing-frameworks:latest.release")
+    implementation("org.openrewrite.recipe:rewrite-static-analysis:latest.release")
 }
 
 recipeDependencies {

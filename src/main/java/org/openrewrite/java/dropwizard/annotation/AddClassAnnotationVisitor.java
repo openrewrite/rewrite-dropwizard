@@ -33,9 +33,9 @@ import static org.openrewrite.java.JavaParser.runtimeClasspath;
 public abstract class AddClassAnnotationVisitor extends JavaIsoVisitor<ExecutionContext> {
 
     private final String annotationText;
-    private final boolean annotateSubclasses;
+    private final Boolean annotateSubclasses;
 
-    public AddClassAnnotationVisitor(String annotationText, boolean annotateSubclasses) {
+    public AddClassAnnotationVisitor(String annotationText, Boolean annotateSubclasses) {
         this.annotationText = annotationText;
         this.annotateSubclasses = annotateSubclasses;
     }
