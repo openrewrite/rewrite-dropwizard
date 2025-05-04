@@ -113,10 +113,7 @@ public class RemoveVariablesByPackage extends Recipe {
             }
 
             private boolean isClassScope() {
-                return getCursor().dropParentUntil(J.class::isInstance).getValue()
-                        instanceof J.ClassDeclaration;
-            }
-
+                return getCursor().dropParentUntil(J.class::isInstance).getValue() instanceof J.ClassDeclaration;
             private boolean isMethodParameter() {
                 return getCursor().dropParentUntil(J.class::isInstance).getValue()
                         instanceof J.MethodDeclaration;
