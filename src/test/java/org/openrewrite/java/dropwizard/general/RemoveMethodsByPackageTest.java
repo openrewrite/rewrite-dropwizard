@@ -16,6 +16,7 @@
 package org.openrewrite.java.dropwizard.general;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -38,6 +39,7 @@ class RemoveMethodsByPackageTest implements RewriteTest {
                   """));
     }
 
+    @DocumentExample
     @Test
     void removesMethodWithDeprecatedReturnType() {
         rewriteRun(
@@ -66,7 +68,8 @@ class RemoveMethodsByPackageTest implements RewriteTest {
                       return "test";
                   }
               }
-              """));
+              """
+          ));
     }
 
     @Test
@@ -94,7 +97,8 @@ class RemoveMethodsByPackageTest implements RewriteTest {
                   public void methodToKeep(String param) {
                   }
               }
-              """));
+              """
+          ));
     }
 
     @Test
@@ -112,6 +116,7 @@ class RemoveMethodsByPackageTest implements RewriteTest {
                   public void method2(int param) {
                   }
               }
-              """));
+              """
+          ));
     }
 }

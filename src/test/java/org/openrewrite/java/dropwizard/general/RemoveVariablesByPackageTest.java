@@ -16,6 +16,7 @@
 package org.openrewrite.java.dropwizard.general;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -29,6 +30,7 @@ class RemoveVariablesByPackageTest implements RewriteTest {
         spec.recipe(new RemoveVariablesByPackage("java.lang", false));
     }
 
+    @DocumentExample
     @Test
     void removesMatchingClassVariables() {
         rewriteRun(
@@ -54,7 +56,8 @@ class RemoveVariablesByPackageTest implements RewriteTest {
                   public void method() {
                   }
               }
-              """));
+              """
+          ));
     }
 
     @Test
@@ -73,7 +76,8 @@ class RemoveVariablesByPackageTest implements RewriteTest {
                       String localVar = "stays";
                   }
               }
-              """));
+              """
+          ));
     }
 
     @Test
@@ -99,7 +103,8 @@ class RemoveVariablesByPackageTest implements RewriteTest {
                   public void method(String param1, int param2) {
                   }
               }
-              """));
+              """
+          ));
     }
 
     @Test
@@ -118,7 +123,8 @@ class RemoveVariablesByPackageTest implements RewriteTest {
 
               class TestClass {
               }
-              """));
+              """
+          ));
     }
 
     @Test
@@ -144,7 +150,8 @@ class RemoveVariablesByPackageTest implements RewriteTest {
               class TestClass {
                   private String otherVar = "stays";
               }
-              """));
+              """
+          ));
     }
 
 }
