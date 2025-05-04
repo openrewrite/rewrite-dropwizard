@@ -75,8 +75,8 @@ public class RemoveVariablesByPackage extends Recipe {
                     if (var.getInitializer() instanceof J.MethodInvocation) {
                         JavaType.Method methodType =
                                 ((J.MethodInvocation) var.getInitializer()).getMethodType();
-                        if (methodType != null
-                                && methodType.getDeclaringType().getFullyQualifiedName().contains(packageFilter)) {
+                        if (methodType != null &&
+                                methodType.getDeclaringType().getFullyQualifiedName().contains(packageFilter)) {
                             doAfterVisit(new RemoveImportsVisitor());
                             return null;
                         }
@@ -128,8 +128,8 @@ public class RemoveVariablesByPackage extends Recipe {
     static class RemoveImportsVisitor extends JavaIsoVisitor<ExecutionContext> {
 
         @Override
-        public J.Import visitImport(J.Import _import, ExecutionContext context) {
-            J.Import imp = super.visitImport(_import, context);
+        public J.Import visitImport(J.Import _import, ExecutionContext ctx) {
+            J.Import imp = super.visitImport(_import, ctx);
             maybeRemoveImport(imp.getQualid().toString());
             return imp;
         }
