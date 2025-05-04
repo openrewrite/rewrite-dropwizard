@@ -29,14 +29,12 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class RemoveAndExcludeDependency extends Recipe {
 
-    @Option(
-            displayName = "Group ID to remove",
+    @Option(displayName = "Group ID to remove",
             description = "The first part of a dependency coordinate to remove 'org.mockito'",
             example = "org.mockito")
     String groupId;
 
-    @Option(
-            displayName = "Artifact ID to remove",
+    @Option(displayName = "Artifact ID to remove",
             description = "The second part of a dependency coordinate to remove 'mockito-core'",
             example = "mockito-core")
     String artifactId;
