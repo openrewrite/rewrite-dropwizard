@@ -44,22 +44,6 @@ recipeList:
       value: "8080"
       delimiter: "="
   - org.openrewrite.properties.AddProperty:
-      property: server.shutdown
-      value: "graceful"
-      delimiter: "="
-  - org.openrewrite.properties.AddProperty:
-      property: spring.main.allow-circular-references
-      value: "true"
-      delimiter: "="
-  - org.openrewrite.properties.AddProperty:
-      property: management.endpoints.web.base-path
-      value: "/"
-      delimiter: "="
-  - org.openrewrite.properties.AddProperty:
-      property: management.server.base-path
-      value: "/management"
-      delimiter: "="
-  - org.openrewrite.properties.AddProperty:
       property: management.server.port
       value: "8081"
       delimiter: "="
@@ -70,20 +54,8 @@ displayName: Add Spring Boot Actuator Configuration
 description: Configures Spring Boot Actuator endpoints and health checks in application.properties.
 recipeList:
   - org.openrewrite.properties.AddProperty:
-      property: management.endpoint.health.show-details
-      value: ALWAYS
-      delimiter: "="
-  - org.openrewrite.properties.AddProperty:
       property: management.endpoints.web.exposure.include
       value: "*"
-      delimiter: "="
-  - org.openrewrite.properties.AddProperty:
-      property: management.endpoint.health.show-components
-      value: ALWAYS
-      delimiter: "="
-  - org.openrewrite.properties.AddProperty:
-      property: management.endpoint.health.probes.enabled
-      value: "true"
       delimiter: "="
   - org.openrewrite.properties.AddProperty:
       property: management.health.livenessstate.enabled
@@ -110,27 +82,11 @@ recipeList:
       delimiter: "="
   - org.openrewrite.properties.AddProperty:
       property: spring.datasource.username
-      value: org.h2.Driver
+      value: "sa"
       delimiter: "="
   - org.openrewrite.properties.AddProperty:
       property: spring.datasource.password
-      value: org.h2.Driver
-      delimiter: "="
-  - org.openrewrite.properties.AddProperty:
-      property: spring.jpa.hibernate.ddl-auto
-      value: validate
-      delimiter: "="
-  - org.openrewrite.properties.AddProperty:
-      property: spring.jpa.show-sql
-      value: "true"
-      delimiter: "="
-  - org.openrewrite.properties.AddProperty:
-      property: spring.jpa.properties.hibernate.dialect
-      value: org.hibernate.dialect.H2Dialect
-      delimiter: "="
-  - org.openrewrite.properties.AddProperty:
-      property: spring.jpa.hibernate.naming.physical-strategy
-      value: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      value: ""
       delimiter: "="
 ---
 type: specs.openrewrite.org/v1beta/recipe
