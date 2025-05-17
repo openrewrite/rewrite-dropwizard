@@ -33,6 +33,8 @@ name: org.openrewrite.java.dropwizard.CoreSetup
 displayName: Create Spring Boot Application Entry Point
 description: Creates the main Spring Boot application class.
 recipeList:
+  - org.openrewrite.java.dropwizard.AddMissingApplicationProperties
+  - org.openrewrite.java.dropwizard.AddCoreExampleProperties
   - org.openrewrite.maven.AddDependency:
       groupId: org.projectlombok
       artifactId: lombok
@@ -46,11 +48,37 @@ recipeList:
       scope: import
       type: pom
       addToRootPom: true
+  - org.openrewrite.maven.RemoveManagedDependency:
+      groupId: io.dropwizard
+      artifactId: dropwizard-bom
+  - org.openrewrite.maven.AddDependency:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter
+      version: "2.7.18"
+      onlyIfAbsent: true
+  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      groupId: io.dropwizard
+      artifactId: dropwizard-core
   - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "org.springframework.boot.SpringBootApplication"
       targetSupertypeName: "io.dropwizard.Application"
   - org.openrewrite.java.dropwizard.method.RemoveSuperTypeByType:
       typeToRemove: io.dropwizard.Application
+  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      groupId: io.dropwizard
+      artifactId: dropwizard-assets
+  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      groupId: io.dropwizard
+      artifactId: dropwizard-http2
+  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      groupId: io.dropwizard
+      artifactId: dropwizard-migrations
+  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      groupId: io.dropwizard
+      artifactId: dropwizard-views-freemarker
+  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      groupId: io.dropwizard
+      artifactId: dropwizard-views-mustache
 
 ---
 type: specs.openrewrite.org/v1beta/recipe
@@ -63,6 +91,7 @@ recipeList:
       artifactId: spring-boot-starter-actuator
       version: "2.7.18"
       onlyIfAbsent: true
+  - org.openrewrite.java.dropwizard.AddActuatorConfiguration
   - org.openrewrite.java.dropwizard.annotation.micrometer.CodahaleTimedToMicrometerTimed
 
 ---
@@ -124,9 +153,25 @@ recipeList:
       artifactId: spring-boot-starter-jersey
       version: "2.7.18"
       onlyIfAbsent: true
+  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      groupId: io.dropwizard
+      artifactId: dropwizard-jersey
+  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      groupId: org.glassfish.jersey.test-framework.providers
+      artifactId: jersey-test-framework-provider-inmemory
+  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      groupId: org.glassfish.jersey.test-framework.providers
+      artifactId: jersey-test-framework-provider-grizzly2
   - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfAnnotationExists:
       annotationToAdd: "org.springframework.stereotype.Component"
       targetAnnotationClassName: "javax.ws.rs.Path"
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: io.dropwizard.jersey.params.LongParam
+      newFullyQualifiedTypeName: java.lang.Long
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: io.dropwizard.jersey.params.DateTimeParam
+      newFullyQualifiedTypeName: java.time.Instant
+  - org.openrewrite.java.dropwizard.AddJerseyConfiguration
 ---
 # Hibernate Migration
 type: specs.openrewrite.org/v1beta/recipe
@@ -139,15 +184,19 @@ recipeList:
       artifactId: spring-boot-starter-data-jpa
       version: "2.7.18"
       onlyIfAbsent: true
+  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      groupId: io.dropwizard
+      artifactId: dropwizard-hibernate
   - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "org.springframework.stereotype.Repository"
       targetSupertypeName: "io.dropwizard.hibernate.AbstractDAO"
   - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
       annotationToAdd: "org.springframework.transaction.annotation.Transactional"
       targetSupertypeName: "io.dropwizard.hibernate.AbstractDAO"
+  - org.openrewrite.java.dropwizard.AddHibernateConfiguration
 #  - org.openrewrite.java.dropwizard.method.ChangeSuperType:
 #      targetClass: "io.dropwizard.hibernate.AbstractDAO"
-#      newSuperclass: "ee.taltech.example.AbstractJpaDAO" # Custom class; from helper library
+#      newSuperclass: "org.openrewrite.java.dropwizard.example.AbstractJpaDAO" # Custom class; from helper library
 #      convertToInterface: false
 #      keepTypeParameters: true
 #      removeUnnecessaryOverrides: true
@@ -164,6 +213,11 @@ recipeList:
       version: "2.7.18"
       onlyIfAbsent: true
       scope: test
+  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      groupId: io.dropwizard
+      artifactId: dropwizard-testing
+  - org.openrewrite.java.testing.junit5.JUnit4to5Migration
+
 ---
 # Security migration
 type: specs.openrewrite.org/v1beta/recipe
@@ -176,6 +230,10 @@ recipeList:
       artifactId: spring-boot-starter-security
       version: "2.7.18"
       onlyIfAbsent: true
+  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      groupId: io.dropwizard
+      artifactId: dropwizard-auth
+
 ---
 # Tasks, Commands
 type: specs.openrewrite.org/v1beta/recipe
@@ -202,6 +260,14 @@ recipeList:
   - org.openrewrite.java.RemoveUnusedImports
   - org.openrewrite.java.dropwizard.method.RemoveUnnecessaryOverride:
       ignoreAnonymousClassMethods: false
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: io.dropwizard.Duration
+      newFullyQualifiedTypeName: java.lang.Duration
+  - org.openrewrite.java.dropwizard.general.RemoveVariablesByPackage:
+      packageFilter: "io.dropwizard"
+      removeOnlyClassScope: false
+  - org.openrewrite.java.dropwizard.general.RemoveMethodsByPackage:
+      packageFilter: "io.dropwizard"
   - org.openrewrite.maven.OrderPomElements
   - org.openrewrite.maven.RemoveRedundantDependencyVersions
 ---

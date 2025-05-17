@@ -1,0 +1,112 @@
+#
+# Copyright 2025 the original author or authors.
+# <p>
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# <p>
+# https://www.apache.org/licenses/LICENSE-2.0
+# <p>
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.AddMissingApplicationProperties
+displayName: Add application.properties if missing
+description: This recipe creates an application.properties file in the resources folder if it does not exist.
+recipeList:
+  - org.openrewrite.properties.CreatePropertiesFile:
+      relativeFileName: src/main/resources/application.properties
+      fileContents: ""
+      overwriteExisting: false
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.AddCoreExampleProperties
+displayName: Add Core Example Properties
+description: Adds core example properties to the application.properties file.
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: "**/src/main/resources/application.properties"
+recipeList:
+  - org.openrewrite.properties.AddProperty:
+      property: spring.application.name
+      value: "my-application"
+      delimiter: "="
+  - org.openrewrite.properties.AddProperty:
+      property: server.port
+      value: "8080"
+      delimiter: "="
+  - org.openrewrite.properties.AddProperty:
+      property: management.server.port
+      value: "8081"
+      delimiter: "="
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.AddActuatorConfiguration
+displayName: Add Spring Boot Actuator Configuration
+description: Configures Spring Boot Actuator endpoints and health checks in application.properties.
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: "**/src/main/resources/application.properties"
+recipeList:
+  - org.openrewrite.properties.AddProperty:
+      property: management.endpoints.web.exposure.include
+      value: "*"
+      delimiter: "="
+  - org.openrewrite.properties.AddProperty:
+      property: management.health.livenessstate.enabled
+      value: "true"
+      delimiter: "="
+  - org.openrewrite.properties.AddProperty:
+      property: management.health.readinessstate.enabled
+      value: "true"
+      delimiter: "="
+---
+# AddHibernateConfiguration Recipe
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.AddHibernateConfiguration
+displayName: Add Hibernate Configuration
+description: Configures Spring Boot Hibernate and JPA settings in application.properties.
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: "**/src/main/resources/application.properties"
+recipeList:
+  - org.openrewrite.properties.AddProperty:
+      property: spring.datasource.url
+      value: jdbc:h2:mem:mydb
+      delimiter: "="
+  - org.openrewrite.properties.AddProperty:
+      property: spring.datasource.driverClassName
+      value: org.h2.Driver
+      delimiter: "="
+  - org.openrewrite.properties.AddProperty:
+      property: spring.datasource.username
+      value: "sa"
+      delimiter: "="
+  - org.openrewrite.properties.AddProperty:
+      property: spring.datasource.password
+      value: ""
+      delimiter: "="
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.AddJerseyConfiguration
+displayName: Add Jersey Configuration
+description: Configures essential Jersey properties in Spring Boot that complement the JerseyConfig class.
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: "**/src/main/resources/application.properties"
+recipeList:
+  - org.openrewrite.properties.AddProperty:
+      property: spring.jersey.type
+      value: "servlet"
+      delimiter: "="
+  - org.openrewrite.properties.AddProperty:
+      property: spring.jersey.application-path
+      value: "/api"
+      delimiter: "="
+
+

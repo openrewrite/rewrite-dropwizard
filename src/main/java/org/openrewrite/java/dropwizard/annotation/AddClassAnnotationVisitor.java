@@ -15,6 +15,7 @@
  */
 package org.openrewrite.java.dropwizard.annotation;
 
+import lombok.RequiredArgsConstructor;
 import org.openrewrite.Cursor;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.java.AnnotationMatcher;
@@ -30,15 +31,11 @@ import static java.util.Comparator.comparing;
 import static org.openrewrite.java.JavaParser.fromJavaVersion;
 import static org.openrewrite.java.JavaParser.runtimeClasspath;
 
+@RequiredArgsConstructor
 public abstract class AddClassAnnotationVisitor extends JavaIsoVisitor<ExecutionContext> {
 
     private final String annotationText;
-    private final boolean annotateSubclasses;
-
-    public AddClassAnnotationVisitor(String annotationText, boolean annotateSubclasses) {
-        this.annotationText = annotationText;
-        this.annotateSubclasses = annotateSubclasses;
-    }
+    private final Boolean annotateSubclasses;
 
     protected abstract boolean shouldAddAnnotation(ClassDeclaration cd);
 

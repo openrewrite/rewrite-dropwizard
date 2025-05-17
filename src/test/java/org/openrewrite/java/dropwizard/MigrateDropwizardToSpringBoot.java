@@ -15,11 +15,29 @@
  */
 package org.openrewrite.java.dropwizard;
 
+import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
+import static org.openrewrite.properties.Assertions.properties;
+
 class MigrateDropwizardToSpringBoot implements RewriteTest {
+
+    @Language("properties")
+    private static final String EXPECTED = """
+      management.endpoints.web.exposure.include=*
+      management.health.livenessstate.enabled=true
+      management.health.readinessstate.enabled=true
+      management.server.port=8081
+      server.port=8080
+      spring.application.name=my-application
+      spring.datasource.driverClassName=org.h2.Driver
+      spring.datasource.url=jdbc:h2:mem:mydb
+      spring.datasource.username=sa
+      spring.jersey.application-path=/api
+      spring.jersey.type=servlet
+      """;
 
     @Override
     public void defaults(RecipeSpec spec) {
@@ -27,7 +45,39 @@ class MigrateDropwizardToSpringBoot implements RewriteTest {
     }
 
     @Test
-    void run() {
-        rewriteRun(); // Validates yaml recipe
+    void createNewProperties() {
+        rewriteRun( // TODO We likely should not unconditionally create these files with these values!
+          //language=properties
+          properties(
+            null,
+            EXPECTED,
+            spec -> spec.path("src/main/resources/application.properties"))
+        );
+    }
+
+    @Test
+    void updateExistingProperties() {
+        rewriteRun(
+          //language=properties
+          properties(
+            "foo=bar",
+            "foo=bar\n" + EXPECTED,
+            spec -> spec.path("src/main/resources/application.properties"))
+        );
+    }
+
+    @Test
+    void doNotChangeTestProperties() {
+        rewriteRun(
+          //language=properties
+          properties(
+            null,
+            EXPECTED,
+            spec -> spec.path("src/main/resources/application.properties")),
+          //language=properties
+          properties(
+            "foo=bar",
+            spec -> spec.path("src/test/resources/application.properties"))
+        );
     }
 }
