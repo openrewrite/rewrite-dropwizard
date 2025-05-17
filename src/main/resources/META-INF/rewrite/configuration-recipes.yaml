@@ -21,19 +21,16 @@ description: This recipe creates an application.properties file in the resources
 recipeList:
   - org.openrewrite.properties.CreatePropertiesFile:
       relativeFileName: src/main/resources/application.properties
-      fileContents: |
-
-      overwriteExisting: false
-  - org.openrewrite.properties.CreatePropertiesFile:
-      relativeFileName: src/test/resources/application.properties
-      fileContents: |
-
+      fileContents: ""
       overwriteExisting: false
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.dropwizard.AddCoreExampleProperties
 displayName: Add Core Example Properties
 description: Adds core example properties to the application.properties file.
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: "**/src/main/resources/application.properties"
 recipeList:
   - org.openrewrite.properties.AddProperty:
       property: spring.application.name
@@ -52,6 +49,9 @@ type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.dropwizard.AddActuatorConfiguration
 displayName: Add Spring Boot Actuator Configuration
 description: Configures Spring Boot Actuator endpoints and health checks in application.properties.
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: "**/src/main/resources/application.properties"
 recipeList:
   - org.openrewrite.properties.AddProperty:
       property: management.endpoints.web.exposure.include
@@ -71,6 +71,9 @@ type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.dropwizard.AddHibernateConfiguration
 displayName: Add Hibernate Configuration
 description: Configures Spring Boot Hibernate and JPA settings in application.properties.
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: "**/src/main/resources/application.properties"
 recipeList:
   - org.openrewrite.properties.AddProperty:
       property: spring.datasource.url
@@ -93,6 +96,9 @@ type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.dropwizard.AddJerseyConfiguration
 displayName: Add Jersey Configuration
 description: Configures essential Jersey properties in Spring Boot that complement the JerseyConfig class.
+preconditions:
+  - org.openrewrite.FindSourceFiles:
+      filePattern: "**/src/main/resources/application.properties"
 recipeList:
   - org.openrewrite.properties.AddProperty:
       property: spring.jersey.type
