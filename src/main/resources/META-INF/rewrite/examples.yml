@@ -109,6 +109,68 @@ examples:
     language: java
 ---
 type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.java.dropwizard.general.RemoveMethodsByPackage
+examples:
+- description: ''
+  parameters:
+  - com.example.deprecated
+  sources:
+  - before: |
+      package org.example;
+
+      import com.example.deprecated.OldType;
+
+      class Test {
+          public OldType methodToRemove() {
+              return null;
+          }
+
+          public String methodToKeep() {
+              return "test";
+          }
+      }
+    after: |
+      package org.example;
+
+      class Test {
+
+          public String methodToKeep() {
+              return "test";
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.java.dropwizard.general.RemoveVariablesByPackage
+examples:
+- description: ''
+  parameters:
+  - java.lang
+  - 'false'
+  sources:
+  - before: |
+      package com.example;
+
+      class TestClass {
+          private String shouldBeRemoved = "test";
+          private static final int STAYS = 42;
+
+          public void method() {
+              String localVar = "REMOVED";
+          }
+      }
+    after: |
+      package com.example;
+
+      class TestClass {
+          private static final int STAYS = 42;
+
+          public void method() {
+          }
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.java.dropwizard.method.ChangeSuperType
 examples:
 - description: ''
