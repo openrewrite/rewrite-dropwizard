@@ -16,11 +16,9 @@
 package org.openrewrite.java.dropwizard.test;
 
 import org.junit.jupiter.api.Test;
-import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
-import org.openrewrite.test.TypeValidation;
 
 import static org.openrewrite.java.Assertions.java;
 
@@ -31,7 +29,6 @@ class DaoTestRuleLambdaExtractorTest implements RewriteTest {
         spec.recipe(
             new MethodLambdaExtractor(
               "io.dropwizard.DaoTestRule", "*..DaoTestRule inTransaction(..)"))
-          .typeValidationOptions(TypeValidation.none())
           .parser(
             JavaParser.fromJavaVersion()
               .dependsOn(
@@ -60,6 +57,9 @@ class DaoTestRuleLambdaExtractorTest implements RewriteTest {
                   }
                     """,
                 """
+                  import java.util.List;
+                  import java.util.Optional;
+
                   interface PersonDAO {
                       Person create(Person person);
                       List<Person> findAll();
@@ -83,7 +83,6 @@ class DaoTestRuleLambdaExtractorTest implements RewriteTest {
               """));
     }
 
-    @DocumentExample
     @Test
     void transformSimpleLambda() {
         rewriteRun(

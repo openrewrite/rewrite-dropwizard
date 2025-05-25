@@ -63,11 +63,7 @@ public class DropwizardRulesJUnit4ToSpringBoot extends Recipe {
 
     /**
      * Decide which annotations to apply based on the found rules. Adjust this logic as needed.
-     *
-     * <p>Priority: - If DropwizardAppRule is found: Full context -> @SpringBootTest - If
-     * ResourceTestRule: Assume we want full context + mock mvc -> @SpringBootTest
-     * + @AutoConfigureMockMvc - If DAOTestRule only: @DataJpaTest - If we detect controller-only
-     * scenario (not shown in Dropwizard, but if needed): @WebMvcTest
+     * We can't add MockMVC annotations as Spring Jersey does not support these.
      */
     private static Set<String> determineAnnotations(Set<String> foundRules) {
         Set<String> set = new HashSet<>();
