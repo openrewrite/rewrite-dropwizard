@@ -133,9 +133,9 @@ public class RestTemplateCallBuilder implements DropwizardToSpringCallBuilder {
     }
 
     private boolean hasHeaders(ParsedCall callInfo) {
-        return !callInfo.getAuthHeader().isEmpty()
-                || !callInfo.getAcceptMediaType().isEmpty()
-                || !callInfo.getContentMediaType().isEmpty();
+        return !callInfo.getAuthHeader().isEmpty() ||
+                !callInfo.getAcceptMediaType().isEmpty() ||
+                !callInfo.getContentMediaType().isEmpty();
     }
 
     private String buildBodyExchange(

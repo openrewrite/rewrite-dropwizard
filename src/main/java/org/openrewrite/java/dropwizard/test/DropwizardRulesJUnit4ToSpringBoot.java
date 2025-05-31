@@ -172,9 +172,9 @@ public class DropwizardRulesJUnit4ToSpringBoot extends Recipe {
 
             // If we already have a Spring test annotation that sets the extension, no need to re-add
             boolean hasSpringExtension =
-                    hasAnnotation(cd, SPRING_BOOT_TEST)
-                            || hasAnnotation(cd, DATA_JPA_TEST)
-                            || hasAnnotation(cd, WEB_MVC_TEST);
+                    hasAnnotation(cd, SPRING_BOOT_TEST) ||
+                            hasAnnotation(cd, DATA_JPA_TEST) ||
+                            hasAnnotation(cd, WEB_MVC_TEST);
 
             if (hasSpringExtension) {
                 return cd;

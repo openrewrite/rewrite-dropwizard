@@ -130,8 +130,8 @@ public class TransformDropwizardRuleInvocations extends Recipe {
             }
 
             private boolean isValidInitializer(J.VariableDeclarations varDecls) {
-                return !varDecls.getVariables().isEmpty()
-                        && varDecls.getVariables().get(0).getInitializer() instanceof J.MethodInvocation;
+                return !varDecls.getVariables().isEmpty() &&
+                        varDecls.getVariables().get(0).getInitializer() instanceof J.MethodInvocation;
             }
 
             private boolean isRuleRESTCall(J.MethodInvocation method) {
@@ -149,9 +149,9 @@ public class TransformDropwizardRuleInvocations extends Recipe {
             }
 
             private J.MethodInvocation transformMethodInvocation(J.MethodInvocation original) {
-                JavaType returnType = (original.getMethodType() != null)
-                        ? original.getMethodType().getReturnType()
-                        : null;
+                JavaType returnType = (original.getMethodType() != null) ?
+                        original.getMethodType().getReturnType() :
+                        null;
 
                 String snippet = getCallBuilder()
                         .buildMethod(DropwizardCallParser.parse(original, getCursor()), returnType);

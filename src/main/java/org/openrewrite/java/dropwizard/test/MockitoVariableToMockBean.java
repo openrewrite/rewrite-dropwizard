@@ -75,8 +75,8 @@ public class MockitoVariableToMockBean extends Recipe {
                         original.getModifiers().stream()
                                 .filter(
                                         mod ->
-                                                mod.getType() != J.Modifier.Type.Static
-                                                        && mod.getType() != J.Modifier.Type.Final)
+                                                mod.getType() != J.Modifier.Type.Static &&
+                                                        mod.getType() != J.Modifier.Type.Final)
                                 .collect(Collectors.toList());
 
                 // Remove the initializer

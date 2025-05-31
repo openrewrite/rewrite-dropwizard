@@ -16,6 +16,7 @@
 package org.openrewrite.java.dropwizard.test;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -68,21 +69,7 @@ class DaoTestRuleLambdaExtractorTest implements RewriteTest {
                   """));
     }
 
-    @Test
-    void doNotTransformSimpleLambda() {
-        rewriteRun(
-          java(
-            """
-              import javax.transaction.Transactional;
-
-              class Test {
-                  public void test() {
-                      String result = "test";
-                  }
-              }
-              """));
-    }
-
+    @DocumentExample
     @Test
     void transformSimpleLambda() {
         rewriteRun(
@@ -108,7 +95,24 @@ class DaoTestRuleLambdaExtractorTest implements RewriteTest {
                       String result = "test";
                   }
               }
-              """));
+              """
+          ));
+    }
+
+    @Test
+    void doNotTransformSimpleLambda() {
+        rewriteRun(
+          java(
+            """
+              import javax.transaction.Transactional;
+
+              class Test {
+                  public void test() {
+                      String result = "test";
+                  }
+              }
+              """
+          ));
     }
 
     @Test
@@ -138,7 +142,8 @@ class DaoTestRuleLambdaExtractorTest implements RewriteTest {
                       String result = "test";
                   }
               }
-              """));
+              """
+          ));
     }
 
     @Test
@@ -180,6 +185,7 @@ class DaoTestRuleLambdaExtractorTest implements RewriteTest {
                       final List<Person> persons = personDAO.findAll();
                   }
               }
-                """));
+                """
+          ));
     }
 }

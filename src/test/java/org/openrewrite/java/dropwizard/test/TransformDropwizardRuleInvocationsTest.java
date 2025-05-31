@@ -16,6 +16,7 @@
 package org.openrewrite.java.dropwizard.test;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -145,7 +146,8 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
                       .readEntity(Object.class);
               }
           }
-          """, """
+          """,
+                """
           import io.dropwizard.testing.junit.DropwizardAppRule;
           import org.springframework.http.HttpEntity;
           import org.springframework.http.HttpHeaders;
@@ -174,7 +176,8 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
 
     @Test
     void shouldConvertSimpleGetRequest() {
-        rewriteRun(java("""
+        rewriteRun(java(
+                """
             import io.dropwizard.testing.junit.DropwizardAppRule;
             import com.fasterxml.jackson.databind.ObjectMapper;
             import org.springframework.web.client.RestTemplate;
@@ -223,7 +226,8 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
 
     @Test
     void shouldConvertGenericTypeToParametrized() {
-        rewriteRun(java("""
+        rewriteRun(java(
+                """
           package com.example.helloworld.resources;
 
           import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -245,7 +249,8 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
                       .get(new GenericType<List<Object>>() {});
               }
           }
-          """, """
+          """,
+                """
           package com.example.helloworld.resources;
 
           import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -281,7 +286,8 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
 
     @Test
     void shouldConvertPostRequest() {
-        rewriteRun(java("""
+        rewriteRun(java(
+                """
           import io.dropwizard.testing.junit.DropwizardAppRule;
           import org.springframework.web.client.RestTemplate;
           import javax.ws.rs.client.Entity;
@@ -346,7 +352,8 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
                   }
               }
           }
-          """, """
+          """,
+                """
           import io.dropwizard.testing.junit.DropwizardAppRule;
           import org.springframework.http.HttpEntity;
           import org.springframework.http.HttpMethod;
@@ -378,7 +385,8 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
 
     @Test
     void shouldConvertResponseToResponseEntity() {
-        rewriteRun(java("""
+        rewriteRun(java(
+                """
             import io.dropwizard.testing.junit.DropwizardAppRule;
             import org.springframework.web.client.RestTemplate;
             import org.springframework.http.HttpHeaders;

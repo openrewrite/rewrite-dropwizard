@@ -85,8 +85,8 @@ public class MethodLambdaExtractor extends Recipe {
 
                         List<Statement> updatedStatements = new ArrayList<>();
                         for (Statement stmt : md.getBody().getStatements()) {
-                            if (stmt instanceof J.MethodInvocation
-                                    && shouldExtractMethodInvocation((J.MethodInvocation) stmt)) {
+                            if (stmt instanceof J.MethodInvocation &&
+                                    shouldExtractMethodInvocation((J.MethodInvocation) stmt)) {
                                 processMethodInvocationStatement((J.MethodInvocation) stmt, updatedStatements);
                             } else if (stmt instanceof J.VariableDeclarations) {
                                 processVariableDeclaration((J.VariableDeclarations) stmt, updatedStatements);
