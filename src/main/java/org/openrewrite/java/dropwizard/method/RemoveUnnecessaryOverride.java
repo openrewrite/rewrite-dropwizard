@@ -27,8 +27,8 @@ import org.openrewrite.java.service.AnnotationService;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.TypeUtils;
 
-@Value
 @EqualsAndHashCode(callSuper = false)
+@Value
 public class RemoveUnnecessaryOverride extends Recipe {
 
     private static final AnnotationMatcher OVERRIDE_ANNOTATION = new AnnotationMatcher("@java.lang.Override");

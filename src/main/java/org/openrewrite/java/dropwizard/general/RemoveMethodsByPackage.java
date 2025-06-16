@@ -28,8 +28,8 @@ import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.Statement;
 import org.openrewrite.java.tree.TypeUtils;
 
-@Value
 @EqualsAndHashCode(callSuper = false)
+@Value
 public class RemoveMethodsByPackage extends Recipe {
 
     @Option(displayName = "Package filter",

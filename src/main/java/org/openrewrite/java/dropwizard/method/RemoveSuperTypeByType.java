@@ -25,8 +25,8 @@ import org.openrewrite.java.tree.JavaType;
 
 import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
 
-@Value
 @EqualsAndHashCode(callSuper = false)
+@Value
 public class RemoveSuperTypeByType extends Recipe {
 
     @Option(displayName = "Fully qualified name of the superclass to remove",

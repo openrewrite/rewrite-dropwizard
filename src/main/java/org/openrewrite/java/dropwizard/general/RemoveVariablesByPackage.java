@@ -27,8 +27,8 @@ import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 
-@Value
 @EqualsAndHashCode(callSuper = false)
+@Value
 public class RemoveVariablesByPackage extends Recipe {
 
     @Option(displayName = "Package filter",
