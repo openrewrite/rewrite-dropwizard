@@ -157,8 +157,7 @@ class CodahaleTimedToMicrometerTimedTest implements RewriteTest {
               import java.util.concurrent.TimeUnit;
 
               class TestClass {
-                  @Timed(
-                      value = "customMetricName")
+                  @Timed("customMetricName")
                   public void timedMethod() {
                   }
               }
