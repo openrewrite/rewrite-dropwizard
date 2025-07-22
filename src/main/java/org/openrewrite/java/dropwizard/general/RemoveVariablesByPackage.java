@@ -105,9 +105,10 @@ public class RemoveVariablesByPackage extends Recipe {
 
             private JavaType.FullyQualified resolveFullyQualified(JavaType type) {
                 if (type instanceof JavaType.Parameterized) {
-                    return TypeUtils.asFullyQualified(((JavaType.Parameterized) type).getType());
-                } else if (type instanceof JavaType.Class) {
-                    return TypeUtils.asFullyQualified(type);
+                    return TypeUtils.asFullyQualified( ((JavaType.Parameterized) type).getType() );
+                }
+                if (type instanceof JavaType.Class) {
+                    return TypeUtils.asFullyQualified( type );
                 }
                 return null;
             }
