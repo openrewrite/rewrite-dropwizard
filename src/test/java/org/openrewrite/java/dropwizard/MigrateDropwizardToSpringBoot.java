@@ -49,7 +49,7 @@ class MigrateDropwizardToSpringBoot implements RewriteTest {
         rewriteRun( // TODO We likely should not unconditionally create these files with these values!
           //language=properties
           properties(
-            null,
+            doesNotExist(),
             EXPECTED,
             spec -> spec.path("src/main/resources/application.properties"))
         );
@@ -71,7 +71,7 @@ class MigrateDropwizardToSpringBoot implements RewriteTest {
         rewriteRun(
           //language=properties
           properties(
-            null,
+            doesNotExist(),
             EXPECTED,
             spec -> spec.path("src/main/resources/application.properties")),
           //language=properties
