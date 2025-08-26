@@ -21,8 +21,6 @@ description: This recipe creates an application.properties file in the resources
 recipeList:
   - org.openrewrite.properties.CreatePropertiesFile:
       relativeFileName: src/main/resources/application.properties
-      fileContents: ""
-      overwriteExisting: false
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.dropwizard.AddCoreExampleProperties
@@ -35,15 +33,12 @@ recipeList:
   - org.openrewrite.properties.AddProperty:
       property: spring.application.name
       value: "my-application"
-      delimiter: "="
   - org.openrewrite.properties.AddProperty:
       property: server.port
       value: "8080"
-      delimiter: "="
   - org.openrewrite.properties.AddProperty:
       property: management.server.port
       value: "8081"
-      delimiter: "="
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.dropwizard.AddActuatorConfiguration
@@ -56,15 +51,12 @@ recipeList:
   - org.openrewrite.properties.AddProperty:
       property: management.endpoints.web.exposure.include
       value: "*"
-      delimiter: "="
   - org.openrewrite.properties.AddProperty:
       property: management.health.livenessstate.enabled
       value: "true"
-      delimiter: "="
   - org.openrewrite.properties.AddProperty:
       property: management.health.readinessstate.enabled
       value: "true"
-      delimiter: "="
 ---
 # AddHibernateConfiguration Recipe
 type: specs.openrewrite.org/v1beta/recipe
@@ -78,19 +70,15 @@ recipeList:
   - org.openrewrite.properties.AddProperty:
       property: spring.datasource.url
       value: jdbc:h2:mem:mydb
-      delimiter: "="
   - org.openrewrite.properties.AddProperty:
       property: spring.datasource.driverClassName
       value: org.h2.Driver
-      delimiter: "="
   - org.openrewrite.properties.AddProperty:
       property: spring.datasource.username
       value: "sa"
-      delimiter: "="
   - org.openrewrite.properties.AddProperty:
       property: spring.datasource.password
       value: ""
-      delimiter: "="
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.dropwizard.AddJerseyConfiguration
@@ -103,10 +91,8 @@ recipeList:
   - org.openrewrite.properties.AddProperty:
       property: spring.jersey.type
       value: "servlet"
-      delimiter: "="
   - org.openrewrite.properties.AddProperty:
       property: spring.jersey.application-path
       value: "/api"
-      delimiter: "="
 
 
