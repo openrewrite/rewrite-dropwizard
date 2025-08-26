@@ -39,7 +39,6 @@ recipeList:
       groupId: org.projectlombok
       artifactId: lombok
       version: "1.18.x"
-      onlyIfAbsent: true
       onlyIfUsing: "lombok.*"
   - org.openrewrite.maven.AddManagedDependency:
       groupId: org.springframework.boot
@@ -55,7 +54,6 @@ recipeList:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter
       version: "2.7.18"
-      onlyIfAbsent: true
   - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-core
@@ -90,7 +88,6 @@ recipeList:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-actuator
       version: "2.7.18"
-      onlyIfAbsent: true
   - org.openrewrite.java.dropwizard.AddActuatorConfiguration
   - org.openrewrite.java.dropwizard.annotation.micrometer.CodahaleTimedToMicrometerTimed
 
@@ -142,17 +139,14 @@ recipeList:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter
       version: "2.7.18"
-      onlyIfAbsent: true
   - org.openrewrite.maven.AddDependency:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-web
       version: "2.7.18"
-      onlyIfAbsent: true
   - org.openrewrite.maven.AddDependency:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-jersey
       version: "2.7.18"
-      onlyIfAbsent: true
   - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-jersey
@@ -183,7 +177,6 @@ recipeList:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-data-jpa
       version: "2.7.18"
-      onlyIfAbsent: true
   - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-hibernate
@@ -211,7 +204,6 @@ recipeList:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-test
       version: "2.7.18"
-      onlyIfAbsent: true
       scope: test
   - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
       groupId: io.dropwizard
@@ -229,7 +221,6 @@ recipeList:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-security
       version: "2.7.18"
-      onlyIfAbsent: true
   - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-auth
