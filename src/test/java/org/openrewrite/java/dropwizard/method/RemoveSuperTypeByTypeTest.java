@@ -127,8 +127,8 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
         );
     }
 
-    @Test
     @Disabled
+    @Test
     void handlesImportRemoval() {
         rewriteRun(
           java(

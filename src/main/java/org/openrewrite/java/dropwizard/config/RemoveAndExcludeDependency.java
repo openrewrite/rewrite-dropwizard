@@ -25,8 +25,8 @@ import org.openrewrite.maven.RemoveDependency;
 import java.util.Arrays;
 import java.util.List;
 
-@Value
 @EqualsAndHashCode(callSuper = false)
+@Value
 public class RemoveAndExcludeDependency extends Recipe {
 
     @Option(displayName = "Group ID to remove",

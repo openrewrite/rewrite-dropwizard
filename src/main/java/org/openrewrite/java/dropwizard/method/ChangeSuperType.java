@@ -35,8 +35,8 @@ import static java.lang.Boolean.TRUE;
 import static org.openrewrite.java.tree.TypeUtils.asFullyQualified;
 import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
 
-@Value
 @EqualsAndHashCode(callSuper = false)
+@Value
 public class ChangeSuperType extends Recipe {
 
     @Option(displayName = "Target class",

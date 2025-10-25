@@ -15,7 +15,7 @@
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfAnnotationExists
 examples:
-- description: ''
+- description: '`AddClassAnnotationIfAnnotationExistsTest#addsAnnotationWhenTargetExists`'
   parameters:
   - javax.persistence.Entity
   - javax.persistence.Table
@@ -42,7 +42,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists
 examples:
-- description: ''
+- description: '`AddClassAnnotationIfSuperTypeExistsRecipeTest#addsAnnotationWhenExtendsMatch`'
   parameters:
   - javax.persistence.Entity
   - java.util.AbstractList
@@ -84,7 +84,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.java.dropwizard.annotation.micrometer.CodahaleTimedToMicrometerTimed
 examples:
-- description: ''
+- description: '`CodahaleTimedToMicrometerTimedTest#transformsSimpleTimed`'
   sources:
   - before: |
       package com.example;
@@ -111,7 +111,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.java.dropwizard.general.RemoveMethodsByPackage
 examples:
-- description: ''
+- description: '`RemoveMethodsByPackageTest#removesMethodWithDeprecatedReturnType`'
   parameters:
   - com.example.deprecated
   sources:
@@ -143,7 +143,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.java.dropwizard.general.RemoveVariablesByPackage
 examples:
-- description: ''
+- description: '`RemoveVariablesByPackageTest#removesMatchingClassVariables`'
   parameters:
   - java.lang
   - 'false'
@@ -173,7 +173,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.java.dropwizard.method.ChangeSuperType
 examples:
-- description: ''
+- description: '`ChangeSuperTypeTest#handlesImportsCorrectly`'
   parameters:
   - java.util.Vector
   - java.util.ArrayList
@@ -204,7 +204,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.java.dropwizard.method.RemoveSuperTypeByType
 examples:
-- description: ''
+- description: '`RemoveSuperTypeByTypeTest#removesExtends`'
   parameters:
   - com.example.BaseClass
   sources:
@@ -236,7 +236,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.java.dropwizard.method.RemoveUnnecessaryOverride
 examples:
-- description: ''
+- description: '`RemoveUnnecessaryOverrideTest#configuresRenderCommandArguments`'
   parameters:
   - 'false'
   sources:
@@ -274,7 +274,7 @@ examples:
 type: specs.openrewrite.org/v1beta/example
 recipeName: org.openrewrite.java.dropwizard.method.RemoveUnnecessarySuperCalls
 examples:
-- description: ''
+- description: '`RemoveUnnecessarySuperCallsTest#removesSuperCallsWhenNoSuperclass`'
   sources:
   - before: |
       class A {

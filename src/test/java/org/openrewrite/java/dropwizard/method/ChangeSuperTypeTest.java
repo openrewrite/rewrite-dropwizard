@@ -243,9 +243,9 @@ class ChangeSuperTypeTest implements RewriteTest {
         );
     }
 
-    @Test
-    @Disabled
     @Deprecated
+    @Disabled
+    @Test
     void removesConstructorSuperCall() {
         rewriteRun(
           java(

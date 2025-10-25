@@ -28,8 +28,8 @@ import org.openrewrite.java.tree.TypeUtils;
 
 import java.util.Objects;
 
-@Value
 @EqualsAndHashCode(callSuper = false)
+@Value
 public class AddClassAnnotationIfSuperTypeExists extends Recipe {
 
     @Option(displayName = "Annotation to add",
