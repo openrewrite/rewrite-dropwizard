@@ -88,8 +88,8 @@ public class ChangeSuperType extends Recipe {
 
                 String typeParams = getTypeParams(cd.getExtends());
 
-                maybeAddImport(newSuperclass);
                 maybeRemoveImport(targetClass);
+                maybeAddImport(newSuperclass);
 
                 JavaTemplate extendsTemplate = JavaTemplate.builder(newSuperclass + typeParams)
                         // TODO runtimeClasspath() might be different in other recipe run environments
