@@ -35,4 +35,9 @@ dependencies {
     testRuntimeOnly("org.projectlombok:lombok:1.18.+")
     testRuntimeOnly("net.sourceforge.argparse4j:argparse4j:0.9.0")
     testRuntimeOnly("io.dropwizard:dropwizard-testing:1.3.29")
+    testRuntimeOnly("org.springframework.boot:spring-boot-starter-test:2.5.+")
+    testRuntimeOnly("org.springframework.boot:spring-boot-starter-web:2.5.+")
+    testRuntimeOnly("jakarta.ws.rs:jakarta.ws.rs-api:2.1.6")
+
+
 }
