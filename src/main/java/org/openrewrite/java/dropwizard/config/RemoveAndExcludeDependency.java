@@ -39,15 +39,9 @@ public class RemoveAndExcludeDependency extends Recipe {
             example = "mockito-core")
     String artifactId;
 
-    @Override
-    public String getDisplayName() {
-        return "Combined dependency management to remove and exclude";
-    }
+    String displayName = "Combined dependency management to remove and exclude";
 
-    @Override
-    public String getDescription() {
-        return "Combines excluding transitive dependencies and removing direct dependencies.";
-    }
+    String description = "Combines excluding transitive dependencies and removing direct dependencies.";
 
     @Override
     public List<Recipe> getRecipeList() {

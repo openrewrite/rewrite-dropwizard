@@ -47,15 +47,9 @@ public class AddClassAnnotationIfAnnotationExists extends Recipe {
     @Nullable
     Boolean annotateInnerClasses;
 
-    @Override
-    public String getDisplayName() {
-        return "Add annotation if target annotations exist";
-    }
+    String displayName = "Add annotation if target annotations exist";
 
-    @Override
-    public String getDescription() {
-        return "Adds annotation if class has any of the specified target annotations.";
-    }
+    String description = "Adds annotation if class has any of the specified target annotations.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

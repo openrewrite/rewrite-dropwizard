@@ -41,15 +41,9 @@ public class RemoveVariablesByPackage extends Recipe {
             example = "com.example.unwanted")
     Boolean removeOnlyClassScope;
 
-    @Override
-    public String getDisplayName() {
-        return "Remove class variables matching package filter";
-    }
+    String displayName = "Remove class variables matching package filter";
 
-    @Override
-    public String getDescription() {
-        return "Removes class-level variables from classes in the specified package.";
-    }
+    String description = "Removes class-level variables from classes in the specified package.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

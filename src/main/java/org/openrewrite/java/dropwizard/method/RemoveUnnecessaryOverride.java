@@ -41,16 +41,10 @@ public class RemoveUnnecessaryOverride extends Recipe {
     @Nullable
     Boolean ignoreAnonymousClassMethods;
 
-    @Override
-    public String getDisplayName() {
-        return "Remove unnecessary `@Override` annotations";
-    }
+    String displayName = "Remove unnecessary `@Override` annotations";
 
-    @Override
-    public String getDescription() {
-        return "Removes `@Override` annotations from methods that don't actually override or implement any method. " +
+    String description = "Removes `@Override` annotations from methods that don't actually override or implement any method. " +
                 "This helps maintain clean code by removing incorrect annotations that could be misleading.";
-    }
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

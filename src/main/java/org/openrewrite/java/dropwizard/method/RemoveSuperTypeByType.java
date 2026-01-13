@@ -34,15 +34,9 @@ public class RemoveSuperTypeByType extends Recipe {
             example = "io.dropwizard.Configuration")
     String typeToRemove;
 
-    @Override
-    public String getDisplayName() {
-        return "Remove supertype by fully qualified name matches";
-    }
+    String displayName = "Remove supertype by fully qualified name matches";
 
-    @Override
-    public String getDescription() {
-        return "Removes a specified type from class extends or implements clauses.";
-    }
+    String description = "Removes a specified type from class extends or implements clauses.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
