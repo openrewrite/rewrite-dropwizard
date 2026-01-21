@@ -235,8 +235,8 @@ recipeList:
 # Tasks, Commands
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.dropwizard.MigrateTasksAndCommands
-displayName: Clean up various issues with the code.
-description: Clean up the code.
+displayName: Migrate `PostBodyTask` and `ConfiguredCommand`
+description: Remove or change the superclasses of `PostBodyTask` and `ConfiguredCommand`.
 recipeList:
   - org.openrewrite.java.dropwizard.method.ChangeSuperclass:
       targetClass: io.dropwizard.cli.ConfiguredCommand
@@ -250,8 +250,8 @@ recipeList:
 # Cleanup
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.dropwizard.CodeCleanup
-displayName: Clean up various issues with the code.
-description: Clean up the code.
+displayName: Clean up various issues with the code
+description: Shorten references, remove unused imports, and remove Dropwizard-specific code constructs.
 recipeList:
   - org.openrewrite.java.ShortenFullyQualifiedTypeReferences
   - org.openrewrite.java.RemoveUnusedImports

@@ -37,15 +37,9 @@ public class RemoveMethodsByPackage extends Recipe {
             example = "com.example.unwanted")
     String packageFilter;
 
-    @Override
-    public String getDisplayName() {
-        return "Remove methods referencing specified package";
-    }
+    String displayName = "Remove methods referencing specified package";
 
-    @Override
-    public String getDescription() {
-        return "Removes any method that has a return type or parameter type from the specified package.";
-    }
+    String description = "Removes any method that has a return type or parameter type from the specified package.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

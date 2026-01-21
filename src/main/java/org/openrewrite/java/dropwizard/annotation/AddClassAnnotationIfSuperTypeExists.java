@@ -48,15 +48,9 @@ public class AddClassAnnotationIfSuperTypeExists extends Recipe {
     @Nullable
     Boolean annotateInnerClasses;
 
-    @Override
-    public String getDisplayName() {
-        return "Add annotation if target supertypes exist";
-    }
+    String displayName = "Add annotation if target supertypes exist";
 
-    @Override
-    public String getDescription() {
-        return "Adds annotation if class extends or implements any of the specified target types.";
-    }
+    String description = "Adds annotation if class extends or implements any of the specified target types.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {

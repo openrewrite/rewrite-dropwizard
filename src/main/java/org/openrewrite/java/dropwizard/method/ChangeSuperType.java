@@ -64,15 +64,9 @@ public class ChangeSuperType extends Recipe {
             required = false)
     Boolean removeUnnecessaryOverrides;
 
-    @Override
-    public String getDisplayName() {
-        return "Change superclass";
-    }
+    String displayName = "Change superclass";
 
-    @Override
-    public String getDescription() {
-        return "Changes the superclass of a specified class to a new superclass.";
-    }
+    String description = "Changes the superclass of a specified class to a new superclass.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
@@ -88,8 +82,8 @@ public class ChangeSuperType extends Recipe {
 
                 String typeParams = getTypeParams(cd.getExtends());
 
-                maybeAddImport(newSuperclass);
                 maybeRemoveImport(targetClass);
+                maybeAddImport(newSuperclass);
 
                 JavaTemplate extendsTemplate = JavaTemplate.builder(newSuperclass + typeParams)
                         // TODO runtimeClasspath() might be different in other recipe run environments

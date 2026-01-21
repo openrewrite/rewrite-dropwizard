@@ -15,6 +15,7 @@
  */
 package org.openrewrite.java.dropwizard.method;
 
+import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
@@ -25,15 +26,11 @@ import org.openrewrite.java.tree.TypeUtils;
 
 public class RemoveUnnecessarySuperCalls extends Recipe {
 
-    @Override
-    public String getDisplayName() {
-        return "Remove `super` calls when the class does not extend another class";
-    }
+    @Getter
+    final String displayName = "Remove `super` calls when the class does not extend another class";
 
-    @Override
-    public String getDescription() {
-        return "Removes calls to `super(...)` or `super.someMethod(...)` if the class does not have a real superclass besides `java.lang.Object`.";
-    }
+    @Getter
+    final String description = "Removes calls to `super(...)` or `super.someMethod(...)` if the class does not have a real superclass besides `java.lang.Object`.";
 
     @Override
     public JavaIsoVisitor<ExecutionContext> getVisitor() {
