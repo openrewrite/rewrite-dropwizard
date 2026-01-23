@@ -17,16 +17,20 @@ package org.openrewrite.java.dropwizard.jetty;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.openrewrite.*;
-import org.openrewrite.java.*;
+import org.openrewrite.ExecutionContext;
+import org.openrewrite.Preconditions;
+import org.openrewrite.Recipe;
+import org.openrewrite.TreeVisitor;
+import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.*;
 import org.openrewrite.marker.Markers;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.openrewrite.Tree.randomId;
 import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
 
@@ -67,12 +71,12 @@ public class MigrateJettyHandlerSignature extends Recipe {
                 // Build Handler.Abstract as a FieldAccess: Handler.Abstract
                 J.Identifier handlerIdent = new J.Identifier(
                         randomId(), Space.EMPTY, Markers.EMPTY,
-                        Collections.emptyList(), "Handler",
+                        emptyList(), "Handler",
                         JavaType.ShallowClass.build("org.eclipse.jetty.server.Handler"), null
                 );
                 J.Identifier abstractIdent = new J.Identifier(
                         randomId(), Space.EMPTY, Markers.EMPTY,
-                        Collections.emptyList(), "Abstract",
+                        emptyList(), "Abstract",
                         handlerAbstractType, null
                 );
                 J.FieldAccess handlerAbstract = new J.FieldAccess(
@@ -84,8 +88,8 @@ public class MigrateJettyHandlerSignature extends Recipe {
 
                 maybeRemoveImport(ABSTRACT_HANDLER);
                 maybeAddImport("org.eclipse.jetty.server.Handler");
-                maybeAddImport(JETTY_CALLBACK);
                 maybeRemoveImport("jakarta.servlet.http.HttpServletRequest");
+                maybeAddImport(JETTY_CALLBACK);
                 maybeRemoveImport("jakarta.servlet.http.HttpServletResponse");
                 maybeRemoveImport("jakarta.servlet.ServletException");
                 maybeRemoveImport("javax.servlet.http.HttpServletRequest");
@@ -133,10 +137,10 @@ public class MigrateJettyHandlerSignature extends Recipe {
             if (md.getThrows() != null) {
                 J.Identifier exceptionType = new J.Identifier(
                         randomId(), Space.SINGLE_SPACE, Markers.EMPTY,
-                        Collections.emptyList(), "Exception",
+                        emptyList(), "Exception",
                         JavaType.ShallowClass.build("java.lang.Exception"), null
                 );
-                md = md.withThrows(Collections.singletonList(exceptionType));
+                md = md.withThrows(singletonList(exceptionType));
             }
 
             return md;
@@ -158,24 +162,24 @@ public class MigrateJettyHandlerSignature extends Recipe {
                             JavaType.Method succeededType = new JavaType.Method(
                                     null, 1L, JavaType.ShallowClass.build(JETTY_CALLBACK),
                                     "succeeded", JavaType.Primitive.Void,
-                                    Collections.emptyList(), Collections.emptyList(),
-                                    Collections.emptyList(), Collections.emptyList(),
-                                    Collections.emptyList(), Collections.emptyList()
+                                    emptyList(), emptyList(),
+                                    emptyList(), emptyList(),
+                                    emptyList(), emptyList()
                             );
                             J.Identifier newName = new J.Identifier(
                                     randomId(), mi.getName().getPrefix(), Markers.EMPTY,
-                                    Collections.emptyList(), "succeeded",
+                                    emptyList(), "succeeded",
                                     succeededType, null
                             );
                             return mi
                                     .withSelect(new J.Identifier(
                                             randomId(), mi.getSelect().getPrefix(), Markers.EMPTY,
-                                            Collections.emptyList(), "callback",
+                                            emptyList(), "callback",
                                             JavaType.ShallowClass.build(JETTY_CALLBACK), null
                                     ))
                                     .withName(newName)
                                     .withMethodType(succeededType)
-                                    .withArguments(Collections.emptyList());
+                                    .withArguments(emptyList());
                         }
                     }
                 }
@@ -210,22 +214,22 @@ public class MigrateJettyHandlerSignature extends Recipe {
             JavaType.ShallowClass type = JavaType.ShallowClass.build(fqn);
             J.Identifier typeExpr = new J.Identifier(
                     randomId(), Space.EMPTY, Markers.EMPTY,
-                    Collections.emptyList(), typeName, type, null
+                    emptyList(), typeName, type, null
             );
 
             J.VariableDeclarations.NamedVariable namedVar = new J.VariableDeclarations.NamedVariable(
                     randomId(), Space.SINGLE_SPACE, Markers.EMPTY,
                     new J.Identifier(randomId(), Space.EMPTY, Markers.EMPTY,
-                            Collections.emptyList(), paramName, type,
+                            emptyList(), paramName, type,
                             new JavaType.Variable(null, 0, paramName, null, type, null)),
-                    Collections.emptyList(), null, null
+                    emptyList(), null, null
             );
 
             return new J.VariableDeclarations(
                     randomId(), Space.EMPTY, Markers.EMPTY,
-                    Collections.emptyList(), Collections.emptyList(),
-                    typeExpr, null, Collections.emptyList(),
-                    Collections.singletonList(JRightPadded.build(namedVar))
+                    emptyList(), emptyList(),
+                    typeExpr, null, emptyList(),
+                    singletonList(JRightPadded.build(namedVar))
             );
         }
     }
