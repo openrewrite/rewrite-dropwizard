@@ -110,9 +110,11 @@ public class MigrateJettyHandlerSignature extends Recipe {
                 return md;
             }
 
-            // Change return type from void to boolean
+            // Change return type from void to boolean, preserving the original prefix space
             md = md.withReturnTypeExpression(
-                    new J.Primitive(randomId(), Space.EMPTY, Markers.EMPTY, JavaType.Primitive.Boolean)
+                    new J.Primitive(randomId(),
+                            md.getReturnTypeExpression() != null ? md.getReturnTypeExpression().getPrefix() : Space.SINGLE_SPACE,
+                            Markers.EMPTY, JavaType.Primitive.Boolean)
             );
 
             // Build new parameter list: Request request, Response response, Callback callback
@@ -153,13 +155,26 @@ public class MigrateJettyHandlerSignature extends Recipe {
                         JavaType.Variable selectType = ((J.Identifier) select).getFieldType();
                         if (selectType != null && isOfClassType(selectType.getType(), JETTY_REQUEST)) {
                             // Replace with callback.succeeded()
+                            JavaType.Method succeededType = new JavaType.Method(
+                                    null, 1L, JavaType.ShallowClass.build(JETTY_CALLBACK),
+                                    "succeeded", JavaType.Primitive.Void,
+                                    Collections.emptyList(), Collections.emptyList(),
+                                    Collections.emptyList(), Collections.emptyList(),
+                                    Collections.emptyList(), Collections.emptyList()
+                            );
+                            J.Identifier newName = new J.Identifier(
+                                    randomId(), mi.getName().getPrefix(), Markers.EMPTY,
+                                    Collections.emptyList(), "succeeded",
+                                    succeededType, null
+                            );
                             return mi
                                     .withSelect(new J.Identifier(
                                             randomId(), mi.getSelect().getPrefix(), Markers.EMPTY,
                                             Collections.emptyList(), "callback",
                                             JavaType.ShallowClass.build(JETTY_CALLBACK), null
                                     ))
-                                    .withName(mi.getName().withSimpleName("succeeded"))
+                                    .withName(newName)
+                                    .withMethodType(succeededType)
                                     .withArguments(Collections.emptyList());
                         }
                     }
