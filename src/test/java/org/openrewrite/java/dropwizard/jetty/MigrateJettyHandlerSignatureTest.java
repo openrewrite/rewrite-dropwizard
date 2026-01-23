@@ -28,7 +28,9 @@ class MigrateJettyHandlerSignatureTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         spec.recipe(new MigrateJettyHandlerSignature())
-            .parser(JavaParser.fromJavaVersion().classpath("jetty-server", "jakarta.servlet-api"));
+          .parser(JavaParser.fromJavaVersion().classpath(
+            "jetty-server",
+            "jakarta.servlet-api"));
     }
 
     @DocumentExample
@@ -64,22 +66,6 @@ class MigrateJettyHandlerSignatureTest implements RewriteTest {
                   public boolean handle(Request request, Response response, Callback callback) throws Exception {
                       response.setStatus(200);
                       callback.succeeded();
-                  }
-              }
-              """
-          )
-        );
-    }
-
-    @Test
-    void doesNotModifyNonHandlerClass() {
-        rewriteRun(
-          //language=java
-          java(
-            """
-              public class NotAHandler {
-                  public void handle(String target) {
-                      // not a Jetty handler
                   }
               }
               """

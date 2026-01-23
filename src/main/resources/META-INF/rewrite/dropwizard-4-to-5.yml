@@ -23,16 +23,6 @@ description: >-
   and migrating Jetty handler implementations.
   Note that Dropwizard 5.0.x requires Java 17 or higher.
 recipeList:
-  - org.openrewrite.java.dropwizard.UpgradeDropwizardDependencies_4_To_5
-  - org.openrewrite.java.dropwizard.RemoveMaxQueuedRequestsConfig
-  - org.openrewrite.java.dropwizard.MigrateJettyHandlerSignature
----
-type: specs.openrewrite.org/v1beta/recipe
-name: org.openrewrite.java.dropwizard.UpgradeDropwizardDependencies_4_To_5
-displayName: Upgrade Dropwizard dependencies from 4.x to 5.0.x
-description: >-
-  Upgrades all Dropwizard dependencies to 5.0.x.
-recipeList:
   - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
       groupId: io.dropwizard
       artifactId: "*"
@@ -41,13 +31,6 @@ recipeList:
       groupId: io.dropwizard.modules
       artifactId: "*"
       newVersion: "5.0.x"
----
-type: specs.openrewrite.org/v1beta/recipe
-name: org.openrewrite.java.dropwizard.RemoveMaxQueuedRequestsConfig
-displayName: Remove `server.maxQueuedRequests` configuration
-description: >-
-  The `server.maxQueuedRequests` configuration option was removed in Dropwizard 5.0.x without replacement.
-  This recipe removes it from Dropwizard YAML configuration files.
-recipeList:
   - org.openrewrite.yaml.DeleteKey:
       keyPath: $.server.maxQueuedRequests
+  - org.openrewrite.java.dropwizard.MigrateJettyHandlerSignature
