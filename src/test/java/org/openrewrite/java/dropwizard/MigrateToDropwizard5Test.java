@@ -114,6 +114,9 @@ class MigrateToDropwizard5Test implements RewriteTest {
                   <groupId>com.example</groupId>
                   <artifactId>my-app</artifactId>
                   <version>1.0-SNAPSHOT</version>
+                  <properties>
+                      <maven.compiler.release>17</maven.compiler.release>
+                  </properties>
                   <dependencyManagement>
                       <dependencies>
                           <dependency>
