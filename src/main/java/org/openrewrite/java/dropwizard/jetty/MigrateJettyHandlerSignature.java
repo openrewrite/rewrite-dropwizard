@@ -22,6 +22,7 @@ import org.openrewrite.Preconditions;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.JavaIsoVisitor;
+import org.openrewrite.java.MethodMatcher;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.*;
 import org.openrewrite.marker.Markers;
@@ -46,24 +47,29 @@ public class MigrateJettyHandlerSignature extends Recipe {
             "to use `Callback` and return `true`.";
 
     private static final String ABSTRACT_HANDLER = "org.eclipse.jetty.server.handler.AbstractHandler";
-    private static final String HANDLER_ABSTRACT = "org.eclipse.jetty.server.Handler.Abstract";
     private static final String JETTY_REQUEST = "org.eclipse.jetty.server.Request";
     private static final String JETTY_RESPONSE = "org.eclipse.jetty.server.Response";
     private static final String JETTY_CALLBACK = "org.eclipse.jetty.util.Callback";
+
+    private static final MethodMatcher HANDLE_METHOD_MATCHER = new MethodMatcher(
+            ABSTRACT_HANDLER + " handle(String, org.eclipse.jetty.server.Request, ..)", true);
+    private static final MethodMatcher SET_HANDLED_MATCHER = new MethodMatcher(
+            JETTY_REQUEST + " setHandled(boolean)", false);
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
                 new UsesType<>(ABSTRACT_HANDLER, false),
                 new JavaIsoVisitor<ExecutionContext>() {
+
                     @Override
                     public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
                         J.ClassDeclaration cd = super.visitClassDeclaration(classDecl, ctx);
 
                         if (cd.getExtends() != null && isOfClassType(cd.getExtends().getType(), ABSTRACT_HANDLER)) {
-                            JavaType.ShallowClass handlerAbstractType = JavaType.ShallowClass.build(HANDLER_ABSTRACT);
+                            JavaType.ShallowClass handlerAbstractType = JavaType.ShallowClass.build(
+                                    "org.eclipse.jetty.server.Handler.Abstract");
 
-                            // Build Handler.Abstract as a FieldAccess: Handler.Abstract
                             J.Identifier handlerIdent = new J.Identifier(
                                     randomId(), Space.EMPTY, Markers.EMPTY,
                                     emptyList(), "Handler",
@@ -74,23 +80,22 @@ public class MigrateJettyHandlerSignature extends Recipe {
                                     emptyList(), "Abstract",
                                     handlerAbstractType, null
                             );
-                            J.FieldAccess handlerAbstract = new J.FieldAccess(
+                            cd = cd.withExtends(new J.FieldAccess(
                                     randomId(), cd.getExtends().getPrefix(), Markers.EMPTY,
                                     handlerIdent, JLeftPadded.build(abstractIdent),
                                     handlerAbstractType
-                            );
-                            cd = cd.withExtends(handlerAbstract);
+                            ));
 
                             maybeRemoveImport(ABSTRACT_HANDLER);
+                            maybeRemoveImport("jakarta.servlet.ServletException");
                             maybeRemoveImport("jakarta.servlet.http.HttpServletRequest");
                             maybeRemoveImport("jakarta.servlet.http.HttpServletResponse");
-                            maybeRemoveImport("jakarta.servlet.ServletException");
+                            maybeRemoveImport("javax.servlet.ServletException");
                             maybeRemoveImport("javax.servlet.http.HttpServletRequest");
                             maybeRemoveImport("javax.servlet.http.HttpServletResponse");
-                            maybeRemoveImport("javax.servlet.ServletException");
                             maybeAddImport(JETTY_CALLBACK);
-                            maybeAddImport(JETTY_RESPONSE);
                             maybeAddImport("org.eclipse.jetty.server.Handler");
+                            maybeAddImport(JETTY_RESPONSE);
                         }
 
                         return cd;
@@ -100,16 +105,12 @@ public class MigrateJettyHandlerSignature extends Recipe {
                     public J.MethodDeclaration visitMethodDeclaration(J.MethodDeclaration method, ExecutionContext ctx) {
                         J.MethodDeclaration md = super.visitMethodDeclaration(method, ctx);
 
-                        if (!isHandleMethod(md)) {
-                            return md;
-                        }
-
                         J.ClassDeclaration enclosingClass = getCursor().firstEnclosing(J.ClassDeclaration.class);
-                        if (enclosingClass == null || enclosingClass.getExtends() == null) {
+                        if (enclosingClass == null || !HANDLE_METHOD_MATCHER.matches(md, enclosingClass)) {
                             return md;
                         }
 
-                        // Change return type from void to boolean, preserving the original prefix space
+                        // Change return type from void to boolean
                         md = md.withReturnTypeExpression(
                                 new J.Primitive(randomId(),
                                         md.getReturnTypeExpression() != null ? md.getReturnTypeExpression().getPrefix() : Space.SINGLE_SPACE,
@@ -121,11 +122,8 @@ public class MigrateJettyHandlerSignature extends Recipe {
                         newParams.add(buildParameter("Request", JETTY_REQUEST, "request"));
                         newParams.add(buildParameter("Response", JETTY_RESPONSE, "response"));
                         newParams.add(buildParameter("Callback", JETTY_CALLBACK, "callback"));
-
-                        // Add leading space to second and third parameters
                         newParams.set(1, newParams.get(1).withPrefix(Space.SINGLE_SPACE));
                         newParams.set(2, newParams.get(2).withPrefix(Space.SINGLE_SPACE));
-
                         md = md.withParameters(newParams);
 
                         // Update throws clause to just Exception
@@ -145,51 +143,48 @@ public class MigrateJettyHandlerSignature extends Recipe {
                     public J.MethodInvocation visitMethodInvocation(J.MethodInvocation method, ExecutionContext ctx) {
                         J.MethodInvocation mi = super.visitMethodInvocation(method, ctx);
 
-                        // Replace baseRequest.setHandled(true) with callback.succeeded()
-                        if ("setHandled".equals(mi.getSimpleName()) && mi.getArguments().size() == 1) {
-                            Expression arg = mi.getArguments().get(0);
-                            if (arg instanceof J.Literal && Boolean.TRUE.equals(((J.Literal) arg).getValue())) {
-                                Expression select = mi.getSelect();
-                                if (select instanceof J.Identifier) {
-                                    JavaType.Variable selectType = ((J.Identifier) select).getFieldType();
-                                    if (selectType != null && isOfClassType(selectType.getType(), JETTY_REQUEST)) {
-                                        // Replace with callback.succeeded()
-                                        JavaType.Method succeededType = new JavaType.Method(
-                                                null, 1L, JavaType.ShallowClass.build(JETTY_CALLBACK),
-                                                "succeeded", JavaType.Primitive.Void,
-                                                emptyList(), emptyList(),
-                                                emptyList(), emptyList(),
-                                                emptyList(), emptyList()
-                                        );
-                                        J.Identifier newName = new J.Identifier(
-                                                randomId(), mi.getName().getPrefix(), Markers.EMPTY,
-                                                emptyList(), "succeeded",
-                                                succeededType, null
-                                        );
-                                        return mi
-                                                .withSelect(new J.Identifier(
-                                                        randomId(), mi.getSelect().getPrefix(), Markers.EMPTY,
-                                                        emptyList(), "callback",
-                                                        JavaType.ShallowClass.build(JETTY_CALLBACK), null
-                                                ))
-                                                .withName(newName)
-                                                .withMethodType(succeededType)
-                                                .withArguments(emptyList());
-                                    }
-                                }
-                            }
+                        if (!SET_HANDLED_MATCHER.matches(mi)) {
+                            return mi;
                         }
 
-                        return mi;
+                        Expression arg = mi.getArguments().get(0);
+                        if (!(arg instanceof J.Literal) || !Boolean.TRUE.equals(((J.Literal) arg).getValue())) {
+                            return mi;
+                        }
+
+                        // Replace with callback.succeeded()
+                        JavaType.Method succeededType = new JavaType.Method(
+                                null, 1L, JavaType.ShallowClass.build(JETTY_CALLBACK),
+                                "succeeded", JavaType.Primitive.Void,
+                                emptyList(), emptyList(),
+                                emptyList(), emptyList(),
+                                emptyList(), emptyList()
+                        );
+                        J.Identifier newName = new J.Identifier(
+                                randomId(), mi.getName().getPrefix(), Markers.EMPTY,
+                                emptyList(), "succeeded",
+                                succeededType, null
+                        );
+                        return mi
+                                .withSelect(new J.Identifier(
+                                        randomId(), mi.getSelect().getPrefix(), Markers.EMPTY,
+                                        emptyList(), "callback",
+                                        JavaType.ShallowClass.build(JETTY_CALLBACK), null
+                                ))
+                                .withName(newName)
+                                .withMethodType(succeededType)
+                                .withArguments(emptyList());
                     }
 
                     @Override
                     public J.Return visitReturn(J.Return return_, ExecutionContext ctx) {
                         J.Return ret = super.visitReturn(return_, ctx);
 
-                        // In handle methods, ensure we return true/false instead of bare return
                         J.MethodDeclaration enclosingMethod = getCursor().firstEnclosing(J.MethodDeclaration.class);
-                        if (enclosingMethod != null && isHandleMethod(enclosingMethod) && ret.getExpression() == null) {
+                        J.ClassDeclaration enclosingClass = getCursor().firstEnclosing(J.ClassDeclaration.class);
+                        if (enclosingMethod != null && enclosingClass != null &&
+                                HANDLE_METHOD_MATCHER.matches(enclosingMethod, enclosingClass) &&
+                                ret.getExpression() == null) {
                             ret = ret.withExpression(
                                     new J.Literal(randomId(), Space.SINGLE_SPACE, Markers.EMPTY, true, "true",
                                             null, JavaType.Primitive.Boolean)
@@ -199,19 +194,12 @@ public class MigrateJettyHandlerSignature extends Recipe {
                         return ret;
                     }
 
-                    private boolean isHandleMethod(J.MethodDeclaration md) {
-                        return "handle".equals(md.getSimpleName()) &&
-                               md.getParameters().size() == 4 &&
-                               md.getParameters().stream().allMatch(p -> p instanceof J.VariableDeclarations);
-                    }
-
                     private J.VariableDeclarations buildParameter(String typeName, String fqn, String paramName) {
                         JavaType.ShallowClass type = JavaType.ShallowClass.build(fqn);
                         J.Identifier typeExpr = new J.Identifier(
                                 randomId(), Space.EMPTY, Markers.EMPTY,
                                 emptyList(), typeName, type, null
                         );
-
                         J.VariableDeclarations.NamedVariable namedVar = new J.VariableDeclarations.NamedVariable(
                                 randomId(), Space.SINGLE_SPACE, Markers.EMPTY,
                                 new J.Identifier(randomId(), Space.EMPTY, Markers.EMPTY,
@@ -219,7 +207,6 @@ public class MigrateJettyHandlerSignature extends Recipe {
                                         new JavaType.Variable(null, 0, paramName, null, type, null)),
                                 emptyList(), null, null
                         );
-
                         return new J.VariableDeclarations(
                                 randomId(), Space.EMPTY, Markers.EMPTY,
                                 emptyList(), emptyList(),
@@ -230,5 +217,4 @@ public class MigrateJettyHandlerSignature extends Recipe {
                 }
         );
     }
-
 }
