@@ -20,13 +20,15 @@ import org.openrewrite.DocumentExample;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.yaml.Assertions.yaml;
 
-class UpgradeDropwizardDependenciesTest implements RewriteTest {
+class UpgradeDropwizard5Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipeFromResources("org.openrewrite.java.dropwizard.UpgradeDropwizardDependencies_4_To_5");
+        spec.recipeFromResources("org.openrewrite.java.dropwizard.UpgradeDropwizard_4_To_5");
     }
 
     @DocumentExample
@@ -36,9 +38,7 @@ class UpgradeDropwizardDependenciesTest implements RewriteTest {
           //language=xml
           pomXml(
             """
-              <project xmlns="http://maven.apache.org/POM/4.0.0"
-                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+              <project>
                   <modelVersion>4.0.0</modelVersion>
                   <groupId>com.example</groupId>
                   <artifactId>my-app</artifactId>
@@ -62,13 +62,12 @@ class UpgradeDropwizardDependenciesTest implements RewriteTest {
                   </dependencies>
               </project>
               """,
-            spec -> spec.after(pom -> {
-                // The BOM version should be upgraded to 5.0.x
-                org.assertj.core.api.Assertions.assertThat(pom)
-                        .contains("<artifactId>dropwizard-bom</artifactId>")
-                        .doesNotContain("<version>4.0.10</version>");
-                return pom;
-            })
+            spec -> spec.after(pom ->
+              // The BOM version should be upgraded to 5.0.x
+              assertThat(pom)
+                .contains("<artifactId>dropwizard-bom</artifactId>")
+                .doesNotContain("<version>4.0.10</version>")
+                .actual())
           )
         );
     }
@@ -79,9 +78,7 @@ class UpgradeDropwizardDependenciesTest implements RewriteTest {
           //language=xml
           pomXml(
             """
-              <project xmlns="http://maven.apache.org/POM/4.0.0"
-                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+              <project>
                   <modelVersion>4.0.0</modelVersion>
                   <groupId>com.example</groupId>
                   <artifactId>my-app</artifactId>
@@ -100,11 +97,8 @@ class UpgradeDropwizardDependenciesTest implements RewriteTest {
                   </dependencies>
               </project>
               """,
-            spec -> spec.after(pom -> {
-                org.assertj.core.api.Assertions.assertThat(pom)
-                        .doesNotContain("<version>4.0.10</version>");
-                return pom;
-            })
+            spec -> spec.after(pom ->
+              assertThat(pom).doesNotContain("<version>4.0.10</version>").actual())
           )
         );
     }
@@ -115,9 +109,7 @@ class UpgradeDropwizardDependenciesTest implements RewriteTest {
           //language=xml
           pomXml(
             """
-              <project xmlns="http://maven.apache.org/POM/4.0.0"
-                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+              <project>
                   <modelVersion>4.0.0</modelVersion>
                   <groupId>com.example</groupId>
                   <artifactId>my-app</artifactId>
@@ -134,6 +126,32 @@ class UpgradeDropwizardDependenciesTest implements RewriteTest {
                       </dependencies>
                   </dependencyManagement>
               </project>
+              """
+          )
+        );
+    }
+
+    @Test
+    void removesMaxQueuedRequests() {
+        rewriteRun(
+          //language=yaml
+          yaml(
+            """
+              server:
+                maxQueuedRequests: 1024
+                applicationConnectors:
+                  - type: http
+                    port: 8080
+              logging:
+                level: INFO
+              """,
+            """
+              server:
+                applicationConnectors:
+                  - type: http
+                    port: 8080
+              logging:
+                level: INFO
               """
           )
         );

@@ -45,7 +45,7 @@ class MigrateJettyHandlerSignatureTest implements RewriteTest {
               import jakarta.servlet.http.HttpServletRequest;
               import jakarta.servlet.http.HttpServletResponse;
 
-              public class MyHandler extends AbstractHandler {
+              class MyHandler extends AbstractHandler {
                   @Override
                   public void handle(String target, Request baseRequest,
                                      HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -61,7 +61,7 @@ class MigrateJettyHandlerSignatureTest implements RewriteTest {
               import org.eclipse.jetty.util.Callback;
               import jakarta.servlet.http.HttpServletResponse;
 
-              public class MyHandler extends Handler.Abstract {
+              class MyHandler extends Handler.Abstract {
                   @Override
                   public boolean handle(Request request, Response response, Callback callback) throws Exception {
                       response.setStatus(200);
