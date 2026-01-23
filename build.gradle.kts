@@ -17,6 +17,8 @@ dependencies {
     implementation("org.openrewrite:rewrite-properties")
     implementation("org.openrewrite:rewrite-yaml")
 
+    implementation("org.openrewrite.recipe:rewrite-hibernate:${rewriteVersion}")
+    implementation("org.openrewrite.recipe:rewrite-migrate-java:${rewriteVersion}")
     implementation("org.openrewrite.recipe:rewrite-static-analysis:${rewriteVersion}")
     implementation("org.openrewrite.recipe:rewrite-testing-frameworks:${rewriteVersion}")
 
