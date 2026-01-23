@@ -17,14 +17,12 @@ dependencies {
     implementation("org.openrewrite:rewrite-properties")
     implementation("org.openrewrite:rewrite-yaml")
 
+    implementation("org.openrewrite.recipe:rewrite-hibernate:${rewriteVersion}")
+    implementation("org.openrewrite.recipe:rewrite-migrate-java:${rewriteVersion}")
     implementation("org.openrewrite.recipe:rewrite-static-analysis:${rewriteVersion}")
     implementation("org.openrewrite.recipe:rewrite-testing-frameworks:${rewriteVersion}")
 
     runtimeOnly("org.openrewrite:rewrite-java-21")
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.+")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.+")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.3")
 
     testImplementation("org.openrewrite:rewrite-test")
 
@@ -35,4 +33,6 @@ dependencies {
     testRuntimeOnly("org.projectlombok:lombok:1.18.+")
     testRuntimeOnly("net.sourceforge.argparse4j:argparse4j:0.9.0")
     testRuntimeOnly("io.dropwizard:dropwizard-testing:1.3.29")
+    testRuntimeOnly("org.eclipse.jetty:jetty-server:11.+")
+    testRuntimeOnly("jakarta.servlet:jakarta.servlet-api:5.+")
 }
