@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 the original author or authors.
+ * Copyright 2026 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.openrewrite.maven.Assertions.pomXml;
 import static org.openrewrite.yaml.Assertions.yaml;
 
-class UpgradeDropwizard5Test implements RewriteTest {
+class MigrateToDropwizard5Test implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
-        spec.recipeFromResources("org.openrewrite.java.dropwizard.UpgradeDropwizard_4_To_5");
+        spec.recipeFromResources("org.openrewrite.java.dropwizard.MigrateToDropwizard5");
     }
 
     @DocumentExample
