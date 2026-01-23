@@ -35,4 +35,6 @@ dependencies {
     testRuntimeOnly("org.projectlombok:lombok:1.18.+")
     testRuntimeOnly("net.sourceforge.argparse4j:argparse4j:0.9.0")
     testRuntimeOnly("io.dropwizard:dropwizard-testing:1.3.29")
+    testRuntimeOnly("org.eclipse.jetty:jetty-server:11.+")
+    testRuntimeOnly("jakarta.servlet:jakarta.servlet-api:5.+")
 }

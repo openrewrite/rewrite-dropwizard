@@ -1,0 +1,53 @@
+#
+# Copyright 2025 the original author or authors.
+# <p>
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# <p>
+# https://www.apache.org/licenses/LICENSE-2.0
+# <p>
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.UpgradeDropwizard_4_To_5
+displayName: Upgrade Dropwizard 4.x to 5.0.x
+description: >-
+  Apply changes required to upgrade a Dropwizard 4.x application to 5.0.x.
+  This includes upgrading dependencies, removing deprecated configuration options,
+  and migrating Jetty handler implementations.
+  Note that Dropwizard 5.0.x requires Java 17 or higher.
+recipeList:
+  - org.openrewrite.java.dropwizard.UpgradeDropwizardDependencies_4_To_5
+  - org.openrewrite.java.dropwizard.RemoveMaxQueuedRequestsConfig
+  - org.openrewrite.java.dropwizard.MigrateJettyHandlerSignature
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.UpgradeDropwizardDependencies_4_To_5
+displayName: Upgrade Dropwizard dependencies from 4.x to 5.0.x
+description: >-
+  Upgrades all Dropwizard dependencies to 5.0.x.
+recipeList:
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: io.dropwizard
+      artifactId: "*"
+      newVersion: "5.0.x"
+  - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+      groupId: io.dropwizard.modules
+      artifactId: "*"
+      newVersion: "5.0.x"
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.openrewrite.java.dropwizard.RemoveMaxQueuedRequestsConfig
+displayName: Remove `server.maxQueuedRequests` configuration
+description: >-
+  The `server.maxQueuedRequests` configuration option was removed in Dropwizard 5.0.x without replacement.
+  This recipe removes it from Dropwizard YAML configuration files.
+recipeList:
+  - org.openrewrite.yaml.DeleteKey:
+      keyPath: $.server.maxQueuedRequests
