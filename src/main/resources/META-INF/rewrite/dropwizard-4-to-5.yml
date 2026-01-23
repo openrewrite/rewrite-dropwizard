@@ -33,4 +33,4 @@ recipeList:
       newVersion: "5.0.x"
   - org.openrewrite.yaml.DeleteKey:
       keyPath: $.server.maxQueuedRequests
-  - org.openrewrite.java.dropwizard.MigrateJettyHandlerSignature
+  - org.openrewrite.java.dropwizard.jetty.MigrateJettyHandlerSignature
