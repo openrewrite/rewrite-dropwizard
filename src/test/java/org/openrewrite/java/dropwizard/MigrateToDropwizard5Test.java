@@ -122,7 +122,7 @@ class MigrateToDropwizard5Test implements RewriteTest {
                           <dependency>
                               <groupId>io.dropwizard</groupId>
                               <artifactId>dropwizard-bom</artifactId>
-                              <version>5.0.0</version>
+                              <version>5.0.1</version>
                               <type>pom</type>
                               <scope>import</scope>
                           </dependency>
