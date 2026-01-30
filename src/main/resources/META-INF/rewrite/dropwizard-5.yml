@@ -23,7 +23,8 @@ description: >-
   and migrating Jetty handler implementations.
 
   Includes required migrations to Java 17, Jakarta EE 10, JUnit 5.14, Jackson 2.x, and Hibernate 6.6.
-  See [the upgrade guide](https://www.dropwizard.io/en/stable/manual/upgrade-notes/upgrade-notes-5_0_x.html).
+  See [the upgrade guide](https://www.dropwizard.io/en/stable/manual/upgrade-notes/upgrade-notes-5_0_x.html).preconditions:
+  - org.openrewrite.Singleton
 recipeList:
   - org.openrewrite.java.dependencies.UpgradeDependencyVersion:
       groupId: io.dropwizard
