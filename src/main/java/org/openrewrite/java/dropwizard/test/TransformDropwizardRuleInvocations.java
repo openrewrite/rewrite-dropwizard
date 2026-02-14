@@ -83,7 +83,7 @@ public class TransformDropwizardRuleInvocations extends Recipe {
                 addImports();
                 removeImports();
 
-                return transformVariableDeclaration(varDecls, mi);
+                return transformVariableDeclaration(ctx, varDecls, mi);
             }
 
 
@@ -99,7 +99,7 @@ public class TransformDropwizardRuleInvocations extends Recipe {
                     removeImports();
                     addImports();
 
-                    return transformMethodInvocation(method);
+                    return transformMethodInvocation(ctx, method);
                 }
 
                 return method;
@@ -148,7 +148,7 @@ public class TransformDropwizardRuleInvocations extends Recipe {
                 return false;
             }
 
-            private J.MethodInvocation transformMethodInvocation(J.MethodInvocation original) {
+            private J.MethodInvocation transformMethodInvocation(ExecutionContext ctx, J.MethodInvocation original) {
                 JavaType returnType = (original.getMethodType() != null) ?
                         original.getMethodType().getReturnType() :
                         null;
@@ -160,12 +160,12 @@ public class TransformDropwizardRuleInvocations extends Recipe {
                         .contextSensitive()
                         .imports(getCallBuilder().getImports())
                         .staticImports(getCallBuilder().getStaticImports())
-                        .javaParser(JavaParser.fromJavaVersion().classpath(JavaParser.runtimeClasspath()))
+                        .javaParser(JavaParser.fromJavaVersion().classpathFromResources(ctx, "spring-web-5.*", "spring-core-5.*"))
                         .build()
                         .apply(updateCursor(original), original.getCoordinates().replace());
             }
 
-            private J transformVariableDeclaration(J.VariableDeclarations varDecls, J.MethodInvocation original) {
+            private J transformVariableDeclaration(ExecutionContext ctx, J.VariableDeclarations varDecls, J.MethodInvocation original) {
                 JavaType varType = varDecls.getType();
 
                 DropwizardCallParser.ParsedCall info = DropwizardCallParser.parse(original, getCursor());
@@ -177,7 +177,7 @@ public class TransformDropwizardRuleInvocations extends Recipe {
                         .contextSensitive()
                         .imports(getCallBuilder().getImports())
                         .staticImports(getCallBuilder().getStaticImports())
-                        .javaParser(JavaParser.fromJavaVersion().classpath(JavaParser.runtimeClasspath()))
+                        .javaParser(JavaParser.fromJavaVersion().classpathFromResources(ctx, "spring-web-5.*", "spring-core-5.*"))
                         .build()
                         .apply(updateCursor(varDecls), varDecls.getCoordinates().replace());
             }

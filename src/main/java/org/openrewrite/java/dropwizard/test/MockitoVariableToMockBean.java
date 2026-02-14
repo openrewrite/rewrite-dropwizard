@@ -93,7 +93,7 @@ public class MockitoVariableToMockBean extends Recipe {
 
                 // Add @MockBean using JavaTemplate
                 JavaTemplate template = JavaTemplate.builder("@MockBean")
-                        .javaParser(JavaParser.fromJavaVersion().classpath(JavaParser.runtimeClasspath()))
+                        .javaParser(JavaParser.fromJavaVersion().classpathFromResources(ctx, "spring-boot-test-2.*"))
                         .imports(MOCKITO_MOCK_BEAN)
                         .build();
                 modified = template.apply(

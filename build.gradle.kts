@@ -5,6 +5,13 @@ plugins {
 group = "org.openrewrite.recipe"
 description = "Migrate between Dropwizard versions. Automatically."
 
+recipeDependencies {
+    parserClasspath("org.springframework.boot:spring-boot-test:2.+")
+    parserClasspath("org.springframework.boot:spring-boot-test-autoconfigure:2.+")
+    parserClasspath("org.springframework:spring-core:5.+")
+    parserClasspath("org.springframework:spring-web:5.+")
+}
+
 val rewriteVersion = rewriteRecipe.rewriteVersion.get()
 dependencies {
     compileOnly("org.projectlombok:lombok:latest.release")

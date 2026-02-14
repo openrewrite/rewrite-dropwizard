@@ -193,7 +193,7 @@ public class DropwizardRulesJUnit4ToSpringBoot extends Recipe {
                 if (!hasAnnotation(cd, getSimpleName(fqn))) {
                     JavaTemplate template =
                             JavaTemplate.builder("@" + getSimpleNameWithParams(fqn))
-                                    .javaParser(JavaParser.fromJavaVersion().classpath(JavaParser.runtimeClasspath()))
+                                    .javaParser(JavaParser.fromJavaVersion().classpathFromResources(ctx, "spring-boot-test-2.*", "spring-boot-test-autoconfigure-2.*"))
                                     .imports(SPRING_BOOT_TEST, AUTO_CONFIGURE_MOCK_MVC, DATA_JPA_TEST, WEB_MVC_TEST)
                                     .build();
                     cd =
