@@ -176,14 +176,14 @@ class DropwizardRulesJUnit4ToSpringBootTest implements RewriteTest {
               """,
             """
               import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
               @DataJpaTest
               class MyDAOTest {
+
                   // test methods...
               }
               """
           ));
-                  }
-              """));
     }
 
     @Test
@@ -218,14 +218,14 @@ class DropwizardRulesJUnit4ToSpringBootTest implements RewriteTest {
               """,
             """
               import org.springframework.boot.test.context.SpringBootTest;
+
               @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
               class MyClientTest {
+
                   // test methods...
               }
               """
           ));
-                }
-              """));
     }
 
     @Test
