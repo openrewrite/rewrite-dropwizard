@@ -13,36 +13,12 @@
 # limitations under the License.
 ---
 type: specs.openrewrite.org/v1beta/example
-recipeName: org.openrewrite.java.dropwizard.RemoveMaxQueuedRequestsConfig
+recipeName: org.openrewrite.java.dropwizard.MigrateToDropwizard5
 examples:
-- description: '`RemoveMaxQueuedRequestsConfigTest#removesMaxQueuedRequests`'
+- description: '`MigrateToDropwizard5Test#upgradesDropwizardBom`'
   sources:
   - before: |
-      server:
-        maxQueuedRequests: 1024
-        applicationConnectors:
-          - type: http
-            port: 8080
-      logging:
-        level: INFO
-    after: |
-      server:
-        applicationConnectors:
-          - type: http
-            port: 8080
-      logging:
-        level: INFO
-    language: yaml
----
-type: specs.openrewrite.org/v1beta/example
-recipeName: org.openrewrite.java.dropwizard.UpgradeDropwizardDependencies_4_To_5
-examples:
-- description: '`UpgradeDropwizardDependenciesTest#upgradesDropwizardBom`'
-  sources:
-  - before: |
-      <project xmlns="http://maven.apache.org/POM/4.0.0"
-               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+      <project>
           <modelVersion>4.0.0</modelVersion>
           <groupId>com.example</groupId>
           <artifactId>my-app</artifactId>
@@ -237,7 +213,7 @@ examples:
       import jakarta.servlet.http.HttpServletRequest;
       import jakarta.servlet.http.HttpServletResponse;
 
-      public class MyHandler extends AbstractHandler {
+      class MyHandler extends AbstractHandler {
           @Override
           public void handle(String target, Request baseRequest,
                              HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -252,7 +228,7 @@ examples:
       import org.eclipse.jetty.util.Callback;
       import jakarta.servlet.http.HttpServletResponse;
 
-      public class MyHandler extends Handler.Abstract {
+      class MyHandler extends Handler.Abstract {
           @Override
           public boolean handle(Request request, Response response, Callback callback) throws Exception {
               response.setStatus(200);
