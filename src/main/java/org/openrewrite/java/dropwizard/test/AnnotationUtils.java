@@ -16,12 +16,6 @@
 package org.openrewrite.java.dropwizard.test;
 
 import org.jspecify.annotations.Nullable;
-import org.openrewrite.Tree;
-import org.openrewrite.java.tree.J;
-import org.openrewrite.java.tree.JavaType;
-import org.openrewrite.java.tree.Space;
-import org.openrewrite.java.tree.TypeUtils;
-import org.openrewrite.marker.Markers;
 
 public class AnnotationUtils {
 
@@ -53,28 +47,5 @@ public class AnnotationUtils {
         String baseName = name.substring(0, paramStart);
         String params = name.substring(paramStart);
         return baseName.substring(baseName.lastIndexOf('.') + 1) + params;
-    }
-
-    public static J.Annotation makeAnnotation(String fullyQualifiedName) {
-        JavaType.FullyQualified annotationType =
-                TypeUtils.asFullyQualified(JavaType.buildType(fullyQualifiedName));
-
-        return makeAnnotation(annotationType);
-    }
-
-    public static J.Annotation makeAnnotation(JavaType.FullyQualified annotationType) {
-        return new J.Annotation(
-                Tree.randomId(),
-                Space.SINGLE_SPACE,
-                Markers.EMPTY,
-                new J.Identifier(
-                        Tree.randomId(),
-                        Space.EMPTY,
-                        Markers.EMPTY,
-                        null,
-                        annotationType.getClassName(),
-                        annotationType,
-                        null),
-                null);
     }
 }

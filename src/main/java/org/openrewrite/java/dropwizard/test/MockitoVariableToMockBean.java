@@ -21,6 +21,8 @@ import org.openrewrite.ExecutionContext;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.JavaIsoVisitor;
+import org.openrewrite.java.JavaParser;
+import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.MethodMatcher;
 import org.openrewrite.java.tree.J;
 
@@ -29,7 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.openrewrite.java.dropwizard.test.AnnotationUtils.makeAnnotation;
+import static java.util.Comparator.comparing;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
@@ -68,8 +70,6 @@ public class MockitoVariableToMockBean extends Recipe {
                 maybeRemoveImport(ORG_MOCKITO_MOCKITO);
                 maybeAddImport(MOCKITO_MOCK_BEAN);
 
-                J.Annotation mockBeanAnnotation = makeAnnotation(MOCKITO_MOCK_BEAN);
-
                 // Remove static and final modifiers
                 List<J.Modifier> newModifiers =
                         original.getModifiers().stream()
@@ -86,12 +86,21 @@ public class MockitoVariableToMockBean extends Recipe {
                                 .collect(Collectors.toList());
 
                 // Build the new declaration
-                return autoFormat(
-                        original
-                                .withLeadingAnnotations(Collections.singletonList(mockBeanAnnotation))
-                                .withModifiers(newModifiers)
-                                .withVariables(variables),
-                        ctx);
+                J.VariableDeclarations modified = original
+                        .withLeadingAnnotations(Collections.emptyList())
+                        .withModifiers(newModifiers)
+                        .withVariables(variables);
+
+                // Add @MockBean using JavaTemplate
+                JavaTemplate template = JavaTemplate.builder("@MockBean")
+                        .javaParser(JavaParser.fromJavaVersion().classpath(JavaParser.runtimeClasspath()))
+                        .imports(MOCKITO_MOCK_BEAN)
+                        .build();
+                modified = template.apply(
+                        updateCursor(modified),
+                        modified.getCoordinates().addAnnotation(comparing(J.Annotation::getSimpleName)));
+
+                return autoFormat(modified, ctx);
             }
 
             return original;
