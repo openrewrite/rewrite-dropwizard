@@ -36,22 +36,17 @@ import static java.util.Collections.singletonList;
 @EqualsAndHashCode(callSuper = false)
 public class MethodLambdaExtractor extends Recipe {
 
-    @Option(example = "TODO Provide a usage example for the docs",
-            displayName = "Ignore methods in anonymous classes",
+    @Option(displayName = "Ignore methods in anonymous classes",
             description = "When enabled, ignore @Override annotations on methods in anonymous classes.",
-            required = false)
-    @Nullable
+            example = "io.dropwizard.testing.junit.DAOTestRule")
     String preconditionType;
 
-    @Option(example = "TODO Provide a usage example for the docs",
-            displayName = "Ignore methods in anonymous classes",
+    @Option(displayName = "Ignore methods in anonymous classes",
             description = "When enabled, ignore @Override annotations on methods in anonymous classes.",
-            required = false)
-    @Nullable
+            example = "*..DAOTestRule inTransaction(..)")
     String matchingPattern;
 
     String displayName = "Extract lambda expressions";
-
     String description = "Extracts the body of lambda expressions and inlines them into the surrounding code.";
 
     private boolean shouldExtractMethodInvocation(J.MethodInvocation methodInvocation) {
@@ -69,7 +64,7 @@ public class MethodLambdaExtractor extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
-                Preconditions.or(new UsesType<>(preconditionType, true)),
+                new UsesType<>(preconditionType, true),
                 new JavaIsoVisitor<ExecutionContext>() {
                     @Override
                     public J.MethodDeclaration visitMethodDeclaration(
