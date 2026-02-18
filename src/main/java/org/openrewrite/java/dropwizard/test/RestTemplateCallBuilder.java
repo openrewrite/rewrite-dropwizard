@@ -96,9 +96,8 @@ public class RestTemplateCallBuilder implements DropwizardToSpringCallBuilder {
         if (needsHeaders) {
             String headers = buildHeaders(callInfo);
             return String.format("new HttpEntity<>(%s, %s)", body, headers);
-        } else {
-            return String.format("new HttpEntity<>(%s)", body);
         }
+        return String.format("new HttpEntity<>(%s)", body);
     }
 
     private String buildHeaders(ParsedCall callInfo) {

@@ -56,7 +56,7 @@ class DaoTestRuleLambdaExtractorTest implements RewriteTest {
                           this.jobTitle = jobTitle;
                       }
                   }
-                    """,
+                  """,
                 """
                   import java.util.List;
                   import java.util.Optional;
@@ -185,7 +185,7 @@ class DaoTestRuleLambdaExtractorTest implements RewriteTest {
                       final List<Person> persons = personDAO.findAll();
                   }
               }
-                """
+              """
           ));
     }
 }

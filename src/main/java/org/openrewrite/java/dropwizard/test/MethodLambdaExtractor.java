@@ -27,36 +27,27 @@ import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.Statement;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class MethodLambdaExtractor extends Recipe {
 
-    @Option(
-            displayName = "Ignore methods in anonymous classes",
+    @Option(displayName = "Ignore methods in anonymous classes",
             description = "When enabled, ignore @Override annotations on methods in anonymous classes.",
-            required = false)
-    @Nullable
+            example = "io.dropwizard.testing.junit.DAOTestRule")
     String preconditionType;
 
-    @Option(
-            displayName = "Ignore methods in anonymous classes",
+    @Option(displayName = "Ignore methods in anonymous classes",
             description = "When enabled, ignore @Override annotations on methods in anonymous classes.",
-            required = false)
-    @Nullable
+            example = "*..DAOTestRule inTransaction(..)")
     String matchingPattern;
 
-    @Override
-    public String getDisplayName() {
-        return "Extract lambda expressions";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Extracts the body of lambda expressions and inlines them into the surrounding code.";
-    }
+    String displayName = "Extract lambda expressions";
+    String description = "Extracts the body of lambda expressions and inlines them into the surrounding code.";
 
     private boolean shouldExtractMethodInvocation(J.MethodInvocation methodInvocation) {
         return new MethodMatcher(matchingPattern).matches(methodInvocation);
@@ -73,7 +64,7 @@ public class MethodLambdaExtractor extends Recipe {
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
-                Preconditions.or(new UsesType<>(preconditionType, true)),
+                new UsesType<>(preconditionType, true),
                 new JavaIsoVisitor<ExecutionContext>() {
                     @Override
                     public J.MethodDeclaration visitMethodDeclaration(
@@ -175,9 +166,9 @@ public class MethodLambdaExtractor extends Recipe {
                             J.Block block = (J.Block) lambda.getBody();
                             return block.getStatements();
                         } else if (lambda.getBody() instanceof Expression) {
-                            return Collections.singletonList((Statement) lambda.getBody());
+                            return singletonList((Statement) lambda.getBody());
                         }
-                        return Collections.emptyList();
+                        return emptyList();
                     }
                 });
     }

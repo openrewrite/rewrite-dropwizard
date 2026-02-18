@@ -35,15 +35,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class TransformDropwizardRuleInvocations extends Recipe {
 
-    @Override
-    public String getDisplayName() {
-        return "Convert dropwizard appRule to restTemplate";
-    }
+    String displayName = "Convert dropwizard appRule to restTemplate";
 
-    @Override
-    public String getDescription() {
-        return "Transforms Dropwizard AppRule testing calls to their equivalent RestTemplate calls.";
-    }
+    String description = "Transforms Dropwizard AppRule testing calls to their equivalent RestTemplate calls.";
 
     private DropwizardToSpringCallBuilder getCallBuilder() {
         return new RestTemplateCallBuilder();

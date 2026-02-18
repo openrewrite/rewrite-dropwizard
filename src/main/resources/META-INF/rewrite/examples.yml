@@ -357,3 +357,58 @@ examples:
           }
       }
     language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.java.dropwizard.test.DropwizardRulesJUnit4ToSpringBoot
+examples:
+- description: '`DropwizardRulesJUnit4ToSpringBootTest#convertDropwizardAppRule`'
+  sources:
+  - before: |
+      import io.dropwizard.testing.junit.DropwizardAppRule;
+      import org.junit.ClassRule;
+
+      class MyAppTest {
+          @ClassRule
+          public static final DropwizardAppRule<?> RULE = new DropwizardAppRule<>(Object.class);
+
+          // test methods...
+      }
+    after: |
+      import org.springframework.boot.test.context.SpringBootTest;
+
+      @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+      class MyAppTest {
+
+          // test methods...
+      }
+    language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.java.dropwizard.test.MethodLambdaExtractor
+examples:
+- description: '`DaoTestRuleLambdaExtractorTest#transformSimpleLambda`'
+  parameters:
+  - io.dropwizard.DaoTestRule
+  - '*..DaoTestRule inTransaction(..)'
+  sources:
+  - before: |
+      import io.dropwizard.DaoTestRule;
+
+      class Test {
+          private DaoTestRule daoTestRule;
+
+          public void test() {
+              String result = daoTestRule.inTransaction(() -> "test");
+          }
+      }
+    after: |
+      import io.dropwizard.DaoTestRule;
+
+      class Test {
+          private DaoTestRule daoTestRule;
+
+          public void test() {
+              String result = "test";
+          }
+      }
+    language: java

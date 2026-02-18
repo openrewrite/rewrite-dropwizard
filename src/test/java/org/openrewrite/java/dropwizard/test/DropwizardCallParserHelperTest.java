@@ -51,9 +51,11 @@ class DropwizardCallParserHelperTest {
 
     @Test
     void extractAuthHeader_multilineWithConstant2() {
-        String input = "RULE.target(\"/protected/admin\").request()\n" +
-          "            .header(HttpEntity.AUTHORIZATION, \"Basic Y2hpZWYtd2l6YXJkOnNlY3JldA==\")\n" +
-          "            .get(String.class)\n";
+        String input = """
+          RULE.target("/protected/admin").request()
+                      .header(HttpEntity.AUTHORIZATION, "Basic Y2hpZWYtd2l6YXJkOnNlY3JldA==")
+                      .get(String.class)
+          """;
         String actual = DropwizardCallParser.extractAuthHeader(input);
         assertThat(actual).isEqualTo("\"Basic Y2hpZWYtd2l6YXJkOnNlY3JldA==\"");
     }

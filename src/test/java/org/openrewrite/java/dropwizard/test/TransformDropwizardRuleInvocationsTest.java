@@ -16,7 +16,6 @@
 package org.openrewrite.java.dropwizard.test;
 
 import org.junit.jupiter.api.Test;
-import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -129,24 +128,25 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
 
     @Test
     void shouldConvertSimplePostRequest() {
-        rewriteRun(java("""
-          import io.dropwizard.testing.junit.DropwizardAppRule;
-          import org.springframework.web.client.RestTemplate;
-          import javax.ws.rs.client.Entity;
-          import javax.ws.rs.core.MediaType;
-
-          class TestApi {
-              private final DropwizardAppRule<Object> RULE = new DropwizardAppRule<>(Object.class);
-              private final RestTemplate restTemplate = new RestTemplate();
-
-              private Object postObject(Object person) {
-                  return RULE.client().target("http://localhost:8080/people")
-                      .request()
-                      .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE))
-                      .readEntity(Object.class);
-              }
-          }
-          """,
+        rewriteRun(java(
+                """
+                        import io.dropwizard.testing.junit.DropwizardAppRule;
+                        import org.springframework.web.client.RestTemplate;
+                        import javax.ws.rs.client.Entity;
+                        import javax.ws.rs.core.MediaType;
+                        
+                        class TestApi {
+                            private final DropwizardAppRule<Object> RULE = new DropwizardAppRule<>(Object.class);
+                            private final RestTemplate restTemplate = new RestTemplate();
+                        
+                            private Object postObject(Object person) {
+                                return RULE.client().target("http://localhost:8080/people")
+                                    .request()
+                                    .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE))
+                                    .readEntity(Object.class);
+                            }
+                        }
+                        """,
                 """
           import io.dropwizard.testing.junit.DropwizardAppRule;
           import org.springframework.http.HttpEntity;
@@ -305,54 +305,56 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
                       .readEntity(Object.class);
               }
           }
-          """, """
-            import io.dropwizard.testing.junit.DropwizardAppRule;
-            import org.springframework.http.HttpEntity;
-            import org.springframework.http.HttpHeaders;
-            import org.springframework.http.HttpMethod;
-            import org.springframework.web.client.RestTemplate;
-            import javax.ws.rs.client.Entity;
-
-            import java.util.Collections;
-
-            class TestApi {
-                private final DropwizardAppRule<Object> RULE = new DropwizardAppRule<>(Object.class);
-                private final RestTemplate restTemplate = new RestTemplate();
-
-                void test() {
-                    Object person = new Object();
-                    java.lang.Object response = restTemplate.exchange("/people", HttpMethod.POST, new HttpEntity<>(person, new HttpHeaders() {
-                        {
-                            setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-                            setAccept(Collections.singletonList(org.springframework.http.MediaType.APPLICATION_JSON));
+          """,
+                """
+                        import io.dropwizard.testing.junit.DropwizardAppRule;
+                        import org.springframework.http.HttpEntity;
+                        import org.springframework.http.HttpHeaders;
+                        import org.springframework.http.HttpMethod;
+                        import org.springframework.web.client.RestTemplate;
+                        import javax.ws.rs.client.Entity;
+                      
+                        import java.util.Collections;
+                      
+                        class TestApi {
+                            private final DropwizardAppRule<Object> RULE = new DropwizardAppRule<>(Object.class);
+                            private final RestTemplate restTemplate = new RestTemplate();
+                      
+                            void test() {
+                                Object person = new Object();
+                                java.lang.Object response = restTemplate.exchange("/people", HttpMethod.POST, new HttpEntity<>(person, new HttpHeaders() {
+                                    {
+                                        setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+                                        setAccept(Collections.singletonList(org.springframework.http.MediaType.APPLICATION_JSON));
+                                    }
+                                }), java.lang.Object.class).getBody();
+                            }
                         }
-                    }), java.lang.Object.class).getBody();
-                }
-            }
-          """));
+                        """));
     }
 
     @Test
     void shouldConvertInvocationWithinTryCatch() {
-        rewriteRun(java("""
-          import io.dropwizard.testing.junit.DropwizardAppRule;
-          import org.springframework.web.client.RestTemplate;
-          import org.springframework.http.HttpHeaders;
-
-          class TestApi {
-              private final DropwizardAppRule<Object> RULE = new DropwizardAppRule<>(Object.class);
-              private final RestTemplate restTemplate = new RestTemplate();
-
-              void test() {
-                  try {
-                      RULE.client().target("/protected/admin").request()
-                          .header(HttpHeaders.AUTHORIZATION, "Basic Z29vZC1ndXk6c2VjcmV0")
-                          .get(String.class);
-                  } catch (Exception e) {
-                  }
-              }
-          }
-          """,
+        rewriteRun(java(
+                """
+                        import io.dropwizard.testing.junit.DropwizardAppRule;
+                        import org.springframework.web.client.RestTemplate;
+                        import org.springframework.http.HttpHeaders;
+                        
+                        class TestApi {
+                            private final DropwizardAppRule<Object> RULE = new DropwizardAppRule<>(Object.class);
+                            private final RestTemplate restTemplate = new RestTemplate();
+                        
+                            void test() {
+                                try {
+                                    RULE.client().target("/protected/admin").request()
+                                        .header(HttpHeaders.AUTHORIZATION, "Basic Z29vZC1ndXk6c2VjcmV0")
+                                        .get(String.class);
+                                } catch (Exception e) {
+                                }
+                            }
+                        }
+                        """,
                 """
           import io.dropwizard.testing.junit.DropwizardAppRule;
           import org.springframework.http.HttpEntity;

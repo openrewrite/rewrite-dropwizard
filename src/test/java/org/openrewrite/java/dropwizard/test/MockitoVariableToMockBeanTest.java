@@ -16,6 +16,7 @@
 package org.openrewrite.java.dropwizard.test;
 
 import org.junit.jupiter.api.Test;
+import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -30,6 +31,7 @@ class MockitoVariableToMockBeanTest implements RewriteTest {
           .parser(JavaParser.fromJavaVersion().classpath("mockito-core", "spring-boot-starter-test"));
     }
 
+    @DocumentExample
     @Test
     void convertsMockitoToMockBean() {
         rewriteRun(
@@ -39,36 +41,38 @@ class MockitoVariableToMockBeanTest implements RewriteTest {
 
               public interface PersonDAO {
               }
-              """),
+              """
+          ),
           java(
             """
-                  import org.mockito.Mockito;
-                  import com.example.dao.PersonDAO;
+              import org.mockito.Mockito;
+              import com.example.dao.PersonDAO;
 
-                  class TestClass {
+              class TestClass {
 
-                      @Deprecated
-                      private static final PersonDAO PERSON_DAO = Mockito.mock(PersonDAO.class);
+                  @Deprecated
+                  private static final PersonDAO PERSON_DAO = Mockito.mock(PersonDAO.class);
 
-                      void testMethod() {
-                          // some test code
-                      }
+                  void testMethod() {
+                      // some test code
                   }
+              }
               """,
             """
-                  import com.example.dao.PersonDAO;
-                  import org.springframework.boot.test.mock.mockito.MockBean;
+              import com.example.dao.PersonDAO;
+              import org.springframework.boot.test.mock.mockito.MockBean;
 
-                  class TestClass {
+              class TestClass {
 
-                      @MockBean
-                      private PersonDAO PERSON_DAO;
+                  @MockBean
+                  private PersonDAO PERSON_DAO;
 
-                      void testMethod() {
-                          // some test code
-                      }
+                  void testMethod() {
+                      // some test code
                   }
-              """));
+              }
+              """
+          ));
     }
 
     @Test
@@ -80,45 +84,48 @@ class MockitoVariableToMockBeanTest implements RewriteTest {
 
               public interface EmailService {
               }
-              """),
+              """
+          ),
           java(
             """
               package com.example.dao;
 
               public interface PersonDAO {
               }
-              """),
+              """
+          ),
           java(
             """
-                  import org.mockito.Mockito;
-                  import com.example.dao.PersonDAO;
-                  import com.example.service.EmailService;
+              import org.mockito.Mockito;
+              import com.example.dao.PersonDAO;
+              import com.example.service.EmailService;
 
-                  class TestClass {
-                      private static final PersonDAO PERSON_DAO = Mockito.mock(PersonDAO.class);
-                      private static final EmailService EMAIL_SERVICE = Mockito.mock(EmailService.class);
+              class TestClass {
+                  private static final PersonDAO PERSON_DAO = Mockito.mock(PersonDAO.class);
+                  private static final EmailService EMAIL_SERVICE = Mockito.mock(EmailService.class);
 
-                      void testMethod() {
-                          // some test code
-                      }
+                  void testMethod() {
+                      // some test code
                   }
+              }
               """,
             """
-                  import com.example.dao.PersonDAO;
-                  import com.example.service.EmailService;
-                  import org.springframework.boot.test.mock.mockito.MockBean;
+              import com.example.dao.PersonDAO;
+              import com.example.service.EmailService;
+              import org.springframework.boot.test.mock.mockito.MockBean;
 
-                  class TestClass {
-                      @MockBean
-                      private PersonDAO PERSON_DAO;
-                      @MockBean
-                      private EmailService EMAIL_SERVICE;
+              class TestClass {
+                  @MockBean
+                  private PersonDAO PERSON_DAO;
+                  @MockBean
+                  private EmailService EMAIL_SERVICE;
 
-                      void testMethod() {
-                          // some test code
-                      }
+                  void testMethod() {
+                      // some test code
                   }
-              """));
+              }
+              """
+          ));
     }
 
     @Test
@@ -130,35 +137,37 @@ class MockitoVariableToMockBeanTest implements RewriteTest {
 
               public interface PersonDAO {
               }
-              """),
+              """
+          ),
           java(
             """
-                  import org.mockito.Mockito;
-                  import com.example.dao.PersonDAO;
+              import org.mockito.Mockito;
+              import com.example.dao.PersonDAO;
 
-                  class TestClass {
-                      private static final PersonDAO PERSON_DAO = Mockito.mock(PersonDAO.class);
-                      private static final String CONSTANT = "test";
+              class TestClass {
+                  private static final PersonDAO PERSON_DAO = Mockito.mock(PersonDAO.class);
+                  private static final String CONSTANT = "test";
 
-                      void testMethod() {
-                          // some test code
-                      }
+                  void testMethod() {
+                      // some test code
                   }
+              }
               """,
             """
-                  import com.example.dao.PersonDAO;
-                  import org.springframework.boot.test.mock.mockito.MockBean;
+              import com.example.dao.PersonDAO;
+              import org.springframework.boot.test.mock.mockito.MockBean;
 
-                  class TestClass {
-                      @MockBean
-                      private PersonDAO PERSON_DAO;
-                      private static final String CONSTANT = "test";
+              class TestClass {
+                  @MockBean
+                  private PersonDAO PERSON_DAO;
+                  private static final String CONSTANT = "test";
 
-                      void testMethod() {
-                          // some test code
-                      }
+                  void testMethod() {
+                      // some test code
                   }
-              """));
+              }
+              """
+          ));
     }
 
     @Test
@@ -170,34 +179,36 @@ class MockitoVariableToMockBeanTest implements RewriteTest {
 
               public interface PersonDAO {
               }
-              """),
+              """
+          ),
           java(
             """
-                  import static org.mockito.Mockito.mock;
-                  import com.example.dao.PersonDAO;
+              import static org.mockito.Mockito.mock;
+              import com.example.dao.PersonDAO;
 
-                  class TestClass {
+              class TestClass {
 
-                      private static final PersonDAO PERSON_DAO = mock(PersonDAO.class);
+                  private static final PersonDAO PERSON_DAO = mock(PersonDAO.class);
 
-                      void testMethod() {
-                          // some test code
-                      }
+                  void testMethod() {
+                      // some test code
                   }
+              }
               """,
             """
-                  import com.example.dao.PersonDAO;
-                  import org.springframework.boot.test.mock.mockito.MockBean;
+              import com.example.dao.PersonDAO;
+              import org.springframework.boot.test.mock.mockito.MockBean;
 
-                  class TestClass {
+              class TestClass {
 
-                      @MockBean
-                      private PersonDAO PERSON_DAO;
+                  @MockBean
+                  private PersonDAO PERSON_DAO;
 
-                      void testMethod() {
-                          // some test code
-                      }
+                  void testMethod() {
+                      // some test code
                   }
-              """));
+              }
+              """
+          ));
     }
 }

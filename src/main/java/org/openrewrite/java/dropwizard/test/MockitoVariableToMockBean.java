@@ -27,26 +27,21 @@ import org.openrewrite.java.MethodMatcher;
 import org.openrewrite.java.tree.J;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class MockitoVariableToMockBean extends Recipe {
 
 
-    @Override
-    public String getDisplayName() {
-        return "Convert Mockito mock() to @MockBean";
-    }
+    String displayName = "Convert Mockito mock() to @MockBean";
 
-    @Override
-    public String getDescription() {
-        return "Converts static final Mockito mock fields to Spring Boot @MockBean fields.";
-    }
+    String description = "Converts static final Mockito mock fields to Spring Boot @MockBean fields.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
@@ -77,17 +72,17 @@ public class MockitoVariableToMockBean extends Recipe {
                                         mod ->
                                                 mod.getType() != J.Modifier.Type.Static &&
                                                         mod.getType() != J.Modifier.Type.Final)
-                                .collect(Collectors.toList());
+                                .collect(toList());
 
                 // Remove the initializer
                 List<J.VariableDeclarations.NamedVariable> variables =
                         original.getVariables().stream()
                                 .map(v -> v.withInitializer(null))
-                                .collect(Collectors.toList());
+                                .collect(toList());
 
                 // Build the new declaration
                 J.VariableDeclarations modified = original
-                        .withLeadingAnnotations(Collections.emptyList())
+                        .withLeadingAnnotations(emptyList())
                         .withModifiers(newModifiers)
                         .withVariables(variables);
 
@@ -114,7 +109,7 @@ public class MockitoVariableToMockBean extends Recipe {
             boolean hasStaticAndFinal =
                     varDecls.getModifiers().stream()
                             .map(J.Modifier::getType)
-                            .collect(Collectors.toSet())
+                            .collect(toSet())
                             .containsAll(Arrays.asList(J.Modifier.Type.Static, J.Modifier.Type.Final));
 
             J.VariableDeclarations.NamedVariable var = varDecls.getVariables().get(0);
