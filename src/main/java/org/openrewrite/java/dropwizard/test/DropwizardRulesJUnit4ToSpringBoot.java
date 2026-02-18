@@ -28,10 +28,10 @@ import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Collections.emptySet;
 import static java.util.Comparator.comparing;
 import static org.openrewrite.java.dropwizard.test.AnnotationUtils.getSimpleName;
 import static org.openrewrite.java.dropwizard.test.AnnotationUtils.getSimpleNameWithParams;
@@ -78,15 +78,9 @@ public class DropwizardRulesJUnit4ToSpringBoot extends Recipe {
         return set;
     }
 
-    @Override
-    public String getDisplayName() {
-        return "Replace Dropwizard rules with Spring Boot test configuration";
-    }
+    String displayName = "Replace Dropwizard rules with Spring Boot test configuration";
 
-    @Override
-    public String getDescription() {
-        return "Remove Dropwizard JUnit4 rules and add Spring Boot test annotations and extensions.";
-    }
+    String description = "Remove Dropwizard JUnit4 rules and add Spring Boot test annotations and extensions.";
 
     @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
@@ -131,7 +125,7 @@ public class DropwizardRulesJUnit4ToSpringBoot extends Recipe {
 
                     private Set<String> findDropwizardRules(J.VariableDeclarations vd) {
                         if (vd.getTypeAsFullyQualified() == null) {
-                            return Collections.emptySet();
+                            return emptySet();
                         }
 
                         Set<String> foundRules = new HashSet<>();
