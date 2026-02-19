@@ -412,3 +412,42 @@ examples:
           }
       }
     language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.java.dropwizard.test.MockitoVariableToMockBean
+examples:
+- description: '`MockitoVariableToMockBeanTest#convertsMockitoToMockBean`'
+  sources:
+  - before: |
+      import org.mockito.Mockito;
+      import com.example.dao.PersonDAO;
+
+      class TestClass {
+
+          @Deprecated
+          private static final PersonDAO PERSON_DAO = Mockito.mock(PersonDAO.class);
+
+          void testMethod() {
+              // some test code
+          }
+      }
+    after: |
+      import com.example.dao.PersonDAO;
+      import org.springframework.boot.test.mock.mockito.MockBean;
+
+      class TestClass {
+
+          @MockBean
+          private PersonDAO PERSON_DAO;
+
+          void testMethod() {
+              // some test code
+          }
+      }
+    language: java
+  - before: |
+      package com.example.dao;
+
+      public interface PersonDAO {
+      }
+    language: java
