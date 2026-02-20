@@ -451,3 +451,51 @@ examples:
       public interface PersonDAO {
       }
     language: java
+---
+type: specs.openrewrite.org/v1beta/example
+recipeName: org.openrewrite.java.dropwizard.test.TransformDropwizardRuleInvocations
+examples:
+- description: '`TransformDropwizardRuleInvocationsTest#shouldConvertSimplePostRequest`'
+  sources:
+  - before: |
+      import io.dropwizard.testing.junit.DropwizardAppRule;
+      import org.springframework.web.client.RestTemplate;
+      import javax.ws.rs.client.Entity;
+      import javax.ws.rs.core.MediaType;
+
+      class TestApi {
+          private final DropwizardAppRule<Object> RULE = new DropwizardAppRule<>(Object.class);
+          private final RestTemplate restTemplate = new RestTemplate();
+
+          private Object postObject(Object person) {
+              return RULE.client().target("http://localhost:8080/people")
+                  .request()
+                  .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE))
+                  .readEntity(Object.class);
+          }
+      }
+    after: |
+      import io.dropwizard.testing.junit.DropwizardAppRule;
+      import org.springframework.http.HttpEntity;
+      import org.springframework.http.HttpHeaders;
+      import org.springframework.http.HttpMethod;
+      import org.springframework.http.MediaType;
+      import org.springframework.web.client.RestTemplate;
+      import javax.ws.rs.client.Entity;
+
+      import java.util.Collections;
+
+      class TestApi {
+          private final DropwizardAppRule<Object> RULE = new DropwizardAppRule<>(Object.class);
+          private final RestTemplate restTemplate = new RestTemplate();
+
+          private Object postObject(Object person) {
+              return restTemplate.exchange("/people", HttpMethod.POST, new HttpEntity<>(person, new HttpHeaders() {
+                  {
+                      setContentType(MediaType.APPLICATION_JSON);
+                      setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+                  }
+              }), java.lang.Object.class).getBody();
+          }
+      }
+    language: java
