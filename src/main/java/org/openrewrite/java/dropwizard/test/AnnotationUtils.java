@@ -15,12 +15,12 @@
  */
 package org.openrewrite.java.dropwizard.test;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.jspecify.annotations.Nullable;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnnotationUtils {
-
-    private AnnotationUtils() {
-    }
 
     public static @Nullable String getSimpleName(String name) {
         if (name == null) {

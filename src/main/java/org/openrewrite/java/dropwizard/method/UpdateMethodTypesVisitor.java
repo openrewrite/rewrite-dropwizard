@@ -15,17 +15,15 @@
  */
 package org.openrewrite.java.dropwizard.method;
 
+import lombok.RequiredArgsConstructor;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 
+@RequiredArgsConstructor
 public class UpdateMethodTypesVisitor extends JavaIsoVisitor<ExecutionContext> {
     private final JavaType.FullyQualified newSuperclass;
-
-    public UpdateMethodTypesVisitor(JavaType.FullyQualified newSuperclass) {
-        this.newSuperclass = newSuperclass;
-    }
 
     @Override
     public J.MethodDeclaration visitMethodDeclaration(

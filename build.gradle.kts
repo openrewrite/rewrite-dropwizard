@@ -43,7 +43,7 @@ dependencies {
 
     testRuntimeOnly("net.sourceforge.argparse4j:argparse4j:0.9.0")
     testRuntimeOnly("org.eclipse.jetty:jetty-server:11.+")
-    testRuntimeOnly("org.projectlombok:lombok:1.18.+")
+    testRuntimeOnly("org.projectlombok:lombok:1.18.44")
     testRuntimeOnly("org.springframework.boot:spring-boot-starter-actuator:2.5.+")
     testRuntimeOnly("org.springframework.boot:spring-boot-starter-test:2.5.+")
     testRuntimeOnly("org.springframework.boot:spring-boot-starter-web:2.5.+")

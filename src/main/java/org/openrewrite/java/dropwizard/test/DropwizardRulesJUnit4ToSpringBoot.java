@@ -16,6 +16,7 @@
 package org.openrewrite.java.dropwizard.test;
 
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.jspecify.annotations.Nullable;
 import org.openrewrite.ExecutionContext;
@@ -151,13 +152,10 @@ public class DropwizardRulesJUnit4ToSpringBoot extends Recipe {
                 });
     }
 
+    @RequiredArgsConstructor
     public static class AddSpringBootTestAnnotationVisitor extends JavaIsoVisitor<ExecutionContext> {
 
         private final Set<String> foundRules;
-
-        public AddSpringBootTestAnnotationVisitor(Set<String> foundRules) {
-            this.foundRules = foundRules;
-        }
 
         @Override
         public J.ClassDeclaration visitClassDeclaration(
