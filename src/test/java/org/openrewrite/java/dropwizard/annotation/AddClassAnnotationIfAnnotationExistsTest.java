@@ -152,10 +152,9 @@ class AddClassAnnotationIfAnnotationExistsTest implements RewriteTest {
               """,
             """
               import javax.persistence.Entity;
-              import javax.persistence.Table;
 
               @Entity
-              @Table
+              @javax.persistence.Table
               public class Customer {
                   private String name;
               }

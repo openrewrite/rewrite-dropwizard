@@ -17,12 +17,14 @@ package org.openrewrite.java.dropwizard.method;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.*;
 import org.openrewrite.java.JavaIsoVisitor;
+import org.openrewrite.java.RemoveImplements;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
+import org.openrewrite.java.tree.JavaSourceFile;
 import org.openrewrite.java.tree.JavaType;
-import org.openrewrite.java.tree.TypeTree;
 
 import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
 
@@ -43,56 +45,48 @@ public class RemoveSuperTypeByType extends Recipe {
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
                 new UsesType<>(typeToRemove, false),
-                new JavaIsoVisitor<ExecutionContext>() {
-                    @Override
-                    public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
-                        J.ClassDeclaration cd = super.visitClassDeclaration(classDecl, ctx);
 
-                        // Handle extends clause
-                        if (cd.getExtends() != null && isOfClassType(cd.getExtends().getType(), typeToRemove)) {
-                            cd = cd.withExtends(null);
+                new TreeVisitor<Tree, ExecutionContext>() {
+                    final TreeVisitor<?, ExecutionContext> removeImplements = new RemoveImplements(typeToRemove, null).getVisitor();
+                    final TreeVisitor<?, ExecutionContext> removeExtends = new JavaIsoVisitor<ExecutionContext>() {
+                        @Override
+                        public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
+
+                            if (classDecl.getExtends() == null || !isOfClassType(classDecl.getExtends().getType(), typeToRemove)) {
+                                return classDecl;
+                            }
+
+                            // Handle extends clause
                             JavaType.ShallowClass type = (JavaType.ShallowClass) JavaType.buildType("java.lang.Object");
                             doAfterVisit(new UpdateMethodTypesVisitor(type));
                             doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
+
+                            return classDecl.withExtends(null);
+                        }
+                    };
+
+
+                    @Override
+                    public @Nullable Tree visit(@Nullable Tree tree, ExecutionContext ctx) {
+                        if (!(tree instanceof JavaSourceFile)) {
+                            return tree;
                         }
 
-                        // Handle implements clause
-                        if (cd.getImplements() != null) {
-                            java.util.List<TypeTree> remaining = new java.util.ArrayList<>();
-                            boolean found = false;
-                            for (TypeTree impl : cd.getImplements()) {
-                                if (isOfClassType(impl.getType(), typeToRemove)) {
-                                    found = true;
-                                    maybeRemoveImport(typeToRemove);
-                                } else {
-                                    remaining.add(impl);
-                                }
-                            }
-                            if (found) {
-                                cd = cd.withImplements(remaining.isEmpty() ? null : remaining);
-                                // Update the class type metadata to remove the interface, so
-                                // TypeUtils.isOverride() no longer sees it as an override target
-                                if (cd.getType() instanceof JavaType.Class) {
-                                    JavaType.Class classType = (JavaType.Class) cd.getType();
-                                    java.util.List<JavaType.FullyQualified> updatedInterfaces = new java.util.ArrayList<>();
-                                    for (JavaType.FullyQualified iface : classType.getInterfaces()) {
-                                        if (!isOfClassType(iface, typeToRemove)) {
-                                            updatedInterfaces.add(iface);
-                                        }
-                                    }
-                                    JavaType.Class updatedClassType = classType.withInterfaces(updatedInterfaces);
-                                    cd = cd.withType(updatedClassType);
-                                    // Also update method types so their declaring type reflects the removed interface
-                                    doAfterVisit(new UpdateMethodTypesVisitor(updatedClassType));
-                                }
-                                doAfterVisit(new RemoveUnnecessaryOverride(false).getVisitor());
-                            }
+                        SourceFile sourceFile = (JavaSourceFile) tree;
+
+                        if (removeExtends.isAcceptable(sourceFile, ctx)) {
+                            sourceFile = (SourceFile) removeExtends.visit(sourceFile, ctx);
                         }
 
-                        return cd;
+                        if (tree == sourceFile && removeImplements.isAcceptable(sourceFile, ctx)) {
+                            sourceFile = (SourceFile) removeImplements.visit(sourceFile, ctx);
+                        }
+
+                        return sourceFile;
                     }
-
                 }
         );
     }
+
+
 }

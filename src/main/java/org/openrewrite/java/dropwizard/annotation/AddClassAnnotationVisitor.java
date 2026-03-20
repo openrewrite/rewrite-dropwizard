@@ -16,13 +16,13 @@
 package org.openrewrite.java.dropwizard.annotation;
 
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.Cursor;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.java.AnnotationMatcher;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.service.AnnotationService;
-import org.openrewrite.java.service.ImportService;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.J.ClassDeclaration;
 
@@ -35,6 +35,7 @@ import static org.openrewrite.java.JavaParser.runtimeClasspath;
 public abstract class AddClassAnnotationVisitor extends JavaIsoVisitor<ExecutionContext> {
 
     private final String annotationText;
+    @Nullable
     private final Boolean annotateSubclasses;
 
     protected abstract boolean shouldAddAnnotation(ClassDeclaration cd);
@@ -70,15 +71,9 @@ public abstract class AddClassAnnotationVisitor extends JavaIsoVisitor<Execution
                 .javaParser(fromJavaVersion().classpath(runtimeClasspath()))
                 .imports(annotationType)
                 .build()
-                .apply(
-                        updateCursor(cd),
-                        cd.getCoordinates().addAnnotation(comparing(J.Annotation::getSimpleName)));
-        doAfterVisit(service(ImportService.class).shortenFullyQualifiedTypeReferencesIn(updated));
-        // Force-add the import AFTER shortening, because shortenFullyQualified internally
-        // runs RemoveUnusedImports which would remove the import when the annotation node
-        // lacks type attribution (e.g. when running via mod CLI without the annotation
-        // type on the recipe's runtime classpath).
-        doAfterVisit(new org.openrewrite.java.AddImport<>(annotationType, null, false));
+                .apply(updateCursor(cd), cd.getCoordinates().addAnnotation(comparing(J.Annotation::getSimpleName)));
+
+        maybeAddImport(annotationType, false); // this is a symptom of classpath based on runtime
         return maybeAutoFormat(cd, updated, ctx);
     }
 
