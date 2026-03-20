@@ -27,6 +27,7 @@ import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 
+
 @EqualsAndHashCode(callSuper = false)
 @Value
 public class RemoveVariablesByPackage extends Recipe {
@@ -64,6 +65,9 @@ public class RemoveVariablesByPackage extends Recipe {
                     return vd;
                 }
 
+                // Check if the variable matches the package filter
+                boolean matches = false;
+
                 // Check initializers for method calls from filtered package
                 for (J.VariableDeclarations.NamedVariable var : vd.getVariables()) {
                     if (var.getInitializer() instanceof J.MethodInvocation) {
@@ -71,30 +75,64 @@ public class RemoveVariablesByPackage extends Recipe {
                                 ((J.MethodInvocation) var.getInitializer()).getMethodType();
                         if (methodType != null &&
                                 methodType.getDeclaringType().getFullyQualifiedName().contains(packageFilter)) {
-                            doAfterVisit(new RemoveImportsVisitor());
-                            return null;
+                            matches = true;
+                            break;
                         }
                     }
                 }
 
                 // Original type checks
-                JavaType.FullyQualified declaredFqn = resolveFullyQualified(vd.getType());
-                if (declaredFqn != null && declaredFqn.getFullyQualifiedName().contains(packageFilter)) {
-                    doAfterVisit(new RemoveImportsVisitor());
-                    return null;
+                if (!matches) {
+                    JavaType.FullyQualified declaredFqn = resolveFullyQualified(vd.getType());
+                    if (declaredFqn != null && declaredFqn.getFullyQualifiedName().contains(packageFilter)) {
+                        matches = true;
+                    }
                 }
 
-                for (J.VariableDeclarations.NamedVariable var : vd.getVariables()) {
-                    if (var.getInitializer() != null) {
-                        JavaType.FullyQualified initFqn = resolveFullyQualified(var.getInitializer().getType());
-                        if (initFqn != null && initFqn.getFullyQualifiedName().contains(packageFilter)) {
-                            doAfterVisit(new RemoveImportsVisitor());
-                            return null;
+                if (!matches) {
+                    for (J.VariableDeclarations.NamedVariable var : vd.getVariables()) {
+                        if (var.getInitializer() != null) {
+                            JavaType.FullyQualified initFqn = resolveFullyQualified(var.getInitializer().getType());
+                            if (initFqn != null && initFqn.getFullyQualifiedName().contains(packageFilter)) {
+                                matches = true;
+                                break;
+                            }
                         }
                     }
                 }
 
-                return vd;
+                if (!matches) {
+                    return vd;
+                }
+
+                // Before removing, check if any declared variable has usages in scope
+                for (J.VariableDeclarations.NamedVariable var : vd.getVariables()) {
+                    if (hasUsagesInScope(var.getSimpleName())) {
+                        return vd;
+                    }
+                }
+
+                doAfterVisit(new RemoveImportsVisitor());
+                return null;
+            }
+
+            private boolean hasUsagesInScope(String varName) {
+                J.CompilationUnit cu = getCursor().firstEnclosing(J.CompilationUnit.class);
+                if (cu == null) {
+                    return false;
+                }
+
+                // Count occurrences of the variable name as a standalone identifier in the source
+                String source = cu.printAll();
+                java.util.regex.Pattern p = java.util.regex.Pattern.compile(
+                        "\\b" + java.util.regex.Pattern.quote(varName) + "\\b");
+                java.util.regex.Matcher m = p.matcher(source);
+                int count = 0;
+                while (m.find()) {
+                    count++;
+                }
+                // At least 1 occurrence is the declaration itself; more means usages exist
+                return count > 1;
             }
 
             private JavaType.FullyQualified resolveFullyQualified(JavaType type) {
