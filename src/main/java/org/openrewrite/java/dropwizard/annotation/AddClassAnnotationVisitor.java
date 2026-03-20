@@ -60,17 +60,25 @@ public abstract class AddClassAnnotationVisitor extends JavaIsoVisitor<Execution
             return cd;
         }
 
-        maybeAddImport(annotationType);
+        // Use the short annotation name in the template so the result is properly
+        // importable even when the type isn't on the recipe's runtime classpath.
+        String simpleAnnotation = annotationText.contains(".")
+                ? annotationText.substring(annotationText.lastIndexOf('.') + 1)
+                : annotationText;
 
-        ClassDeclaration updated = JavaTemplate.builder("@#{}")
+        ClassDeclaration updated = JavaTemplate.builder("@" + simpleAnnotation)
                 .javaParser(fromJavaVersion().classpath(runtimeClasspath()))
                 .imports(annotationType)
                 .build()
                 .apply(
                         updateCursor(cd),
-                        cd.getCoordinates().addAnnotation(comparing(J.Annotation::getSimpleName)),
-                        annotationText);
+                        cd.getCoordinates().addAnnotation(comparing(J.Annotation::getSimpleName)));
         doAfterVisit(service(ImportService.class).shortenFullyQualifiedTypeReferencesIn(updated));
+        // Force-add the import AFTER shortening, because shortenFullyQualified internally
+        // runs RemoveUnusedImports which would remove the import when the annotation node
+        // lacks type attribution (e.g. when running via mod CLI without the annotation
+        // type on the recipe's runtime classpath).
+        doAfterVisit(new org.openrewrite.java.AddImport<>(annotationType, null, false));
         return maybeAutoFormat(cd, updated, ctx);
     }
 

@@ -127,6 +127,80 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
         );
     }
 
+    @Test
+    void removesImplementsInterface() {
+        rewriteRun(
+          spec -> spec.recipe(new RemoveSuperTypeByType("com.example.MyInterface")),
+          java(
+            """
+              package com.example;
+
+              interface MyInterface {
+                  void start() throws Exception;
+                  void stop() throws Exception;
+              }
+              """
+          ),
+          java(
+            """
+              package com.example;
+
+              class MyClass implements MyInterface {
+                  @Override
+                  public void start() throws Exception {}
+                  @Override
+                  public void stop() throws Exception {}
+              }
+              """,
+            """
+              package com.example;
+
+              class MyClass {
+                  public void start() throws Exception {}
+                  public void stop() throws Exception {}
+              }
+              """
+          )
+        );
+    }
+
+    @Test
+    void removesOnlyTargetInterfaceKeepsOthers() {
+        rewriteRun(
+          spec -> spec.recipe(new RemoveSuperTypeByType("com.example.MyInterface")),
+          java(
+            """
+              package com.example;
+
+              interface MyInterface {
+                  void start() throws Exception;
+              }
+              """
+          ),
+          java(
+            """
+              package com.example;
+
+              import java.io.Serializable;
+
+              class MyClass implements MyInterface, Serializable {
+                  @Override
+                  public void start() throws Exception {}
+              }
+              """,
+            """
+              package com.example;
+
+              import java.io.Serializable;
+
+              class MyClass implements Serializable {
+                  public void start() throws Exception {}
+              }
+              """
+          )
+        );
+    }
+
     @Disabled
     @Test
     void handlesImportRemoval() {

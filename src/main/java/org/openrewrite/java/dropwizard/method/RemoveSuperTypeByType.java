@@ -22,6 +22,7 @@ import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
+import org.openrewrite.java.tree.TypeTree;
 
 import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
 
@@ -47,11 +48,45 @@ public class RemoveSuperTypeByType extends Recipe {
                     public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
                         J.ClassDeclaration cd = super.visitClassDeclaration(classDecl, ctx);
 
+                        // Handle extends clause
                         if (cd.getExtends() != null && isOfClassType(cd.getExtends().getType(), typeToRemove)) {
                             cd = cd.withExtends(null);
                             JavaType.ShallowClass type = (JavaType.ShallowClass) JavaType.buildType("java.lang.Object");
                             doAfterVisit(new UpdateMethodTypesVisitor(type));
                             doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
+                        }
+
+                        // Handle implements clause
+                        if (cd.getImplements() != null) {
+                            java.util.List<TypeTree> remaining = new java.util.ArrayList<>();
+                            boolean found = false;
+                            for (TypeTree impl : cd.getImplements()) {
+                                if (isOfClassType(impl.getType(), typeToRemove)) {
+                                    found = true;
+                                    maybeRemoveImport(typeToRemove);
+                                } else {
+                                    remaining.add(impl);
+                                }
+                            }
+                            if (found) {
+                                cd = cd.withImplements(remaining.isEmpty() ? null : remaining);
+                                // Update the class type metadata to remove the interface, so
+                                // TypeUtils.isOverride() no longer sees it as an override target
+                                if (cd.getType() instanceof JavaType.Class) {
+                                    JavaType.Class classType = (JavaType.Class) cd.getType();
+                                    java.util.List<JavaType.FullyQualified> updatedInterfaces = new java.util.ArrayList<>();
+                                    for (JavaType.FullyQualified iface : classType.getInterfaces()) {
+                                        if (!isOfClassType(iface, typeToRemove)) {
+                                            updatedInterfaces.add(iface);
+                                        }
+                                    }
+                                    JavaType.Class updatedClassType = classType.withInterfaces(updatedInterfaces);
+                                    cd = cd.withType(updatedClassType);
+                                    // Also update method types so their declaring type reflects the removed interface
+                                    doAfterVisit(new UpdateMethodTypesVisitor(updatedClassType));
+                                }
+                                doAfterVisit(new RemoveUnnecessaryOverride(false).getVisitor());
+                            }
                         }
 
                         return cd;
