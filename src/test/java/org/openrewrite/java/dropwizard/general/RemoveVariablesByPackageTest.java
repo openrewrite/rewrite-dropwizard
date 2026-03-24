@@ -128,6 +128,90 @@ class RemoveVariablesByPackageTest implements RewriteTest {
     }
 
     @Test
+    void preservesVariablesWithUsages() {
+        rewriteRun(
+          java(
+            """
+              package com.example;
+
+              class TestClass {
+                  private String usedField = "test";
+                  private String unusedField = "remove me";
+
+                  public void method() {
+                      System.out.println(usedField);
+                  }
+              }
+              """,
+            """
+              package com.example;
+
+              class TestClass {
+                  private String usedField = "test";
+
+                  public void method() {
+                      System.out.println(usedField);
+                  }
+              }
+              """
+          ));
+    }
+
+    @Test
+    void preservesLocalVariablesWithUsages() {
+        rewriteRun(
+          java(
+            """
+              package com.example;
+
+              class TestClass {
+                  public void method() {
+                      String usedLocal = "test";
+                      String unusedLocal = "remove me";
+                      System.out.println(usedLocal);
+                  }
+              }
+              """,
+            """
+              package com.example;
+
+              class TestClass {
+                  public void method() {
+                      String usedLocal = "test";
+                      System.out.println(usedLocal);
+                  }
+              }
+              """
+          ));
+    }
+
+    @Test
+    void removesUnusedFieldsWithDropwizardTypes() {
+        rewriteRun(
+          spec -> spec
+            .recipe(new RemoveVariablesByPackage("io.dropwizard", false))
+            .parser(JavaParser.fromJavaVersion().classpath("dropwizard-db", "dropwizard-core")),
+          java(
+            """
+              package com.example;
+
+              import io.dropwizard.db.DataSourceFactory;
+
+              class MyConfig {
+                  private DataSourceFactory dataSourceFactory = new DataSourceFactory();
+              }
+              """,
+            """
+              package com.example;
+
+              class MyConfig {
+              }
+              """
+          ));
+    }
+
+
+    @Test
     void removesImports() {
         rewriteRun(
           spec -> spec

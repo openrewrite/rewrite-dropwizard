@@ -36,6 +36,7 @@ dependencies {
     testRuntimeOnly("io.dropwizard.metrics:metrics-annotation:4.1.+")
     testRuntimeOnly("io.dropwizard.metrics:metrics-healthchecks:4.1.+")
     testRuntimeOnly("io.dropwizard:dropwizard-testing:1.3.29")
+    testRuntimeOnly("io.dropwizard:dropwizard-db:1.3.29")
 
     testRuntimeOnly("jakarta.servlet:jakarta.servlet-api:5.+")
     testRuntimeOnly("jakarta.ws.rs:jakarta.ws.rs-api:2.1.6")

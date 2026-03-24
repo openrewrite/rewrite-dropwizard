@@ -23,9 +23,14 @@ import org.openrewrite.Option;
 import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.JavaIsoVisitor;
+import org.openrewrite.java.TypeMatcher;
+import org.openrewrite.java.search.SemanticallyEqual;
+import org.openrewrite.java.tree.Expression;
 import org.openrewrite.java.tree.J;
-import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
 
 @EqualsAndHashCode(callSuper = false)
 @Value
@@ -49,6 +54,8 @@ public class RemoveVariablesByPackage extends Recipe {
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return new JavaIsoVisitor<ExecutionContext>() {
 
+            final TypeMatcher targetTypeMatcher = new TypeMatcher(packageFilter + "..*", true);
+
             @Override
             public J.@Nullable VariableDeclarations visitVariableDeclarations(
                     J.VariableDeclarations multiVariable, ExecutionContext ctx) {
@@ -64,47 +71,52 @@ public class RemoveVariablesByPackage extends Recipe {
                     return vd;
                 }
 
-                // Check initializers for method calls from filtered package
-                for (J.VariableDeclarations.NamedVariable var : vd.getVariables()) {
-                    if (var.getInitializer() instanceof J.MethodInvocation) {
-                        JavaType.Method methodType =
-                                ((J.MethodInvocation) var.getInitializer()).getMethodType();
-                        if (methodType != null &&
-                                methodType.getDeclaringType().getFullyQualifiedName().contains(packageFilter)) {
-                            doAfterVisit(new RemoveImportsVisitor());
-                            return null;
-                        }
+
+                // check if variable or initializer matches
+                if (!targetTypeMatcher.matches(vd.getType())) {
+                    // check of initializer of field is of target type
+                    Expression initializer = vd.getVariables().get(0).getInitializer();
+                    if (!(initializer instanceof J.MethodInvocation) || ((J.MethodInvocation) initializer).getSelect() == null) {
+                        return vd;
+                    }
+
+                    if (!targetTypeMatcher.matches(((J.MethodInvocation) initializer).getSelect().getType())) {
+                        return vd;
+                    } else {
+                        // maybe remove import of removed initializer class
+                        maybeRemoveImport(TypeUtils.asFullyQualified(((J.MethodInvocation) initializer).getSelect().getType()));
                     }
                 }
 
-                // Original type checks
-                JavaType.FullyQualified declaredFqn = resolveFullyQualified(vd.getType());
-                if (declaredFqn != null && declaredFqn.getFullyQualifiedName().contains(packageFilter)) {
-                    doAfterVisit(new RemoveImportsVisitor());
-                    return null;
-                }
-
+                // Before removing, check if any declared variable has usages in scope
                 for (J.VariableDeclarations.NamedVariable var : vd.getVariables()) {
-                    if (var.getInitializer() != null) {
-                        JavaType.FullyQualified initFqn = resolveFullyQualified(var.getInitializer().getType());
-                        if (initFqn != null && initFqn.getFullyQualifiedName().contains(packageFilter)) {
-                            doAfterVisit(new RemoveImportsVisitor());
-                            return null;
-                        }
+                    if (hasUsagesInScope(var.getName())) {
+                        return vd;
                     }
                 }
 
-                return vd;
+                maybeRemoveImport(vd.getTypeAsFullyQualified());
+
+                return null;
             }
 
-            private JavaType.FullyQualified resolveFullyQualified(JavaType type) {
-                if (type instanceof JavaType.Parameterized) {
-                    return TypeUtils.asFullyQualified( ((JavaType.Parameterized) type).getType() );
+            private boolean hasUsagesInScope(J.Identifier varIdentifier) {
+                J.CompilationUnit cu = getCursor().firstEnclosing(J.CompilationUnit.class);
+                if (cu == null) {
+                    return false;
                 }
-                if (type instanceof JavaType.Class) {
-                    return TypeUtils.asFullyQualified( type );
-                }
-                return null;
+
+                return new JavaIsoVisitor<AtomicBoolean>() {
+                    @Override
+                    public J.Identifier visitIdentifier(J.Identifier identifier, AtomicBoolean found) {
+                        if (!found.get()
+                                && SemanticallyEqual.areEqual(identifier, varIdentifier)
+                                && !(getCursor().getParentTreeCursor().getValue() instanceof J.VariableDeclarations.NamedVariable)) {
+                            found.set(true);
+                        }
+                        return identifier;
+                    }
+                }.reduce(cu, new AtomicBoolean()).get();
             }
 
             private boolean isClassScope() {
@@ -115,16 +127,5 @@ public class RemoveVariablesByPackage extends Recipe {
                 return getCursor().dropParentUntil(J.class::isInstance).getValue() instanceof J.MethodDeclaration;
             }
         };
-    }
-
-    // For some reason, just calling maybeRemoveImport(..) does not work properly.
-    static class RemoveImportsVisitor extends JavaIsoVisitor<ExecutionContext> {
-
-        @Override
-        public J.Import visitImport(J.Import _import, ExecutionContext ctx) {
-            J.Import imp = super.visitImport(_import, ctx);
-            maybeRemoveImport(imp.getQualid().toString());
-            return imp;
-        }
     }
 }
