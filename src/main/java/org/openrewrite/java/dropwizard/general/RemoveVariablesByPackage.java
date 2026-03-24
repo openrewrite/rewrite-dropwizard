@@ -24,9 +24,12 @@ import org.openrewrite.Recipe;
 import org.openrewrite.TreeVisitor;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.TypeMatcher;
+import org.openrewrite.java.search.SemanticallyEqual;
 import org.openrewrite.java.tree.Expression;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.TypeUtils;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @EqualsAndHashCode(callSuper = false)
@@ -87,7 +90,7 @@ public class RemoveVariablesByPackage extends Recipe {
 
                 // Before removing, check if any declared variable has usages in scope
                 for (J.VariableDeclarations.NamedVariable var : vd.getVariables()) {
-                    if (hasUsagesInScope(var.getSimpleName())) {
+                    if (hasUsagesInScope(var.getName())) {
                         return vd;
                     }
                 }
@@ -97,23 +100,23 @@ public class RemoveVariablesByPackage extends Recipe {
                 return null;
             }
 
-            private boolean hasUsagesInScope(String varName) {
+            private boolean hasUsagesInScope(J.Identifier varIdentifier) {
                 J.CompilationUnit cu = getCursor().firstEnclosing(J.CompilationUnit.class);
                 if (cu == null) {
                     return false;
                 }
 
-                // Count occurrences of the variable name as a standalone identifier in the source
-                String source = cu.printAll();
-                java.util.regex.Pattern p = java.util.regex.Pattern.compile(
-                        "\\b" + java.util.regex.Pattern.quote(varName) + "\\b");
-                java.util.regex.Matcher m = p.matcher(source);
-                int count = 0;
-                while (m.find()) {
-                    count++;
-                }
-                // At least 1 occurrence is the declaration itself; more means usages exist
-                return count > 1;
+                return new JavaIsoVisitor<AtomicBoolean>() {
+                    @Override
+                    public J.Identifier visitIdentifier(J.Identifier identifier, AtomicBoolean found) {
+                        if (!found.get()
+                                && SemanticallyEqual.areEqual(identifier, varIdentifier)
+                                && !(getCursor().getParentTreeCursor().getValue() instanceof J.VariableDeclarations.NamedVariable)) {
+                            found.set(true);
+                        }
+                        return identifier;
+                    }
+                }.reduce(cu, new AtomicBoolean()).get();
             }
 
             private boolean isClassScope() {
