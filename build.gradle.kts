@@ -27,6 +27,7 @@ dependencies {
     implementation("org.openrewrite.recipe:rewrite-hibernate:${rewriteVersion}")
     implementation("org.openrewrite.recipe:rewrite-migrate-java:${rewriteVersion}")
     implementation("org.openrewrite.recipe:rewrite-static-analysis:${rewriteVersion}")
+    implementation("org.openrewrite.recipe:rewrite-java-dependencies:${rewriteVersion}")
     implementation("org.openrewrite.recipe:rewrite-testing-frameworks:${rewriteVersion}")
 
     runtimeOnly("org.openrewrite:rewrite-java-21")
