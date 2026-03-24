@@ -17,14 +17,15 @@ package org.openrewrite.java.dropwizard.method;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.jspecify.annotations.Nullable;
 import org.openrewrite.*;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.RemoveImplements;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
-import org.openrewrite.java.tree.JavaSourceFile;
 import org.openrewrite.java.tree.JavaType;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
 
@@ -42,51 +43,28 @@ public class RemoveSuperTypeByType extends Recipe {
     String description = "Removes a specified type from class extends or implements clauses.";
 
     @Override
+    public List<Recipe> getRecipeList() {
+        return Collections.singletonList(new RemoveImplements(typeToRemove, null));
+    }
+
+    @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
                 new UsesType<>(typeToRemove, false),
-
-                new TreeVisitor<Tree, ExecutionContext>() {
-                    final TreeVisitor<?, ExecutionContext> removeImplements = new RemoveImplements(typeToRemove, null).getVisitor();
-                    final TreeVisitor<?, ExecutionContext> removeExtends = new JavaIsoVisitor<ExecutionContext>() {
-                        @Override
-                        public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
-
-                            if (classDecl.getExtends() == null || !isOfClassType(classDecl.getExtends().getType(), typeToRemove)) {
-                                return classDecl;
-                            }
-
-                            // Handle extends clause
-                            JavaType.ShallowClass type = (JavaType.ShallowClass) JavaType.buildType("java.lang.Object");
-                            doAfterVisit(new UpdateMethodTypesVisitor(type));
-                            doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
-
-                            return classDecl.withExtends(null);
-                        }
-                    };
-
-
+                new JavaIsoVisitor<ExecutionContext>() {
                     @Override
-                    public @Nullable Tree visit(@Nullable Tree tree, ExecutionContext ctx) {
-                        if (!(tree instanceof JavaSourceFile)) {
-                            return tree;
+                    public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
+                        if (classDecl.getExtends() == null || !isOfClassType(classDecl.getExtends().getType(), typeToRemove)) {
+                            return classDecl;
                         }
 
-                        SourceFile sourceFile = (JavaSourceFile) tree;
+                        JavaType.ShallowClass type = (JavaType.ShallowClass) JavaType.buildType("java.lang.Object");
+                        doAfterVisit(new UpdateMethodTypesVisitor(type));
+                        doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
 
-                        if (removeExtends.isAcceptable(sourceFile, ctx)) {
-                            sourceFile = (SourceFile) removeExtends.visit(sourceFile, ctx);
-                        }
-
-                        if (tree == sourceFile && removeImplements.isAcceptable(sourceFile, ctx)) {
-                            sourceFile = (SourceFile) removeImplements.visit(sourceFile, ctx);
-                        }
-
-                        return sourceFile;
+                        return classDecl.withExtends(null);
                     }
                 }
         );
     }
-
-
 }
