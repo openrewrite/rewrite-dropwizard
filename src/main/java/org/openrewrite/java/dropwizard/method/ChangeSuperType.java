@@ -87,7 +87,7 @@ public class ChangeSuperType extends Recipe {
 
                 JavaTemplate extendsTemplate = JavaTemplate.builder(newSuperclass + typeParams)
                         .javaParser(JavaParser.fromJavaVersion().classpathFromResources(ctx,
-                                "spring-boot-actuator-2.*", "spring-boot-2.*"))
+                                "spring-boot-actuator-2", "spring-boot-2"))
                         .imports(newSuperclass)
                         .contextSensitive()
                         .build();
