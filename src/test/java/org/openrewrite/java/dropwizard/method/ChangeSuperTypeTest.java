@@ -31,7 +31,7 @@ class ChangeSuperTypeTest implements RewriteTest {
         spec.recipe(
             new ChangeSuperType(
               "org.example.OldParent", "org.example.NewParent", false, false, true))
-          .parser(JavaParser.fromJavaVersion().classpath("metrics-healthchecks", "spring-boot-actuator"));
+          .parser(JavaParser.fromJavaVersion().classpath("metrics-healthchecks"));
     }
 
     @DocumentExample
