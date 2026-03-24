@@ -43,7 +43,7 @@ public class RemoveVariablesByPackage extends Recipe {
 
     @Option(displayName = "Remove only class scope",
             description = "Ignores variables that are method scope",
-            example = "com.example.unwanted")
+            example = "true")
     Boolean removeOnlyClassScope;
 
     String displayName = "Remove class variables matching package filter";
@@ -109,9 +109,9 @@ public class RemoveVariablesByPackage extends Recipe {
                 return new JavaIsoVisitor<AtomicBoolean>() {
                     @Override
                     public J.Identifier visitIdentifier(J.Identifier identifier, AtomicBoolean found) {
-                        if (!found.get()
-                                && SemanticallyEqual.areEqual(identifier, varIdentifier)
-                                && !(getCursor().getParentTreeCursor().getValue() instanceof J.VariableDeclarations.NamedVariable)) {
+                        if (!found.get() &&
+                                SemanticallyEqual.areEqual(identifier, varIdentifier) &&
+                                !(getCursor().getParentTreeCursor().getValue() instanceof J.VariableDeclarations.NamedVariable)) {
                             found.set(true);
                         }
                         return identifier;

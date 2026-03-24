@@ -35,7 +35,7 @@ description: Creates the main Spring Boot application class.
 recipeList:
   - org.openrewrite.java.dropwizard.AddMissingApplicationProperties
   - org.openrewrite.java.dropwizard.AddCoreExampleProperties
-  - org.openrewrite.maven.AddDependency:
+  - org.openrewrite.java.dependencies.AddDependency:
       groupId: org.projectlombok
       artifactId: lombok
       version: "1.18.x"
@@ -43,18 +43,18 @@ recipeList:
   - org.openrewrite.maven.AddManagedDependency:
       groupId: org.springframework.boot
       artifactId: spring-boot-dependencies
-      version: "2.7.18"
+      version: "2.7.x"
       scope: import
       type: pom
       addToRootPom: true
   - org.openrewrite.maven.RemoveManagedDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-bom
-  - org.openrewrite.maven.AddDependency:
+  - org.openrewrite.java.dependencies.AddDependency:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter
-      version: "2.7.18"
-  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      version: "2.7.x"
+  - org.openrewrite.java.dependencies.RemoveDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-core
   - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
@@ -62,19 +62,19 @@ recipeList:
       targetSupertypeName: "io.dropwizard.Application"
   - org.openrewrite.java.dropwizard.method.RemoveSuperTypeByType:
       typeToRemove: io.dropwizard.Application
-  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+  - org.openrewrite.java.dependencies.RemoveDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-assets
-  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+  - org.openrewrite.java.dependencies.RemoveDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-http2
-  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+  - org.openrewrite.java.dependencies.RemoveDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-migrations
-  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+  - org.openrewrite.java.dependencies.RemoveDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-views-freemarker
-  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+  - org.openrewrite.java.dependencies.RemoveDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-views-mustache
 
@@ -84,10 +84,10 @@ name: org.openrewrite.java.dropwizard.MigrateHealthChecksAndMetrics
 displayName: Add Spring Boot Actuator
 description: Configures Spring Boot Actuator with basic health endpoints.
 recipeList:
-  - org.openrewrite.maven.AddDependency:
+  - org.openrewrite.java.dependencies.AddDependency:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-actuator
-      version: "2.7.18"
+      version: "2.7.x"
   - org.openrewrite.java.dropwizard.AddActuatorConfiguration
   - org.openrewrite.java.dropwizard.annotation.micrometer.CodahaleTimedToMicrometerTimed
 
@@ -135,25 +135,25 @@ name: org.openrewrite.java.dropwizard.MigrateResourcesToSpringJersey
 displayName: Migrate Resource Classes
 description: Converts Dropwizard Resources to Spring Boot format.
 recipeList:
-  - org.openrewrite.maven.AddDependency:
+  - org.openrewrite.java.dependencies.AddDependency:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter
-      version: "2.7.18"
-  - org.openrewrite.maven.AddDependency:
+      version: "2.7.x"
+  - org.openrewrite.java.dependencies.AddDependency:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-web
-      version: "2.7.18"
-  - org.openrewrite.maven.AddDependency:
+      version: "2.7.x"
+  - org.openrewrite.java.dependencies.AddDependency:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-jersey
-      version: "2.7.18"
-  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      version: "2.7.x"
+  - org.openrewrite.java.dependencies.RemoveDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-jersey
-  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+  - org.openrewrite.java.dependencies.RemoveDependency:
       groupId: org.glassfish.jersey.test-framework.providers
       artifactId: jersey-test-framework-provider-inmemory
-  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+  - org.openrewrite.java.dependencies.RemoveDependency:
       groupId: org.glassfish.jersey.test-framework.providers
       artifactId: jersey-test-framework-provider-grizzly2
   - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfAnnotationExists:
@@ -173,11 +173,11 @@ name: org.openrewrite.java.dropwizard.MigrateHibernate
 displayName: Migrate Hibernate
 description: Converts Dropwizard Resources to Spring Boot format.
 recipeList:
-  - org.openrewrite.maven.AddDependency:
+  - org.openrewrite.java.dependencies.AddDependency:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-data-jpa
-      version: "2.7.18"
-  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      version: "2.7.x"
+  - org.openrewrite.java.dependencies.RemoveDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-hibernate
   - org.openrewrite.java.dropwizard.annotation.AddClassAnnotationIfSuperTypeExists:
@@ -200,12 +200,12 @@ name: org.openrewrite.java.dropwizard.MigrateTests
 displayName: Migrate Health Checks to Spring Boot
 description: Converts Dropwizard tests to Spring Boot format.
 recipeList:
-  - org.openrewrite.maven.AddDependency:
+  - org.openrewrite.java.dependencies.AddDependency:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-test
-      version: "2.7.18"
+      version: "2.7.x"
       scope: test
-  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+  - org.openrewrite.java.dependencies.RemoveDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-testing
   - org.openrewrite.java.testing.junit5.JUnit4to5Migration
@@ -223,11 +223,11 @@ name: org.openrewrite.java.dropwizard.MigrateSecurity
 displayName: Migrate Health Checks to Spring Boot
 description: Converts Dropwizard health checks to Spring Boot format.
 recipeList:
-  - org.openrewrite.maven.AddDependency:
+  - org.openrewrite.java.dependencies.AddDependency:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-security
-      version: "2.7.18"
-  - org.openrewrite.java.dropwizard.config.RemoveAndExcludeDependency:
+      version: "2.7.x"
+  - org.openrewrite.java.dependencies.RemoveDependency:
       groupId: io.dropwizard
       artifactId: dropwizard-auth
 

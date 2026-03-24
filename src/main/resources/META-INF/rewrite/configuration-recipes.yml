@@ -21,6 +21,7 @@ description: This recipe creates an application.properties file in the resources
 recipeList:
   - org.openrewrite.properties.CreatePropertiesFile:
       relativeFileName: src/main/resources/application.properties
+      overwriteExisting: false
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: org.openrewrite.java.dropwizard.AddCoreExampleProperties
