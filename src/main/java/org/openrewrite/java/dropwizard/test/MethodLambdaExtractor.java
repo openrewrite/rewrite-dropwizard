@@ -35,13 +35,13 @@ import static java.util.Collections.singletonList;
 @EqualsAndHashCode(callSuper = false)
 public class MethodLambdaExtractor extends Recipe {
 
-    @Option(displayName = "Ignore methods in anonymous classes",
-            description = "When enabled, ignore @Override annotations on methods in anonymous classes.",
+    @Option(displayName = "Precondition type",
+            description = "The fully qualified type that must be present for this recipe to run.",
             example = "io.dropwizard.testing.junit.DAOTestRule")
     String preconditionType;
 
-    @Option(displayName = "Ignore methods in anonymous classes",
-            description = "When enabled, ignore @Override annotations on methods in anonymous classes.",
+    @Option(displayName = "Matching pattern",
+            description = "The method pattern to match for lambda extraction.",
             example = "*..DAOTestRule inTransaction(..)")
     String matchingPattern;
 

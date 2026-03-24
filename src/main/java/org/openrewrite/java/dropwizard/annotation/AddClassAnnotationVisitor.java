@@ -63,9 +63,9 @@ public abstract class AddClassAnnotationVisitor extends JavaIsoVisitor<Execution
 
         // Use the short annotation name in the template so the result is properly
         // importable even when the type isn't on the recipe's runtime classpath.
-        String simpleAnnotation = annotationText.contains(".")
-                ? annotationText.substring(annotationText.lastIndexOf('.') + 1)
-                : annotationText;
+        String simpleAnnotation = annotationText.contains(".") ?
+                annotationText.substring(annotationText.lastIndexOf('.') + 1) :
+                annotationText;
 
         ClassDeclaration updated = JavaTemplate.builder("@" + simpleAnnotation)
                 .javaParser(fromJavaVersion().classpath(runtimeClasspath()))
