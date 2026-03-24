@@ -6,6 +6,8 @@ group = "org.openrewrite.recipe"
 description = "Migrate between Dropwizard versions. Automatically."
 
 recipeDependencies {
+    parserClasspath("org.springframework.boot:spring-boot:2.+")
+    parserClasspath("org.springframework.boot:spring-boot-actuator:2.+")
     parserClasspath("org.springframework.boot:spring-boot-test:2.+")
     parserClasspath("org.springframework.boot:spring-boot-test-autoconfigure:2.+")
     parserClasspath("org.springframework:spring-core:5.+")
