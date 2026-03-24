@@ -19,9 +19,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.openrewrite.*;
 import org.openrewrite.java.JavaIsoVisitor;
+import org.openrewrite.java.RemoveImplements;
 import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
 
@@ -39,24 +43,27 @@ public class RemoveSuperTypeByType extends Recipe {
     String description = "Removes a specified type from class extends or implements clauses.";
 
     @Override
+    public List<Recipe> getRecipeList() {
+        return Collections.singletonList(new RemoveImplements(typeToRemove, null));
+    }
+
+    @Override
     public TreeVisitor<?, ExecutionContext> getVisitor() {
         return Preconditions.check(
                 new UsesType<>(typeToRemove, false),
                 new JavaIsoVisitor<ExecutionContext>() {
                     @Override
                     public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
-                        J.ClassDeclaration cd = super.visitClassDeclaration(classDecl, ctx);
-
-                        if (cd.getExtends() != null && isOfClassType(cd.getExtends().getType(), typeToRemove)) {
-                            cd = cd.withExtends(null);
-                            JavaType.ShallowClass type = (JavaType.ShallowClass) JavaType.buildType("java.lang.Object");
-                            doAfterVisit(new UpdateMethodTypesVisitor(type));
-                            doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
+                        if (classDecl.getExtends() == null || !isOfClassType(classDecl.getExtends().getType(), typeToRemove)) {
+                            return classDecl;
                         }
 
-                        return cd;
-                    }
+                        JavaType.ShallowClass type = (JavaType.ShallowClass) JavaType.buildType("java.lang.Object");
+                        doAfterVisit(new UpdateMethodTypesVisitor(type));
+                        doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
 
+                        return classDecl.withExtends(null);
+                    }
                 }
         );
     }

@@ -16,13 +16,13 @@
 package org.openrewrite.java.dropwizard.annotation;
 
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.openrewrite.Cursor;
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.java.AnnotationMatcher;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.service.AnnotationService;
-import org.openrewrite.java.service.ImportService;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.J.ClassDeclaration;
 
@@ -35,6 +35,7 @@ import static org.openrewrite.java.JavaParser.runtimeClasspath;
 public abstract class AddClassAnnotationVisitor extends JavaIsoVisitor<ExecutionContext> {
 
     private final String annotationText;
+    @Nullable
     private final Boolean annotateSubclasses;
 
     protected abstract boolean shouldAddAnnotation(ClassDeclaration cd);
@@ -60,17 +61,19 @@ public abstract class AddClassAnnotationVisitor extends JavaIsoVisitor<Execution
             return cd;
         }
 
-        maybeAddImport(annotationType);
+        // Use the short annotation name in the template so the result is properly
+        // importable even when the type isn't on the recipe's runtime classpath.
+        String simpleAnnotation = annotationText.contains(".")
+                ? annotationText.substring(annotationText.lastIndexOf('.') + 1)
+                : annotationText;
 
-        ClassDeclaration updated = JavaTemplate.builder("@#{}")
+        ClassDeclaration updated = JavaTemplate.builder("@" + simpleAnnotation)
                 .javaParser(fromJavaVersion().classpath(runtimeClasspath()))
                 .imports(annotationType)
                 .build()
-                .apply(
-                        updateCursor(cd),
-                        cd.getCoordinates().addAnnotation(comparing(J.Annotation::getSimpleName)),
-                        annotationText);
-        doAfterVisit(service(ImportService.class).shortenFullyQualifiedTypeReferencesIn(updated));
+                .apply(updateCursor(cd), cd.getCoordinates().addAnnotation(comparing(J.Annotation::getSimpleName)));
+
+        maybeAddImport(annotationType, false); // this is a symptom of classpath based on runtime
         return maybeAutoFormat(cd, updated, ctx);
     }
 
