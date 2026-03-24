@@ -73,7 +73,7 @@ public abstract class AddClassAnnotationVisitor extends JavaIsoVisitor<Execution
                 .build()
                 .apply(updateCursor(cd), cd.getCoordinates().addAnnotation(comparing(J.Annotation::getSimpleName)));
 
-        maybeAddImport(annotationType, false); // this is a symptom of classpath based on runtime
+        maybeAddImport(annotationType, false);
         return maybeAutoFormat(cd, updated, ctx);
     }
 
