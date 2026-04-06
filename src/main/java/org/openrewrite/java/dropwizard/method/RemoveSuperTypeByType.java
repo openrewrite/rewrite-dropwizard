@@ -24,9 +24,9 @@ import org.openrewrite.java.search.UsesType;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 
-import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
 
 @EqualsAndHashCode(callSuper = false)
@@ -44,7 +44,7 @@ public class RemoveSuperTypeByType extends Recipe {
 
     @Override
     public List<Recipe> getRecipeList() {
-        return Collections.singletonList(new RemoveImplements(typeToRemove, null));
+        return singletonList(new RemoveImplements(typeToRemove, null));
     }
 
     @Override

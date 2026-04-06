@@ -82,10 +82,9 @@ public class RemoveVariablesByPackage extends Recipe {
 
                     if (!targetTypeMatcher.matches(((J.MethodInvocation) initializer).getSelect().getType())) {
                         return vd;
-                    } else {
-                        // maybe remove import of removed initializer class
-                        maybeRemoveImport(TypeUtils.asFullyQualified(((J.MethodInvocation) initializer).getSelect().getType()));
                     }
+                    // maybe remove import of removed initializer class
+                    maybeRemoveImport(TypeUtils.asFullyQualified(((J.MethodInvocation) initializer).getSelect().getType()));
                 }
 
                 // Before removing, check if any declared variable has usages in scope

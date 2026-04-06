@@ -49,7 +49,7 @@ class RecipeLoadingTest implements RewriteTest {
                 .build()
                 .listRecipes();
         assertThat(recipes).as("No recipes found in %s", packageName).isNotEmpty();
-        SoftAssertions softly = new SoftAssertions();
+        var softly = new SoftAssertions();
         for (Recipe recipe : recipes) {
             if (!recipe.getName().startsWith(packageName)) {
                 continue;
