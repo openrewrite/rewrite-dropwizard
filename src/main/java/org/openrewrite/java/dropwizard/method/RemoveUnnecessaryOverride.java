@@ -63,7 +63,7 @@ public class RemoveUnnecessaryOverride extends Recipe {
                                 !TypeUtils.isOverride(m.getMethodType()) &&
                                 !(Boolean.TRUE.equals(ignoreAnonymousClassMethods) &&
                                         getCursorToParentScope(getCursor()).getValue() instanceof J.NewClass)) {
-                            return removeAnnotationVisitor.visit(m, ctx, getCursor().getParentTreeCursor());
+                            return (J.MethodDeclaration) removeAnnotationVisitor.visit(m, ctx, getCursor().getParentTreeCursor());
                         }
                         return m;
                     }
