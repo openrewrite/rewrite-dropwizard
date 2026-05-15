@@ -143,7 +143,7 @@ public class TransformDropwizardRuleInvocations extends Recipe {
             }
 
             private J.MethodInvocation transformMethodInvocation(ExecutionContext ctx, J.MethodInvocation original) {
-                JavaType returnType = (original.getMethodType() != null) ?
+                JavaType returnType = original.getMethodType() != null ?
                         original.getMethodType().getReturnType() :
                         null;
 

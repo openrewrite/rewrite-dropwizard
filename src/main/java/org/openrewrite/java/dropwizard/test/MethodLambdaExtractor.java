@@ -55,8 +55,8 @@ public class MethodLambdaExtractor extends Recipe {
     private boolean shouldExtractLambda(J.VariableDeclarations varDecl) {
         return varDecl.getVariables().stream()
                 .map(J.VariableDeclarations.NamedVariable::getInitializer)
-                .filter(init -> init instanceof J.MethodInvocation)
-                .map(init -> (J.MethodInvocation) init)
+                .filter(J.MethodInvocation.class::isInstance)
+                .map(J.MethodInvocation.class::cast)
                 .anyMatch(this::shouldExtractMethodInvocation);
     }
 
