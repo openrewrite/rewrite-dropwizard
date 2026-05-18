@@ -157,6 +157,7 @@ class RemoveSuperTypeByTypeTest implements RewriteTest {
 
               class MyClass {
                   public void start() throws Exception {}
+
                   public void stop() throws Exception {}
               }
               """
