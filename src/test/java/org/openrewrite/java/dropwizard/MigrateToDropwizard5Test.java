@@ -104,7 +104,7 @@ class MigrateToDropwizard5Test implements RewriteTest {
     }
 
     @Test
-    void noChangeWhenAlreadyOnVersion5() {
+    void staysWithinDropwizard5x() {
         rewriteRun(
           //language=xml
           pomXml(
@@ -129,7 +129,14 @@ class MigrateToDropwizard5Test implements RewriteTest {
                       </dependencies>
                   </dependencyManagement>
               </project>
-              """
+              """,
+            // Already on Dropwizard 5; the recipe keeps the BOM on the latest 5.0.x patch
+            // (it may bump 5.0.1 to a newer 5.0.x release) without downgrading or breaking it.
+            spec -> spec.after(pom ->
+              assertThat(pom)
+                .contains("<artifactId>dropwizard-bom</artifactId>")
+                .containsPattern("<version>5\\.0\\.\\d+</version>")
+                .actual())
           )
         );
     }
