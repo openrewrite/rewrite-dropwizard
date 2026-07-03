@@ -28,13 +28,11 @@ import static org.assertj.core.api.Assertions.fail;
 
 class RecipeLoadingTest implements RewriteTest {
 
-    /**
-     * Recipes that generate files on empty source sets always consume at least
-     * 1 cycle, which conflicts with the 0-cycle expectation of
-     * {@code rewriteRun} when called without source specs.
-     * These recipes and their composites are tested separately in
-     * {@link MigrateDropwizardToSpringBoot}.
-     */
+    /// Recipes that generate files on empty source sets always consume at least
+    /// 1 cycle, which conflicts with the 0-cycle expectation of
+    /// `rewriteRun` when called without source specs.
+    /// These recipes and their composites are tested separately in
+    /// [MigrateDropwizardToSpringBoot].
     private static final Set<String> FILE_GENERATING_RECIPES = Set.of(
             "org.openrewrite.java.dropwizard.AddMissingApplicationProperties",
             "org.openrewrite.java.dropwizard.CoreSetup",
