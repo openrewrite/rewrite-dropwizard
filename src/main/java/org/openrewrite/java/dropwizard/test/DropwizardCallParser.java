@@ -153,10 +153,18 @@ public class DropwizardCallParser {
 
     static String extractHttpMethod(J.MethodInvocation method) {
         String methodStr = method.print().toLowerCase();
-        if (methodStr.contains(".post(")) return "POST";
-        if (methodStr.contains(".put(")) return "PUT";
-        if (methodStr.contains(".delete(")) return "DELETE";
-        if (methodStr.contains(".patch(")) return "PATCH";
+        if (methodStr.contains(".post(")) {
+            return "POST";
+        }
+        if (methodStr.contains(".put(")) {
+            return "PUT";
+        }
+        if (methodStr.contains(".delete(")) {
+            return "DELETE";
+        }
+        if (methodStr.contains(".patch(")) {
+            return "PATCH";
+        }
         return "GET";
     }
 
