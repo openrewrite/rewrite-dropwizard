@@ -28,7 +28,13 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         spec.recipes(new TransformDropwizardRuleInvocations())
-          .parser(JavaParser.fromJavaVersion().classpath("dropwizard-testing", "dropwizard-core", "jersey-client", "spring-web", "javax.ws.rs-api", "jackson-databind").logCompilationWarningsAndErrors(false)
+          .parser(JavaParser.fromJavaVersion().classpath(
+            "dropwizard-testing",
+            "dropwizard-core",
+            "jersey-client",
+            "spring-web",
+            "javax.ws.rs-api",
+            "jackson-databind").logCompilationWarningsAndErrors(false)
 
             .dependsOn("""
               package io.dropwizard.testing.junit;
