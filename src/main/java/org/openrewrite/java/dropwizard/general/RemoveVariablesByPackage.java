@@ -26,7 +26,9 @@ import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.TypeMatcher;
 import org.openrewrite.java.search.SemanticallyEqual;
 import org.openrewrite.java.tree.Expression;
+import org.openrewrite.java.tree.Flag;
 import org.openrewrite.java.tree.J;
+import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.java.tree.TypeUtils;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -76,15 +78,16 @@ public class RemoveVariablesByPackage extends Recipe {
                 if (!targetTypeMatcher.matches(vd.getType())) {
                     // check of initializer of field is of target type
                     Expression initializer = vd.getVariables().get(0).getInitializer();
-                    if (!(initializer instanceof J.MethodInvocation) || ((J.MethodInvocation) initializer).getSelect() == null) {
+                    if (!(initializer instanceof J.MethodInvocation)) {
                         return vd;
                     }
 
-                    if (!targetTypeMatcher.matches(((J.MethodInvocation) initializer).getSelect().getType())) {
+                    JavaType calledOn = typeCalledOn((J.MethodInvocation) initializer);
+                    if (!targetTypeMatcher.matches(calledOn)) {
                         return vd;
                     }
                     // maybe remove import of removed initializer class
-                    maybeRemoveImport(TypeUtils.asFullyQualified(((J.MethodInvocation) initializer).getSelect().getType()));
+                    maybeRemoveImport(TypeUtils.asFullyQualified(calledOn));
                 }
 
                 // Before removing, check if any declared variable has usages in scope
@@ -116,6 +119,15 @@ public class RemoveVariablesByPackage extends Recipe {
                         return identifier;
                     }
                 }.reduce(cu, new AtomicBoolean()).get();
+            }
+
+            private @Nullable JavaType typeCalledOn(J.MethodInvocation method) {
+                if (method.getSelect() != null) {
+                    return method.getSelect().getType();
+                }
+                // a statically imported method is called on the type that declares it
+                JavaType.Method methodType = method.getMethodType();
+                return methodType != null && methodType.hasFlags(Flag.Static) ? methodType.getDeclaringType() : null;
             }
 
             private boolean isClassScope() {
