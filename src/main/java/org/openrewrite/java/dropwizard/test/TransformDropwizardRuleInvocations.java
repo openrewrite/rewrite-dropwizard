@@ -148,7 +148,7 @@ public class TransformDropwizardRuleInvocations extends Recipe {
                         null;
 
                 String snippet = getCallBuilder()
-                        .buildMethod(DropwizardCallParser.parse(original, getCursor()), returnType);
+                        .buildMethod(DropwizardCallParser.parse(original, getCursor().getParentOrThrow()), returnType);
 
                 return JavaTemplate.builder(snippet)
                         .contextSensitive()
