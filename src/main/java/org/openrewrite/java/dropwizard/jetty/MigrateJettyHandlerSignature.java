@@ -116,6 +116,11 @@ public class MigrateJettyHandlerSignature extends Recipe {
                                         md.getReturnTypeExpression() != null ? md.getReturnTypeExpression().getPrefix() : Space.SINGLE_SPACE,
                                         Markers.EMPTY, JavaType.Primitive.Boolean)
                         );
+                        JavaType.Method mt = md.getMethodType();
+                        if (mt != null) {
+                            mt = mt.withReturnType(JavaType.Primitive.Boolean);
+                            md = md.withMethodType(mt).withName(md.getName().withType(mt));
+                        }
 
                         // Build new parameter list: Request request, Response response, Callback callback
                         List<Statement> newParams = new ArrayList<>();
