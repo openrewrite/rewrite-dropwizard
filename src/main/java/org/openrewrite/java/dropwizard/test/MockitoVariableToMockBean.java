@@ -54,7 +54,7 @@ public class MockitoVariableToMockBean extends Recipe {
         private static final String MOCKITO_MOCK_BEAN =
                 "org.springframework.boot.test.mock.mockito.MockBean";
 
-        private final MethodMatcher mockMatcher = new MethodMatcher("org.mockito.Mockito mock(..)");
+        private static final MethodMatcher MOCK_MATCHER = new MethodMatcher("org.mockito.Mockito mock(..)");
 
         @Override
         public J.VariableDeclarations visitVariableDeclarations(
@@ -118,7 +118,7 @@ public class MockitoVariableToMockBean extends Recipe {
             }
 
             J.MethodInvocation init = (J.MethodInvocation) var.getInitializer();
-            return hasStaticAndFinal && mockMatcher.matches(init);
+            return hasStaticAndFinal && MOCK_MATCHER.matches(init);
         }
     }
 }
