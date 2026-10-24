@@ -18,6 +18,7 @@ package org.openrewrite.java.dropwizard.annotation.micrometer;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
+import org.openrewrite.test.RecipeQualityValidation;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
@@ -131,6 +132,8 @@ class CodahaleTimedToMicrometerTimedTest implements RewriteTest {
     @Test
     void ignoresUnmappedAttributes() {
         rewriteRun(
+          // RemoveAnnotationAttribute leaves the TimeUnit import of the removed rateUnit (openrewrite/rewrite#9378)
+          spec -> spec.recipeQualityValidation(RecipeQualityValidation.builder().removeUnusedImports(false).build()),
           //language=java
           java(
             """

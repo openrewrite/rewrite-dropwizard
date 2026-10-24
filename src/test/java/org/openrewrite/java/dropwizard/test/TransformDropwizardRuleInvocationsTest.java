@@ -162,7 +162,6 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
           import org.springframework.http.HttpMethod;
           import org.springframework.http.MediaType;
           import org.springframework.web.client.RestTemplate;
-          import javax.ws.rs.client.Entity;
 
           import java.util.Collections;
 
@@ -267,9 +266,6 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
           import org.springframework.http.HttpHeaders;
           import org.springframework.http.HttpMethod;
 
-          import javax.ws.rs.client.Entity;
-          import javax.ws.rs.core.GenericType;
-
           import java.util.Collections;
           import java.util.List;
           import org.springframework.web.client.RestTemplate;
@@ -320,7 +316,6 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
                         import org.springframework.http.HttpHeaders;
                         import org.springframework.http.HttpMethod;
                         import org.springframework.web.client.RestTemplate;
-                        import javax.ws.rs.client.Entity;
                       
                         import java.util.Collections;
                       
