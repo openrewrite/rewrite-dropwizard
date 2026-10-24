@@ -79,6 +79,8 @@ public class RestTemplateCallBuilder implements DropwizardToSpringCallBuilder {
     @Override
     public String[] getImportsToRemove() {
         return new String[]{
+                "javax.ws.rs.client.Entity",
+                "javax.ws.rs.core.GenericType",
                 "javax.ws.rs.core.HttpHeaders",
                 "javax.ws.rs.core.MediaType",
                 "javax.ws.rs.core.Response"

@@ -59,7 +59,6 @@ class MigrateJettyHandlerSignatureTest implements RewriteTest {
               import org.eclipse.jetty.server.Request;
               import org.eclipse.jetty.server.Response;
               import org.eclipse.jetty.util.Callback;
-              import jakarta.servlet.http.HttpServletResponse;
 
               class MyHandler extends Handler.Abstract {
                   @Override
