@@ -307,4 +307,67 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
           )
         );
     }
+
+    @Test
+    void preservesSurvivingOverridesAfterRemovingSuperclass() {
+        rewriteRun(
+          spec -> spec.recipes(new RemoveSuperTypeByType("example.Base"), new RemoveUnnecessaryOverride(false))
+            .cycles(3).expectedCyclesThatMakeChanges(1),
+          java(
+            """
+              package example;
+
+              class Base {
+                  public void removed() {
+                  }
+              }
+
+              interface Contract {
+                  void run();
+              }
+
+              class Child extends Base implements Contract {
+                  @Override
+                  public void removed() {
+                  }
+
+                  @Override
+                  public void run() {
+                  }
+
+                  @Override
+                  public String toString() {
+                      return "child";
+                  }
+              }
+              """,
+            """
+              package example;
+
+              class Base {
+                  public void removed() {
+                  }
+              }
+
+              interface Contract {
+                  void run();
+              }
+
+              class Child implements Contract {
+                  public void removed() {
+                  }
+
+                  @Override
+                  public void run() {
+                  }
+
+                  @Override
+                  public String toString() {
+                      return "child";
+                  }
+              }
+              """
+          )
+        );
+    }
 }
