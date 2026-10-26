@@ -58,11 +58,27 @@ public class RemoveSuperTypeByType extends Recipe {
                             return classDecl;
                         }
 
-                        JavaType.ShallowClass type = (JavaType.ShallowClass) JavaType.buildType("java.lang.Object");
-                        doAfterVisit(new UpdateMethodTypesVisitor(type));
+                        JavaType.FullyQualified originalType = classDecl.getType();
+                        JavaType.FullyQualified rawType = originalType instanceof JavaType.Parameterized ?
+                                ((JavaType.Parameterized) originalType).getType() : originalType;
+                        if (!(rawType instanceof JavaType.Class)) {
+                            return classDecl;
+                        }
+                        JavaType.FullyQualified objectType = rawType.getSupertype();
+                        while (objectType != null && !isOfClassType(objectType, "java.lang.Object")) {
+                            objectType = objectType.getSupertype();
+                        }
+                        if (objectType == null) {
+                            return classDecl;
+                        }
+
+                        JavaType.Class declaringType = ((JavaType.Class) rawType).withSupertype(objectType);
+                        doAfterVisit(new UpdateMethodTypesVisitor(declaringType));
                         doAfterVisit(new RemoveUnnecessarySuperCalls.RemoveUnnecessarySuperCallsVisitor());
 
-                        return classDecl.withExtends(null);
+                        JavaType.FullyQualified updatedType = originalType instanceof JavaType.Parameterized ?
+                                ((JavaType.Parameterized) originalType).withType(declaringType) : declaringType;
+                        return classDecl.withExtends(null).withType(updatedType);
                     }
                 }
         );
