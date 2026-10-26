@@ -18,10 +18,13 @@ package org.openrewrite.java.dropwizard.method;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
 import org.openrewrite.java.JavaParser;
+import org.openrewrite.java.tree.J;
+import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.java.Assertions.java;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class RemoveUnnecessaryOverrideTest implements RewriteTest {
 
@@ -366,7 +369,202 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
                       return "child";
                   }
               }
-              """
+              """,
+            source -> source.afterRecipe(cu -> {
+                J.ClassDeclaration child = cu.getClasses().stream()
+                  .filter(c -> c.getSimpleName().equals("Child")).findFirst().orElseThrow();
+                assertThat(child.getType().getSupertype().getFullyQualifiedName()).isEqualTo("java.lang.Object");
+                child.getBody().getStatements().stream()
+                  .filter(J.MethodDeclaration.class::isInstance).map(J.MethodDeclaration.class::cast)
+                  .forEach(method -> assertThat(method.getMethodType().getDeclaringType().getFullyQualifiedName())
+                    .isEqualTo("example.Child"));
+            })
+          )
+        );
+    }
+
+    @Test
+    void preservesGenericInterfaceAndUnrelatedClassOverrides() {
+        rewriteRun(
+          spec -> spec.recipes(new RemoveSuperTypeByType("example.Base"), new RemoveUnnecessaryOverride(false))
+            .cycles(3).expectedCyclesThatMakeChanges(1),
+          java(
+            """
+              package example;
+
+              class Base {
+              }
+
+              interface Contract<T> {
+                  T convert(T value);
+              }
+
+              class Child extends Base implements Contract<String> {
+                  @Override
+                  public String convert(String value) {
+                      return value;
+                  }
+
+                  static class Nested implements Runnable {
+                      @Override
+                      public void run() {
+                      }
+                  }
+              }
+
+              class Unrelated implements Runnable {
+                  @Override
+                  public void run() {
+                  }
+
+                  @Override
+                  public String toString() {
+                      return "other";
+                  }
+              }
+              """,
+            """
+              package example;
+
+              class Base {
+              }
+
+              interface Contract<T> {
+                  T convert(T value);
+              }
+
+              class Child implements Contract<String> {
+                  @Override
+                  public String convert(String value) {
+                      return value;
+                  }
+
+                  static class Nested implements Runnable {
+                      @Override
+                      public void run() {
+                      }
+                  }
+              }
+
+              class Unrelated implements Runnable {
+                  @Override
+                  public void run() {
+                  }
+
+                  @Override
+                  public String toString() {
+                      return "other";
+                  }
+              }
+              """,
+            source -> source.afterRecipe(cu -> {
+                J.ClassDeclaration child = cu.getClasses().stream()
+                  .filter(c -> c.getSimpleName().equals("Child")).findFirst().orElseThrow();
+                J.ClassDeclaration nested = child.getBody().getStatements().stream()
+                  .filter(J.ClassDeclaration.class::isInstance).map(J.ClassDeclaration.class::cast)
+                  .findFirst().orElseThrow();
+                J.ClassDeclaration unrelated = cu.getClasses().stream()
+                  .filter(c -> c.getSimpleName().equals("Unrelated")).findFirst().orElseThrow();
+                for (J.ClassDeclaration owner : new J.ClassDeclaration[]{nested, unrelated}) {
+                    owner.getBody().getStatements().stream()
+                      .filter(J.MethodDeclaration.class::isInstance).map(J.MethodDeclaration.class::cast)
+                      .forEach(method -> assertThat(method.getMethodType().getDeclaringType())
+                        .isSameAs(owner.getType()));
+                }
+            })
+          )
+        );
+    }
+
+    @Test
+    void updatesDescendantOverridesAfterRemovingSuperclass() {
+        rewriteRun(
+          spec -> spec.recipes(new RemoveSuperTypeByType("example.Base"), new RemoveUnnecessaryOverride(false))
+            .cycles(3).expectedCyclesThatMakeChanges(1),
+          java(
+            """
+              package example;
+
+              class Base {
+                  public void removed() {
+                  }
+              }
+
+              interface Contract<T> {
+                  T convert(T value);
+              }
+
+              class Child<T> extends Base implements Contract<T> {
+                  @Override
+                  public T convert(T value) {
+                      return value;
+                  }
+              }
+
+              class Grandchild extends Child<String> {
+                  @Override
+                  public String convert(String value) {
+                      return value;
+                  }
+
+                  @Override
+                  public void removed() {
+                  }
+
+                  @Override
+                  public String toString() {
+                      return "grandchild";
+                  }
+              }
+              """,
+            """
+              package example;
+
+              class Base {
+                  public void removed() {
+                  }
+              }
+
+              interface Contract<T> {
+                  T convert(T value);
+              }
+
+              class Child<T> implements Contract<T> {
+                  @Override
+                  public T convert(T value) {
+                      return value;
+                  }
+              }
+
+              class Grandchild extends Child<String> {
+                  @Override
+                  public String convert(String value) {
+                      return value;
+                  }
+
+                  public void removed() {
+                  }
+
+                  @Override
+                  public String toString() {
+                      return "grandchild";
+                  }
+              }
+              """,
+            source -> source.afterRecipe(cu -> {
+                J.ClassDeclaration grandchild = cu.getClasses().stream()
+                  .filter(c -> c.getSimpleName().equals("Grandchild")).findFirst().orElseThrow();
+                JavaType.FullyQualified parent = grandchild.getType().getSupertype();
+                assertThat(parent).isInstanceOf(JavaType.Parameterized.class);
+                JavaType.Parameterized parameterized = (JavaType.Parameterized) parent;
+                assertThat(parameterized.getType().getFullyQualifiedName()).isEqualTo("example.Child");
+                assertThat(parameterized.getTypeParameters()).containsExactly(JavaType.buildType("java.lang.String"));
+                assertThat(parameterized.getSupertype().getFullyQualifiedName()).isEqualTo("java.lang.Object");
+                grandchild.getBody().getStatements().stream()
+                  .filter(J.MethodDeclaration.class::isInstance).map(J.MethodDeclaration.class::cast)
+                  .forEach(method -> assertThat(method.getMethodType().getDeclaringType().getSupertype())
+                    .isSameAs(parent));
+            })
           )
         );
     }

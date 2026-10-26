@@ -21,34 +21,50 @@ import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
+
+import static org.openrewrite.java.tree.TypeUtils.isOfClassType;
+
 @RequiredArgsConstructor
 public class UpdateMethodTypesVisitor extends JavaIsoVisitor<ExecutionContext> {
-    private final JavaType.FullyQualified newSuperclass;
+    private final JavaType.FullyQualified declaringType;
+    private final Map<JavaType.FullyQualified, JavaType.FullyQualified> updatedTypes = new IdentityHashMap<>();
+
+    @Override
+    public J.ClassDeclaration visitClassDeclaration(J.ClassDeclaration classDecl, ExecutionContext ctx) {
+        J.ClassDeclaration cd = super.visitClassDeclaration(classDecl, ctx);
+        return cd.getType() == null ? cd : cd.withType(updateHierarchy(cd.getType()));
+    }
 
     @Override
     public J.MethodDeclaration visitMethodDeclaration(
             J.MethodDeclaration method, ExecutionContext ctx) {
-        JavaType.Method methodType = method.getMethodType();
-
+        J.MethodDeclaration m = super.visitMethodDeclaration(method, ctx);
+        JavaType.Method methodType = m.getMethodType();
         if (methodType != null) {
-
-            boolean hasOverrideAnnotation =
-                    method.getLeadingAnnotations().stream()
-                            .anyMatch(annotation -> "Override".equals(annotation.getSimpleName()));
-
-            if (hasOverrideAnnotation) {
-                JavaType.FullyQualified declaringType = methodType.getDeclaringType();
-                if (declaringType != null) {
-                    JavaType.Method originalMethodType = method.getMethodType();
-                    if (originalMethodType != null) {
-                        JavaType.Method newMethodType = originalMethodType.withDeclaringType(newSuperclass);
-                        method = method.withMethodType(newMethodType);
-                        method = method.withName(method.getName().withType(newMethodType));
-                    }
-                    return method;
-                }
-            }
+            JavaType.Method updated = methodType.withDeclaringType(updateHierarchy(methodType.getDeclaringType()));
+            return m.withMethodType(updated).withName(m.getName().withType(updated));
         }
-        return method;
+        return m;
+    }
+
+    private JavaType.FullyQualified updateHierarchy(JavaType.FullyQualified type) {
+        JavaType.FullyQualified cached = updatedTypes.get(type);
+        if (cached != null) {
+            return cached;
+        }
+        updatedTypes.put(type, type);
+        JavaType.FullyQualified updated = type;
+        if (type instanceof JavaType.Parameterized) {
+            JavaType.Parameterized parameterized = (JavaType.Parameterized) type;
+            updated = parameterized.withType(updateHierarchy(parameterized.getType()));
+        } else if (isOfClassType(type, declaringType.getFullyQualifiedName())) {
+            updated = declaringType;
+        } else if (type instanceof JavaType.Class && type.getSupertype() != null) {
+            updated = ((JavaType.Class) type).withSupertype(updateHierarchy(type.getSupertype()));
+        }
+        updatedTypes.put(type, updated);
+        return updated;
     }
 }
