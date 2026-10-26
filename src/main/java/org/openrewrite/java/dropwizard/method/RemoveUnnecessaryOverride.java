@@ -32,7 +32,6 @@ import org.openrewrite.java.tree.TypeUtils;
 public class RemoveUnnecessaryOverride extends Recipe {
 
     private static final AnnotationMatcher OVERRIDE_ANNOTATION = new AnnotationMatcher("@java.lang.Override");
-    private static final RemoveAnnotationVisitor removeAnnotationVisitor = new RemoveAnnotationVisitor(OVERRIDE_ANNOTATION);
 
     @Option(
             displayName = "Ignore methods in anonymous classes",
@@ -63,7 +62,8 @@ public class RemoveUnnecessaryOverride extends Recipe {
                                 !TypeUtils.isOverride(m.getMethodType()) &&
                                 !(Boolean.TRUE.equals(ignoreAnonymousClassMethods) &&
                                         getCursorToParentScope(getCursor()).getValue() instanceof J.NewClass)) {
-                            return (J.MethodDeclaration) removeAnnotationVisitor.visit(m, ctx, getCursor().getParentTreeCursor());
+                            return (J.MethodDeclaration) new RemoveAnnotationVisitor(OVERRIDE_ANNOTATION)
+                                    .visit(m, ctx, getCursor().getParentTreeCursor());
                         }
                         return m;
                     }

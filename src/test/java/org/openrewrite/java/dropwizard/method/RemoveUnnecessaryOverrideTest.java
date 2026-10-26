@@ -17,16 +17,58 @@ package org.openrewrite.java.dropwizard.method;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
+import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.JavaType;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import static org.openrewrite.java.Assertions.java;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RemoveUnnecessaryOverrideTest implements RewriteTest {
+
+    @Test
+    void concurrentRunsUseIndependentAnnotationVisitors() throws Exception {
+        StringBuilder methods = new StringBuilder();
+        for (int i = 0; i < 12; i++) {
+            methods.append("@Override public void missing").append(i)
+              .append("(String value) { System.out.println(value.trim()); }\n");
+        }
+        J.CompilationUnit source = (J.CompilationUnit) JavaParser.fromJavaVersion().build()
+          .parse("class Example {\n" + methods + "}").findFirst().orElseThrow();
+        RemoveUnnecessaryOverride recipe = new RemoveUnnecessaryOverride(false);
+        ExecutorService workers = Executors.newFixedThreadPool(8);
+        CountDownLatch start = new CountDownLatch(1);
+        try {
+            List<Future<?>> results = new ArrayList<>();
+            for (int i = 0; i < 32; i++) {
+                results.add(workers.submit(() -> {
+                    start.await();
+                    for (int run = 0; run < 4; run++) {
+                        J.CompilationUnit after = (J.CompilationUnit) recipe.getVisitor()
+                          .visitNonNull(source, new InMemoryExecutionContext());
+                        assertThat(after.printAll()).doesNotContain("@Override");
+                    }
+                    return null;
+                }));
+            }
+            start.countDown();
+            for (Future<?> result : results) {
+                result.get();
+            }
+        } finally {
+            workers.shutdownNow();
+        }
+    }
 
     @Override
     public void defaults(RecipeSpec spec) {
