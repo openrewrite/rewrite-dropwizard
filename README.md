@@ -21,15 +21,15 @@
 [![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://community.develocity.cloud/scans)
 </div>
 
-### What is this?
+### This repository is archived
 
-This project implements a [Rewrite module](https://github.com/openrewrite/rewrite) that applies best practices and
-migrations for those projects using the [Dropwizard framework](https://dropwizard.io/).
+The Dropwizard recipes are now developed and released as part of the Moderne recipe catalog, as `io.moderne.recipe:rewrite-dropwizard`.
+That module upgrades Dropwizard 4.x to 5.x and migrates Dropwizard 4.x applications to Spring Boot 3.
+Version 0.10.3 of `org.openrewrite.recipe:rewrite-dropwizard` remains available on Maven Central, but will receive no further changes.
 
-Browse [a selection of recipes available through this module in the recipe catalog](https://docs.openrewrite.org/recipes/java/dropwizard).
-
-## Contributing
-
-We appreciate all types of contributions. See
-the [contributing guide](https://github.com/openrewrite/.github/blob/main/CONTRIBUTING.md) for detailed instructions on
-how to get started.
+| Recipe in this repository | Replacement |
+|---|---|
+| `org.openrewrite.java.dropwizard.MigrateToDropwizard5` | `io.moderne.java.dropwizard.MigrateToDropwizard5` |
+| `org.openrewrite.java.dropwizard.MigrateDropwizardToSpringBoot` | `io.moderne.java.dropwizard.boot.MigrateDropwizardToSpringBoot3`, which starts from Dropwizard 4.x |
+| `org.openrewrite.java.dropwizard.jetty.MigrateJettyHandlerSignature` | `io.moderne.java.dropwizard.dw5.MigrateJettyHandlerSignature` |
+| `org.openrewrite.java.dropwizard.{annotation,general,method,test}.*` | `io.moderne.java.dropwizard.boot.{annotation,general,method,test}.*` |
