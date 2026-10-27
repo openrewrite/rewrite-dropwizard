@@ -18,6 +18,7 @@ package org.openrewrite.java.dropwizard.method;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
+import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -31,7 +32,7 @@ class ChangeSuperTypeTest implements RewriteTest {
         spec.recipe(
             new ChangeSuperType(
               "org.example.OldParent", "org.example.NewParent", false, false, true))
-          .parser(JavaParser.fromJavaVersion().classpath("metrics-healthchecks"));
+          .parser(JavaParser.fromJavaVersion().classpathFromResources(new InMemoryExecutionContext(), "metrics-healthchecks-4"));
     }
 
     @DocumentExample

@@ -12,6 +12,21 @@ recipeDependencies {
     parserClasspath("org.springframework.boot:spring-boot-test-autoconfigure:2.+")
     parserClasspath("org.springframework:spring-core:5.+")
     parserClasspath("org.springframework:spring-web:5.+")
+
+    testParserClasspath("com.fasterxml.jackson.core:jackson-databind:2.9.10.8")
+    testParserClasspath("io.dropwizard:dropwizard-core:1.3.29")
+    testParserClasspath("io.dropwizard:dropwizard-db:1.3.29")
+    testParserClasspath("io.dropwizard:dropwizard-testing:1.3.29")
+    testParserClasspath("io.dropwizard.metrics:metrics-annotation:4.1.+")
+    testParserClasspath("io.dropwizard.metrics:metrics-healthchecks:4.1.+")
+    testParserClasspath("io.micrometer:micrometer-core:1.7.+")
+    testParserClasspath("jakarta.servlet:jakarta.servlet-api:5.+")
+    testParserClasspath("javax.persistence:javax.persistence-api:2.2")
+    testParserClasspath("javax.ws.rs:javax.ws.rs-api:2.0.1")
+    testParserClasspath("net.sourceforge.argparse4j:argparse4j:0.9.0")
+    testParserClasspath("org.eclipse.jetty:jetty-server:11.+")
+    testParserClasspath("org.glassfish.jersey.core:jersey-client:2.25.1")
+    testParserClasspath("org.mockito:mockito-core:3.+")
 }
 
 val rewriteVersion = rewriteRecipe.rewriteVersion.get()
@@ -35,20 +50,4 @@ dependencies {
     runtimeOnly("org.openrewrite:rewrite-java-21")
 
     testImplementation("org.openrewrite:rewrite-test")
-
-    testRuntimeOnly("io.dropwizard.metrics:metrics-annotation:4.1.+")
-    testRuntimeOnly("io.dropwizard.metrics:metrics-healthchecks:4.1.+")
-    testRuntimeOnly("io.dropwizard:dropwizard-testing:1.3.29")
-    testRuntimeOnly("io.dropwizard:dropwizard-db:1.3.29")
-
-    testRuntimeOnly("jakarta.servlet:jakarta.servlet-api:5.+")
-    testRuntimeOnly("jakarta.ws.rs:jakarta.ws.rs-api:2.1.6")
-    testRuntimeOnly("javax.persistence:javax.persistence-api:2.2")
-
-    testRuntimeOnly("net.sourceforge.argparse4j:argparse4j:0.9.0")
-    testRuntimeOnly("org.eclipse.jetty:jetty-server:11.+")
-    testRuntimeOnly("org.projectlombok:lombok:1.18.44")
-    testRuntimeOnly("org.springframework.boot:spring-boot-starter-actuator:2.5.+")
-    testRuntimeOnly("org.springframework.boot:spring-boot-starter-test:2.5.+")
-    testRuntimeOnly("org.springframework.boot:spring-boot-starter-web:2.5.+")
 }

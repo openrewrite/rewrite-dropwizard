@@ -17,6 +17,7 @@ package org.openrewrite.java.dropwizard.test;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
+import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -28,13 +29,13 @@ class TransformDropwizardRuleInvocationsTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         spec.recipes(new TransformDropwizardRuleInvocations())
-          .parser(JavaParser.fromJavaVersion().classpath(
-            "dropwizard-testing",
-            "dropwizard-core",
-            "jersey-client",
-            "spring-web",
-            "javax.ws.rs-api",
-            "jackson-databind").logCompilationWarningsAndErrors(false)
+          .parser(JavaParser.fromJavaVersion().classpathFromResources(new InMemoryExecutionContext(), 
+            "dropwizard-testing-1",
+            "dropwizard-core-1",
+            "jersey-client-2",
+            "spring-web-5",
+            "javax.ws.rs-api-2",
+            "jackson-databind-2").logCompilationWarningsAndErrors(false)
 
             .dependsOn("""
               package io.dropwizard.testing.junit;

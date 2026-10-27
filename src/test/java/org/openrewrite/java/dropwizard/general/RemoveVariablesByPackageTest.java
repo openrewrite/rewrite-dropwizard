@@ -17,6 +17,7 @@ package org.openrewrite.java.dropwizard.general;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
+import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -190,7 +191,7 @@ class RemoveVariablesByPackageTest implements RewriteTest {
         rewriteRun(
           spec -> spec
             .recipe(new RemoveVariablesByPackage("io.dropwizard", false))
-            .parser(JavaParser.fromJavaVersion().classpath("dropwizard-db", "dropwizard-core")),
+            .parser(JavaParser.fromJavaVersion().classpathFromResources(new InMemoryExecutionContext(), "dropwizard-db-1", "dropwizard-core-1")),
           java(
             """
               package com.example;
@@ -216,7 +217,7 @@ class RemoveVariablesByPackageTest implements RewriteTest {
         rewriteRun(
           spec -> spec
             .recipe(new RemoveVariablesByPackage("io.dropwizard", false))
-            .parser(JavaParser.fromJavaVersion().classpath("dropwizard-testing")),
+            .parser(JavaParser.fromJavaVersion().classpathFromResources(new InMemoryExecutionContext(), "dropwizard-testing-1")),
           java(
             """
               package com.example;

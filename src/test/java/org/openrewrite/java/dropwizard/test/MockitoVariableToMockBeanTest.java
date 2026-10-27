@@ -17,6 +17,7 @@ package org.openrewrite.java.dropwizard.test;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
+import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -28,7 +29,7 @@ class MockitoVariableToMockBeanTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         spec.recipe(new MockitoVariableToMockBean())
-          .parser(JavaParser.fromJavaVersion().classpath("mockito-core", "spring-boot-starter-test"));
+          .parser(JavaParser.fromJavaVersion().classpathFromResources(new InMemoryExecutionContext(), "mockito-core-3"));
     }
 
     @DocumentExample
