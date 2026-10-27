@@ -80,7 +80,7 @@ class RemoveUnnecessaryOverrideTest implements RewriteTest {
     void configuresRenderCommandArguments() {
         rewriteRun(
           spec ->
-            spec.parser(JavaParser.fromJavaVersion().classpath("argparse4j", "spring-boot")),
+            spec.parser(JavaParser.fromJavaVersion().classpathFromResources(new InMemoryExecutionContext(), "argparse4j-0.9", "spring-boot-2")),
           java(
             """
               import net.sourceforge.argparse4j.impl.Arguments;

@@ -17,6 +17,7 @@ package org.openrewrite.java.dropwizard.test;
 
 import org.junit.jupiter.api.Test;
 import org.openrewrite.DocumentExample;
+import org.openrewrite.InMemoryExecutionContext;
 import org.openrewrite.java.JavaParser;
 import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
@@ -234,7 +235,7 @@ class DropwizardRulesJUnit4ToSpringBootTest implements RewriteTest {
           spec ->
             spec.parser(
               JavaParser.fromJavaVersion()
-                .classpath("spring-boot-test")
+                .classpathFromResources(new InMemoryExecutionContext(), "spring-boot-test-2")
                 .dependsOn(
                   """
                     package io.dropwizard;

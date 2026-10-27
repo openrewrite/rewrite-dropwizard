@@ -19,12 +19,15 @@ import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.openrewrite.Cursor;
 import org.openrewrite.ExecutionContext;
+import org.openrewrite.internal.ListUtils;
 import org.openrewrite.java.AnnotationMatcher;
 import org.openrewrite.java.JavaIsoVisitor;
 import org.openrewrite.java.JavaTemplate;
 import org.openrewrite.java.service.AnnotationService;
 import org.openrewrite.java.tree.J;
 import org.openrewrite.java.tree.J.ClassDeclaration;
+import org.openrewrite.java.tree.JavaType;
+import org.openrewrite.java.tree.TypeUtils;
 
 import static java.lang.Boolean.TRUE;
 import static java.util.Comparator.comparing;
@@ -74,7 +77,13 @@ public abstract class AddClassAnnotationVisitor extends JavaIsoVisitor<Execution
                 .apply(updateCursor(cd), cd.getCoordinates().addAnnotation(comparing(J.Annotation::getSimpleName)));
 
         maybeAddImport(annotationType, false); // this is a symptom of classpath based on runtime
-        return updated;
+        // The annotation is rarely on the recipe's runtime classpath, so attribute it ourselves;
+        // otherwise the matcher above misses it and the next cycle adds it again.
+        return updated.withLeadingAnnotations(ListUtils.map(updated.getLeadingAnnotations(), a ->
+                !cd.getLeadingAnnotations().contains(a) && !TypeUtils.isOfClassType(a.getType(), annotationType) &&
+                a.getAnnotationType() instanceof J.Identifier ?
+                        a.withAnnotationType(((J.Identifier) a.getAnnotationType()).withType(JavaType.ShallowClass.build(annotationType))) :
+                        a));
     }
 
     private boolean shouldAddAnnotationToAnyParentClass() {
